@@ -1,10 +1,14 @@
 import { Transition } from '@headlessui/react';
-import { Link } from '@inertiajs/react';
-import { createContext, useContext, useState } from 'react';
+import { Link, InertiaLinkProps } from '@inertiajs/react';
+import { PropsWithChildren, createContext, useContext, useState, Fragment } from 'react';
 
-const DropDownContext = createContext();
+const DropDownContext = createContext<{
+    open: boolean;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    toggleOpen: () => void;
+} | undefined>(undefined);
 
-const Dropdown = ({ children }) => {
+const Dropdown = ({ children }: PropsWithChildren) => {
     const [open, setOpen] = useState(false);
 
     const toggleOpen = () => {
@@ -18,8 +22,16 @@ const Dropdown = ({ children }) => {
     );
 };
 
-const Trigger = ({ children }) => {
-    const { open, setOpen, toggleOpen } = useContext(DropDownContext);
+const useDropdownContext = () => {
+    const context = useContext(DropDownContext);
+    if (!context) {
+        throw new Error('useDropdownContext must be used within a Dropdown');
+    }
+    return context;
+};
+
+const Trigger = ({ children }: PropsWithChildren) => {
+    const { open, setOpen, toggleOpen } = useDropdownContext();
 
     return (
         <>
@@ -40,8 +52,8 @@ const Content = ({
     width = '48',
     contentClasses = 'py-1 bg-white',
     children,
-}) => {
-    const { open, setOpen } = useContext(DropDownContext);
+}: PropsWithChildren<{ align?: 'left' | 'right' | 'top'; width?: '48'; contentClasses?: string }>) => {
+    const { open, setOpen } = useDropdownContext();
 
     let alignmentClasses = 'origin-top';
 
@@ -60,6 +72,7 @@ const Content = ({
     return (
         <>
             <Transition
+                as={Fragment}
                 show={open}
                 enter="transition ease-out duration-200"
                 enterFrom="opacity-0 scale-95"
@@ -86,7 +99,7 @@ const Content = ({
     );
 };
 
-const DropdownLink = ({ className = '', children, ...props }) => {
+const DropdownLink = ({ className = '', children, ...props }: InertiaLinkProps) => {
     return (
         <Link
             {...props}

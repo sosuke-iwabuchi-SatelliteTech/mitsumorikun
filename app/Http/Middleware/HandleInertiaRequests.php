@@ -33,6 +33,11 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'is_impersonating' => $request->session()->has('impersonator_id'),
+            ],
+            'flash' => [
+                'message' => $request->session()->get('message'),
+                'error' => $request->session()->get('error'),
             ],
         ];
     }

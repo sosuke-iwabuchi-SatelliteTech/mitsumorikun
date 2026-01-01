@@ -2,17 +2,43 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { Link, usePage, router } from '@inertiajs/react';
+import { PropsWithChildren, ReactNode, useState } from 'react';
+import { PageProps } from '@/types';
 
-export default function AuthenticatedLayout({ header, children }) {
-    const user = usePage().props.auth.user;
+export default function AuthenticatedLayout({
+    header,
+    children,
+}: PropsWithChildren<{ header?: ReactNode }>) {
+    const { auth, flash } = usePage<PageProps>().props;
+    const user = auth.user;
+    const isImpersonating = auth.is_impersonating;
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
+    const handleStopImpersonating = () => {
+        router.delete(route('impersonate.stop'));
+    };
+
     return (
         <div className="min-h-screen bg-gray-100">
+            {isImpersonating && (
+                <div className="bg-amber-500 py-2 px-4 text-white text-center flex justify-center items-center gap-4 shadow-md sticky top-0 z-50">
+                    <span className="font-bold flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                        </svg>
+                        {user.name} として代理ログイン中です
+                    </span>
+                    <button
+                        onClick={handleStopImpersonating}
+                        className="bg-white text-amber-600 px-3 py-1 rounded text-xs font-bold hover:bg-amber-50 transition-colors"
+                    >
+                        管理者に戻る
+                    </button>
+                </div>
+            )}
             <nav className="border-b border-gray-100 bg-white">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
@@ -30,6 +56,28 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
+                                <NavLink
+                                    href={route('customers.index')}
+                                    active={route().current('customers.*')}
+                                >
+                                    顧客マスタ
+                                </NavLink>
+                                {user.role === 'admin' && (
+                                    <NavLink
+                                        href={route('admin.users.index')}
+                                        active={route().current('admin.users.*')}
+                                    >
+                                        ユーザー管理
+                                    </NavLink>
+                                )}
+                                {user.role === 'admin' && (
+                                    <NavLink
+                                        href={route('admin.user-groups.index')}
+                                        active={route().current('admin.user-groups.*')}
+                                    >
+                                        グループ管理
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
@@ -134,6 +182,28 @@ export default function AuthenticatedLayout({ header, children }) {
                         >
                             Dashboard
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route('customers.index')}
+                            active={route().current('customers.*')}
+                        >
+                            顧客マスタ
+                        </ResponsiveNavLink>
+                        {user.role === 'admin' && (
+                            <ResponsiveNavLink
+                                href={route('admin.users.index')}
+                                active={route().current('admin.users.*')}
+                            >
+                                ユーザー管理
+                            </ResponsiveNavLink>
+                        )}
+                        {user.role === 'admin' && (
+                            <ResponsiveNavLink
+                                href={route('admin.user-groups.index')}
+                                active={route().current('admin.user-groups.*')}
+                            >
+                                グループ管理
+                            </ResponsiveNavLink>
+                        )}
                     </div>
 
                     <div className="border-t border-gray-200 pb-1 pt-4">
