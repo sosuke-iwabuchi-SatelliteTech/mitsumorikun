@@ -10,11 +10,6 @@ trait FilterableAndSortable
     /**
      * Scope a query to sort and paginate based on request parameters.
      *
-     * @param Builder $query
-     * @param Request $request
-     * @param array $sortableFields
-     * @param string $defaultSort
-     * @param string $defaultDirection
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function scopeFilterAndSort(

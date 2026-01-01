@@ -27,7 +27,11 @@ export default function Index({ userGroups, filters }: Props) {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        router.get(route('admin.user-groups.index'), { ...params, search, page: 1 }, { preserveState: true });
+        router.get(
+            route('admin.user-groups.index'),
+            { ...params, search, page: 1 },
+            { preserveState: true }
+        );
     };
 
     const handleDelete = (id: string, name: string) => {
@@ -39,7 +43,7 @@ export default function Index({ userGroups, filters }: Props) {
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
                         ユーザーグループ管理
                     </h2>
@@ -56,8 +60,11 @@ export default function Index({ userGroups, filters }: Props) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <form onSubmit={handleSearch} className="flex w-full max-w-md items-center gap-2">
+                    <div className="mb-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
+                        <form
+                            onSubmit={handleSearch}
+                            className="flex w-full max-w-md items-center gap-2"
+                        >
                             <input
                                 type="text"
                                 value={search}
@@ -80,7 +87,7 @@ export default function Index({ userGroups, filters }: Props) {
                         />
                     </div>
 
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg border border-gray-100">
+                    <div className="overflow-hidden border border-gray-100 bg-white shadow-sm sm:rounded-lg">
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
@@ -101,26 +108,51 @@ export default function Index({ userGroups, filters }: Props) {
                                             queryParams={params}
                                             routeName="admin.user-groups.index"
                                         />
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">作成日</th>
-                                        <th className="relative px-6 py-3"><span className="sr-only">操作</span></th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                            作成日
+                                        </th>
+                                        <th className="relative px-6 py-3">
+                                            <span className="sr-only">
+                                                操作
+                                            </span>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
                                     {userGroups.data.map((group) => (
-                                        <tr key={group.id} className="hover:bg-gray-50">
-                                            <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">{group.name}</td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{group.users_count} 名</td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{new Date(group.created_at).toLocaleDateString('ja-JP')}</td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium space-x-4">
+                                        <tr
+                                            key={group.id}
+                                            className="hover:bg-gray-50"
+                                        >
+                                            <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                                                {group.name}
+                                            </td>
+                                            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                                                {group.users_count} 名
+                                            </td>
+                                            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                                                {new Date(
+                                                    group.created_at
+                                                ).toLocaleDateString('ja-JP')}
+                                            </td>
+                                            <td className="space-x-4 whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                                                 <Link
-                                                    href={route('admin.user-groups.edit', group.id)}
+                                                    href={route(
+                                                        'admin.user-groups.edit',
+                                                        group.id
+                                                    )}
                                                     className="text-indigo-600 hover:text-indigo-900"
                                                 >
                                                     編集
                                                 </Link>
                                                 {group.users_count === 0 && (
                                                     <button
-                                                        onClick={() => handleDelete(group.id, group.name)}
+                                                        onClick={() =>
+                                                            handleDelete(
+                                                                group.id,
+                                                                group.name
+                                                            )
+                                                        }
                                                         className="text-red-600 hover:text-red-900"
                                                     >
                                                         削除

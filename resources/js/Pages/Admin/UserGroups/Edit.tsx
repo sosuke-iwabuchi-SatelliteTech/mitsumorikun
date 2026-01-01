@@ -33,21 +33,29 @@ export default function Edit({ userGroup }: Props) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg border border-gray-100">
+                    <div className="overflow-hidden border border-gray-100 bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6">
                             <form onSubmit={submit} className="max-w-xl">
                                 <div>
-                                    <InputLabel htmlFor="name" value="グループ名" />
+                                    <InputLabel
+                                        htmlFor="name"
+                                        value="グループ名"
+                                    />
                                     <TextInput
                                         id="name"
                                         type="text"
                                         name="name"
                                         value={data.name}
                                         className="mt-1 block w-full"
-                                        onChange={(e) => setData('name', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('name', e.target.value)
+                                        }
                                         required
                                     />
-                                    <InputError message={errors.name} className="mt-2" />
+                                    <InputError
+                                        message={errors.name}
+                                        className="mt-2"
+                                    />
                                 </div>
 
                                 <div className="mt-6 flex items-center justify-end">
@@ -57,7 +65,10 @@ export default function Edit({ userGroup }: Props) {
                                     >
                                         キャンセル
                                     </Link>
-                                    <PrimaryButton className="ms-4" disabled={processing}>
+                                    <PrimaryButton
+                                        className="ms-4"
+                                        disabled={processing}
+                                    >
                                         更新
                                     </PrimaryButton>
                                 </div>

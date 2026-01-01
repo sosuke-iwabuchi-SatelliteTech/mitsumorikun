@@ -23,19 +23,23 @@ export default function Index({ auth, customers, filters }: Props) {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        router.get(route('customers.index'), { ...params, search, page: 1 }, { preserveState: true });
+        router.get(
+            route('customers.index'),
+            { ...params, search, page: 1 },
+            { preserveState: true }
+        );
     };
 
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
                         顧客マスタ
                     </h2>
                     <Link
                         href={route('customers.create')}
-                        className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-200"
+                        className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
                         新規登録
                     </Link>
@@ -46,8 +50,11 @@ export default function Index({ auth, customers, filters }: Props) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <form onSubmit={handleSearch} className="flex w-full max-w-md items-center gap-2">
+                    <div className="mb-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
+                        <form
+                            onSubmit={handleSearch}
+                            className="flex w-full max-w-md items-center gap-2"
+                        >
                             <input
                                 type="text"
                                 value={search}
@@ -70,7 +77,7 @@ export default function Index({ auth, customers, filters }: Props) {
                         />
                     </div>
 
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg border border-gray-100">
+                    <div className="overflow-hidden border border-gray-100 bg-white shadow-sm sm:rounded-lg">
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
@@ -107,36 +114,52 @@ export default function Index({ auth, customers, filters }: Props) {
                                             queryParams={params}
                                             routeName="customers.index"
                                         />
-                                        <th scope="col" className="relative px-6 py-3">
-                                            <span className="sr-only">操作</span>
+                                        <th
+                                            scope="col"
+                                            className="relative px-6 py-3"
+                                        >
+                                            <span className="sr-only">
+                                                操作
+                                            </span>
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
                                     {customers.data.length > 0 ? (
                                         customers.data.map((customer) => (
-                                            <tr key={customer.id} className="hover:bg-gray-50 transition-colors duration-150">
+                                            <tr
+                                                key={customer.id}
+                                                className="transition-colors duration-150 hover:bg-gray-50"
+                                            >
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                                                     {customer.name}
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                                    {customer.contact_person_name || '-'}
+                                                    {customer.contact_person_name ||
+                                                        '-'}
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                                    {customer.phone_number || '-'}
+                                                    {customer.phone_number ||
+                                                        '-'}
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                                     {customer.email || '-'}
                                                 </td>
-                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium flex justify-end gap-3">
+                                                <td className="flex justify-end gap-3 whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                                                     <Link
-                                                        href={route('customers.show', customer.id)}
+                                                        href={route(
+                                                            'customers.show',
+                                                            customer.id
+                                                        )}
                                                         className="text-indigo-600 hover:text-indigo-900"
                                                     >
                                                         詳細
                                                     </Link>
                                                     <Link
-                                                        href={route('customers.edit', customer.id)}
+                                                        href={route(
+                                                            'customers.edit',
+                                                            customer.id
+                                                        )}
                                                         className="text-amber-600 hover:text-amber-900"
                                                     >
                                                         編集
@@ -146,7 +169,10 @@ export default function Index({ auth, customers, filters }: Props) {
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan={5} className="px-6 py-10 text-center text-sm text-gray-500">
+                                            <td
+                                                colSpan={5}
+                                                className="px-6 py-10 text-center text-sm text-gray-500"
+                                            >
                                                 登録されている顧客がいません。
                                             </td>
                                         </tr>

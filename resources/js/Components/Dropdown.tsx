@@ -1,12 +1,21 @@
 import { Transition } from '@headlessui/react';
 import { Link, InertiaLinkProps } from '@inertiajs/react';
-import { PropsWithChildren, createContext, useContext, useState, Fragment } from 'react';
+import {
+    PropsWithChildren,
+    createContext,
+    useContext,
+    useState,
+    Fragment,
+} from 'react';
 
-const DropDownContext = createContext<{
-    open: boolean;
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    toggleOpen: () => void;
-} | undefined>(undefined);
+const DropDownContext = createContext<
+    | {
+          open: boolean;
+          setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+          toggleOpen: () => void;
+      }
+    | undefined
+>(undefined);
 
 const Dropdown = ({ children }: PropsWithChildren) => {
     const [open, setOpen] = useState(false);
@@ -52,7 +61,11 @@ const Content = ({
     width = '48',
     contentClasses = 'py-1 bg-white',
     children,
-}: PropsWithChildren<{ align?: 'left' | 'right' | 'top'; width?: '48'; contentClasses?: string }>) => {
+}: PropsWithChildren<{
+    align?: 'left' | 'right' | 'top';
+    width?: '48';
+    contentClasses?: string;
+}>) => {
     const { open, setOpen } = useDropdownContext();
 
     let alignmentClasses = 'origin-top';
@@ -99,7 +112,11 @@ const Content = ({
     );
 };
 
-const DropdownLink = ({ className = '', children, ...props }: InertiaLinkProps) => {
+const DropdownLink = ({
+    className = '',
+    children,
+    ...props
+}: InertiaLinkProps) => {
     return (
         <Link
             {...props}

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 
 class ImpersonationController extends Controller
 {
@@ -16,7 +15,7 @@ class ImpersonationController extends Controller
     {
         // Admin middleware should handle the initial check,
         // but double-check here too for safety.
-        if (!Auth::user()->isAdmin()) {
+        if (! Auth::user()->isAdmin()) {
             abort(403);
         }
 
@@ -35,7 +34,7 @@ class ImpersonationController extends Controller
      */
     public function destroy(): RedirectResponse
     {
-        if (!session()->has('impersonator_id')) {
+        if (! session()->has('impersonator_id')) {
             return redirect()->route('dashboard');
         }
 
@@ -44,6 +43,7 @@ class ImpersonationController extends Controller
 
         if ($originalUser) {
             Auth::login($originalUser);
+
             return redirect()->route('admin.users.index')->with('message', '管理者に戻りました。');
         }
 

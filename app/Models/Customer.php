@@ -3,21 +3,20 @@
 namespace App\Models;
 
 use App\Models\Scopes\UserGroupScope;
+use App\Traits\FilterableAndSortable;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 
-use App\Traits\FilterableAndSortable;
-use Illuminate\Database\Eloquent\Builder;
-
 #[ScopedBy(UserGroupScope::class)]
 class Customer extends Model
 {
     /** @use HasFactory<\Database\Factories\CustomerFactory> */
-    use HasFactory, HasUuids, FilterableAndSortable;
+    use FilterableAndSortable, HasFactory, HasUuids;
 
     protected $fillable = [
         'user_group_id',

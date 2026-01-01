@@ -6,7 +6,11 @@ interface Props {
     routeName: string;
 }
 
-export default function PerPageSelector({ currentPerPage, queryParams, routeName }: Props) {
+export default function PerPageSelector({
+    currentPerPage,
+    queryParams,
+    routeName,
+}: Props) {
     const handlePerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         router.get(
             route(routeName),

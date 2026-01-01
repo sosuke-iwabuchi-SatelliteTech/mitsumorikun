@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\RedirectResponse;
-use App\Enums\UserRole;
 
 class CustomerController extends Controller
 {
@@ -33,6 +32,7 @@ class CustomerController extends Controller
     public function create(Request $request): Response
     {
         abort_if($request->user()->isAdmin(), 403);
+
         return Inertia::render('Customers/Create');
     }
 
@@ -64,6 +64,7 @@ class CustomerController extends Controller
     public function show(Request $request, Customer $customer): Response
     {
         abort_if($request->user()->isAdmin(), 403);
+
         return Inertia::render('Customers/Show', [
             'customer' => $customer,
         ]);
@@ -75,6 +76,7 @@ class CustomerController extends Controller
     public function edit(Request $request, Customer $customer): Response
     {
         abort_if($request->user()->isAdmin(), 403);
+
         return Inertia::render('Customers/Edit', [
             'customer' => $customer,
         ]);

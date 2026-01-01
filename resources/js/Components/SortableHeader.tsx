@@ -16,10 +16,11 @@ export default function SortableHeader({
     currentSort,
     currentDirection,
     queryParams,
-    routeName
+    routeName,
 }: Props) {
     const isActive = sortField === currentSort;
-    const nextDirection = isActive && currentDirection === 'asc' ? 'desc' : 'asc';
+    const nextDirection =
+        isActive && currentDirection === 'asc' ? 'desc' : 'asc';
 
     return (
         <th scope="col" className="px-6 py-3 text-left">

@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\FilterableAndSortable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-use App\Traits\FilterableAndSortable;
-use Illuminate\Database\Eloquent\Builder;
-
 class UserGroup extends Model
 {
     /** @use HasFactory<\Database\Factories\UserGroupFactory> */
-    use HasFactory, HasUuids, FilterableAndSortable;
+    use FilterableAndSortable, HasFactory, HasUuids;
 
     protected $fillable = ['name'];
 

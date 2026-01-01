@@ -30,11 +30,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
         Route::get('/admin/users/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.users.create');
         Route::post('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
-        
+
         Route::resource('/admin/user-groups', \App\Http\Controllers\Admin\UserGroupController::class, [
-            'as' => 'admin'
+            'as' => 'admin',
         ]);
-        
+
         Route::post('/impersonate/{user}', [\App\Http\Controllers\ImpersonationController::class, 'store'])->name('impersonate.start');
     });
 

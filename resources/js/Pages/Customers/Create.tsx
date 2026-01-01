@@ -34,97 +34,150 @@ export default function Create({ auth }: PageProps) {
                         <div className="p-6">
                             <form onSubmit={submit} className="space-y-6">
                                 <div>
-                                    <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
-                                        顧客名称 <span className="text-red-500">*</span>
+                                    <label
+                                        htmlFor="name"
+                                        className="block text-sm font-medium leading-6 text-gray-900"
+                                    >
+                                        顧客名称{' '}
+                                        <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         id="name"
                                         value={data.name}
-                                        onChange={(e) => setData('name', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('name', e.target.value)
+                                        }
                                         className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         required
                                     />
-                                    {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name}</p>}
+                                    {errors.name && (
+                                        <p className="mt-2 text-sm text-red-600">
+                                            {errors.name}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div>
-                                    <label htmlFor="contact_person_name" className="block text-sm font-medium leading-6 text-gray-900">
+                                    <label
+                                        htmlFor="contact_person_name"
+                                        className="block text-sm font-medium leading-6 text-gray-900"
+                                    >
                                         担当者名
                                     </label>
                                     <input
                                         type="text"
                                         id="contact_person_name"
                                         value={data.contact_person_name}
-                                        onChange={(e) => setData('contact_person_name', e.target.value)}
+                                        onChange={(e) =>
+                                            setData(
+                                                'contact_person_name',
+                                                e.target.value
+                                            )
+                                        }
                                         className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
                                     <div>
-                                        <label htmlFor="phone_number" className="block text-sm font-medium leading-6 text-gray-900">
+                                        <label
+                                            htmlFor="phone_number"
+                                            className="block text-sm font-medium leading-6 text-gray-900"
+                                        >
                                             電話番号
                                         </label>
                                         <input
                                             type="text"
                                             id="phone_number"
                                             value={data.phone_number}
-                                            onChange={(e) => setData('phone_number', e.target.value)}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'phone_number',
+                                                    e.target.value
+                                                )
+                                            }
                                             className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="fax_number" className="block text-sm font-medium leading-6 text-gray-900">
+                                        <label
+                                            htmlFor="fax_number"
+                                            className="block text-sm font-medium leading-6 text-gray-900"
+                                        >
                                             FAX番号
                                         </label>
                                         <input
                                             type="text"
                                             id="fax_number"
                                             value={data.fax_number}
-                                            onChange={(e) => setData('fax_number', e.target.value)}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'fax_number',
+                                                    e.target.value
+                                                )
+                                            }
                                             className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+                                    <label
+                                        htmlFor="email"
+                                        className="block text-sm font-medium leading-6 text-gray-900"
+                                    >
                                         メールアドレス
                                     </label>
                                     <input
                                         type="email"
                                         id="email"
                                         value={data.email}
-                                        onChange={(e) => setData('email', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('email', e.target.value)
+                                        }
                                         className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
-                                    {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email}</p>}
+                                    {errors.email && (
+                                        <p className="mt-2 text-sm text-red-600">
+                                            {errors.email}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div>
-                                    <label htmlFor="address" className="block text-sm font-medium leading-6 text-gray-900">
+                                    <label
+                                        htmlFor="address"
+                                        className="block text-sm font-medium leading-6 text-gray-900"
+                                    >
                                         住所
                                     </label>
                                     <input
                                         type="text"
                                         id="address"
                                         value={data.address}
-                                        onChange={(e) => setData('address', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('address', e.target.value)
+                                        }
                                         className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
                                 </div>
 
                                 <div>
-                                    <label htmlFor="remarks" className="block text-sm font-medium leading-6 text-gray-900">
+                                    <label
+                                        htmlFor="remarks"
+                                        className="block text-sm font-medium leading-6 text-gray-900"
+                                    >
                                         備考
                                     </label>
                                     <textarea
                                         id="remarks"
                                         rows={4}
                                         value={data.remarks}
-                                        onChange={(e) => setData('remarks', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('remarks', e.target.value)
+                                        }
                                         className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
                                 </div>

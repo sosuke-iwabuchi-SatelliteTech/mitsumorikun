@@ -1,53 +1,53 @@
 name: Deploy
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'production'
-        type: choice
-        options:
-        - production
-        - staging
+    workflow_dispatch:
+        inputs:
+            environment:
+                description: 'Environment to deploy to'
+                required: true
+                default: 'production'
+                type: choice
+                options:
+                    - production
+                    - staging
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, xml, ctype, iconv, mysql, pgsql, sqlite, bcmath, soap, intl, gd, zip
-          coverage: none
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.2'
+                  extensions: mbstring, xml, ctype, iconv, mysql, pgsql, sqlite, bcmath, soap, intl, gd, zip
+                  coverage: none
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '20'
 
-      - name: Install dependencies
-        run: |
-          composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-          npm install
+            - name: Install dependencies
+              run: |
+                  composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+                  npm install
 
-      - name: Copy .env
-        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+            - name: Copy .env
+              run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Generate key
-        run: php artisan key:generate
+            - name: Generate key
+              run: php artisan key:generate
 
-      - name: Build frontend
-        run: npm run build
+            - name: Build frontend
+              run: npm run build
 
-      - name: Run tests
-        run: php artisan test
+            - name: Run tests
+              run: php artisan test
 
-      - name: Deploy
-        run: |
-          echo "Deploying to ${{ github.event.inputs.environment }}..."
-          # Add your actual deployment commands here (e.g., rsync, ssh, or cloud specific CLIs)
+            - name: Deploy
+              run: |
+                  echo "Deploying to ${{ github.event.inputs.environment }}..."
+                  # Add your actual deployment commands here (e.g., rsync, ssh, or cloud specific CLIs)

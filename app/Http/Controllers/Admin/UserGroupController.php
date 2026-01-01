@@ -65,7 +65,7 @@ class UserGroupController extends Controller
     public function update(Request $request, UserGroup $userGroup): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:user_groups,name,' . $userGroup->id,
+            'name' => 'required|string|max:255|unique:user_groups,name,'.$userGroup->id,
         ]);
 
         $userGroup->update($validated);
