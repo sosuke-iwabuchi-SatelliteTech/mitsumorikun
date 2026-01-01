@@ -2,20 +2,28 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { Customer, PaginatedData, PageProps } from '@/types';
 import { useState } from 'react';
+import Pagination from '@/Components/Pagination';
+import SortableHeader from '@/Components/SortableHeader';
+import PerPageSelector from '@/Components/PerPageSelector';
+import { usePageParams } from '@/Hooks/usePageParams';
 
 interface Props extends PageProps {
     customers: PaginatedData<Customer>;
     filters: {
         search: string;
+        sort_by: string;
+        sort_direction: 'asc' | 'desc';
+        per_page: number;
     };
 }
 
 export default function Index({ auth, customers, filters }: Props) {
     const [search, setSearch] = useState(filters.search || '');
+    const { params, sortBy, sortDirection, perPage } = usePageParams();
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        router.get(route('customers.index'), { search }, { preserveState: true });
+        router.get(route('customers.index'), { ...params, search, page: 1 }, { preserveState: true });
     };
 
     return (
@@ -38,7 +46,7 @@ export default function Index({ auth, customers, filters }: Props) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="mb-6 flex items-center justify-between">
+                    <div className="mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                         <form onSubmit={handleSearch} className="flex w-full max-w-md items-center gap-2">
                             <input
                                 type="text"
@@ -54,6 +62,12 @@ export default function Index({ auth, customers, filters }: Props) {
                                 検索
                             </button>
                         </form>
+
+                        <PerPageSelector
+                            currentPerPage={perPage}
+                            queryParams={params}
+                            routeName="customers.index"
+                        />
                     </div>
 
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg border border-gray-100">
@@ -61,18 +75,38 @@ export default function Index({ auth, customers, filters }: Props) {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                            顧客名称
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                            担当者名
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                            電話番号
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                            メールアドレス
-                                        </th>
+                                        <SortableHeader
+                                            label="顧客名称"
+                                            sortField="name"
+                                            currentSort={sortBy}
+                                            currentDirection={sortDirection}
+                                            queryParams={params}
+                                            routeName="customers.index"
+                                        />
+                                        <SortableHeader
+                                            label="担当者名"
+                                            sortField="contact_person_name"
+                                            currentSort={sortBy}
+                                            currentDirection={sortDirection}
+                                            queryParams={params}
+                                            routeName="customers.index"
+                                        />
+                                        <SortableHeader
+                                            label="電話番号"
+                                            sortField="phone_number"
+                                            currentSort={sortBy}
+                                            currentDirection={sortDirection}
+                                            queryParams={params}
+                                            routeName="customers.index"
+                                        />
+                                        <SortableHeader
+                                            label="メールアドレス"
+                                            sortField="email"
+                                            currentSort={sortBy}
+                                            currentDirection={sortDirection}
+                                            queryParams={params}
+                                            routeName="customers.index"
+                                        />
                                         <th scope="col" className="relative px-6 py-3">
                                             <span className="sr-only">操作</span>
                                         </th>
@@ -121,36 +155,7 @@ export default function Index({ auth, customers, filters }: Props) {
                             </table>
                         </div>
 
-                        {/* Pagination */}
-                        {customers.total > customers.per_page && (
-                            <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-                                <div className="flex flex-1 justify-between sm:hidden">
-                                    {/* Mobile links */}
-                                </div>
-                                <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                                    <div>
-                                        <p className="text-sm text-gray-700">
-                                            <span className="font-medium">{customers.from}</span> 〜 <span className="font-medium">{customers.to}</span> 件目表示中（全 <span className="font-medium">{customers.total}</span> 件）
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                                            {customers.links.map((link, idx) => (
-                                                <Link
-                                                    key={idx}
-                                                    href={link.url || '#'}
-                                                    dangerouslySetInnerHTML={{ __html: link.label }}
-                                                    className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${link.active
-                                                            ? 'z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
-                                                            : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0'
-                                                        } ${!link.url && 'opacity-50 cursor-not-allowed'}`}
-                                                />
-                                            ))}
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+                        <Pagination data={customers} />
                     </div>
                 </div>
             </div>

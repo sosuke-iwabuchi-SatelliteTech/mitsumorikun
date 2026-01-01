@@ -14,14 +14,15 @@ class UserGroupController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $userGroups = UserGroup::withCount('users')
-            ->latest()
-            ->paginate(10);
+            ->search($request->get('search'))
+            ->filterAndSort($request, ['name', 'users_count'], 'name', 'asc');
 
         return Inertia::render('Admin/UserGroups/Index', [
             'userGroups' => $userGroups,
+            'filters' => $request->only(['search', 'sort_by', 'sort_direction', 'per_page']),
         ]);
     }
 

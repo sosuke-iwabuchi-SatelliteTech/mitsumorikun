@@ -30,6 +30,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "lucide-react": "^0.562.0",
         "ziggy-js": "^2.6.0"
     }
 }

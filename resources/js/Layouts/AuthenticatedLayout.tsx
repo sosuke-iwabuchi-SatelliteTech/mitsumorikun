@@ -56,12 +56,14 @@ export default function AuthenticatedLayout({
                                 >
                                     Dashboard
                                 </NavLink>
-                                <NavLink
-                                    href={route('customers.index')}
-                                    active={route().current('customers.*')}
-                                >
-                                    顧客マスタ
-                                </NavLink>
+                                {user.role === 'general' && (
+                                    <NavLink
+                                        href={route('customers.index')}
+                                        active={route().current('customers.*')}
+                                    >
+                                        顧客マスタ
+                                    </NavLink>
+                                )}
                                 {user.role === 'admin' && (
                                     <NavLink
                                         href={route('admin.users.index')}
@@ -182,12 +184,14 @@ export default function AuthenticatedLayout({
                         >
                             Dashboard
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            href={route('customers.index')}
-                            active={route().current('customers.*')}
-                        >
-                            顧客マスタ
-                        </ResponsiveNavLink>
+                        {user.role === 'general' && (
+                            <ResponsiveNavLink
+                                href={route('customers.index')}
+                                active={route().current('customers.*')}
+                            >
+                                顧客マスタ
+                            </ResponsiveNavLink>
+                        )}
                         {user.role === 'admin' && (
                             <ResponsiveNavLink
                                 href={route('admin.users.index')}

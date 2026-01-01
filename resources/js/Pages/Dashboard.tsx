@@ -1,7 +1,11 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { PageProps } from '@/types';
 
 export default function Dashboard() {
+    const { auth } = usePage<PageProps>().props;
+    const user = auth.user;
+
     return (
         <AuthenticatedLayout
             header={
@@ -17,12 +21,14 @@ export default function Dashboard() {
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 flex justify-between items-center">
                             <div>You're logged in!</div>
-                            <Link
-                                href={route('customers.index')}
-                                className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors duration-200"
-                            >
-                                顧客マスタ管理 &rarr;
-                            </Link>
+                            {user.role === 'general' && (
+                                <Link
+                                    href={route('customers.index')}
+                                    className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors duration-200"
+                                >
+                                    顧客マスタ管理 &rarr;
+                                </Link>
+                            )}
                         </div>
                     </div>
                 </div>

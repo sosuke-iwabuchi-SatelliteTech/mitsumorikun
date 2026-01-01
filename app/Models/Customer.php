@@ -10,11 +10,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 
+use App\Traits\FilterableAndSortable;
+use Illuminate\Database\Eloquent\Builder;
+
 #[ScopedBy(UserGroupScope::class)]
 class Customer extends Model
 {
     /** @use HasFactory<\Database\Factories\CustomerFactory> */
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, FilterableAndSortable;
 
     protected $fillable = [
         'user_group_id',
@@ -39,5 +42,16 @@ class Customer extends Model
     public function userGroup(): BelongsTo
     {
         return $this->belongsTo(UserGroup::class);
+    }
+
+    public function scopeSearch(Builder $query, ?string $search)
+    {
+        return $query->when($search, function ($q) use ($search) {
+            $q->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('contact_person_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        });
     }
 }

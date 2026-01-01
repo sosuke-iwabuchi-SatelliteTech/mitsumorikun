@@ -21,11 +21,12 @@ class UserController extends Controller
     public function index(Request $request): Response
     {
         $users = User::with('userGroup')
-            ->latest()
-            ->paginate(20);
+            ->search($request->get('search'))
+            ->filterAndSort($request, ['name', 'email', 'role'], 'name', 'asc');
 
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,
+            'filters' => $request->only(['search', 'sort_by', 'sort_direction', 'per_page']),
         ]);
     }
 

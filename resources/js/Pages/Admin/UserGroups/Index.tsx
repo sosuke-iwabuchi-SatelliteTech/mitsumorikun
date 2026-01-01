@@ -1,6 +1,11 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { UserGroup, PaginatedData, PageProps } from '@/types';
+import { useState } from 'react';
+import Pagination from '@/Components/Pagination';
+import SortableHeader from '@/Components/SortableHeader';
+import PerPageSelector from '@/Components/PerPageSelector';
+import { usePageParams } from '@/Hooks/usePageParams';
 
 interface GroupWithCount extends UserGroup {
     users_count: number;
@@ -8,9 +13,23 @@ interface GroupWithCount extends UserGroup {
 
 interface Props extends PageProps {
     userGroups: PaginatedData<GroupWithCount>;
+    filters: {
+        search: string;
+        sort_by: string;
+        sort_direction: 'asc' | 'desc';
+        per_page: number;
+    };
 }
 
-export default function Index({ userGroups }: Props) {
+export default function Index({ userGroups, filters }: Props) {
+    const [search, setSearch] = useState(filters.search || '');
+    const { params, sortBy, sortDirection, perPage } = usePageParams();
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        router.get(route('admin.user-groups.index'), { ...params, search, page: 1 }, { preserveState: true });
+    };
+
     const handleDelete = (id: string, name: string) => {
         if (confirm(`グループ「${name}」を削除してもよろしいですか？`)) {
             router.delete(route('admin.user-groups.destroy', id));
@@ -37,13 +56,51 @@ export default function Index({ userGroups }: Props) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <form onSubmit={handleSearch} className="flex w-full max-w-md items-center gap-2">
+                            <input
+                                type="text"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="グループ名で検索..."
+                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            />
+                            <button
+                                type="submit"
+                                className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                            >
+                                検索
+                            </button>
+                        </form>
+
+                        <PerPageSelector
+                            currentPerPage={perPage}
+                            queryParams={params}
+                            routeName="admin.user-groups.index"
+                        />
+                    </div>
+
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg border border-gray-100">
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">グループ名</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">所属ユーザー数</th>
+                                        <SortableHeader
+                                            label="グループ名"
+                                            sortField="name"
+                                            currentSort={sortBy}
+                                            currentDirection={sortDirection}
+                                            queryParams={params}
+                                            routeName="admin.user-groups.index"
+                                        />
+                                        <SortableHeader
+                                            label="所属ユーザー数"
+                                            sortField="users_count"
+                                            currentSort={sortBy}
+                                            currentDirection={sortDirection}
+                                            queryParams={params}
+                                            routeName="admin.user-groups.index"
+                                        />
                                         <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">作成日</th>
                                         <th className="relative px-6 py-3"><span className="sr-only">操作</span></th>
                                     </tr>
@@ -75,18 +132,7 @@ export default function Index({ userGroups }: Props) {
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-
-                    <div className="mt-4 flex justify-center">
-                        {userGroups.links.map((link, idx) => (
-                            <Link
-                                key={idx}
-                                href={link.url || '#'}
-                                className={`mx-1 px-3 py-1 rounded border ${link.active ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
-                                    } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                            />
-                        ))}
+                        <Pagination data={userGroups} />
                     </div>
                 </div>
             </div>

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
+use App\Enums\UserRole;
 
 class CustomerController extends Controller
 {
@@ -15,30 +16,23 @@ class CustomerController extends Controller
      */
     public function index(Request $request): Response
     {
+        abort_if($request->user()->isAdmin(), 403);
         $query = Customer::query();
-
-        if ($request->has('search')) {
-            $search = $request->get('search');
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('contact_person_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        $customers = $query->latest()->paginate(10)->withQueryString();
+        $customers = Customer::search($request->get('search'))
+            ->filterAndSort($request, ['name', 'contact_person_name', 'email', 'phone_number'], 'name', 'asc');
 
         return Inertia::render('Customers/Index', [
             'customers' => $customers,
-            'filters' => $request->only(['search']),
+            'filters' => $request->only(['search', 'sort_by', 'sort_direction', 'per_page']),
         ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
+        abort_if($request->user()->isAdmin(), 403);
         return Inertia::render('Customers/Create');
     }
 
@@ -47,6 +41,7 @@ class CustomerController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        abort_if($request->user()->isAdmin(), 403);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'contact_person_name' => 'nullable|string|max:255',
@@ -66,8 +61,9 @@ class CustomerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Customer $customer): Response
+    public function show(Request $request, Customer $customer): Response
     {
+        abort_if($request->user()->isAdmin(), 403);
         return Inertia::render('Customers/Show', [
             'customer' => $customer,
         ]);
@@ -76,8 +72,9 @@ class CustomerController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Customer $customer): Response
+    public function edit(Request $request, Customer $customer): Response
     {
+        abort_if($request->user()->isAdmin(), 403);
         return Inertia::render('Customers/Edit', [
             'customer' => $customer,
         ]);
@@ -88,6 +85,7 @@ class CustomerController extends Controller
      */
     public function update(Request $request, Customer $customer): RedirectResponse
     {
+        abort_if($request->user()->isAdmin(), 403);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'contact_person_name' => 'nullable|string|max:255',
@@ -107,8 +105,9 @@ class CustomerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Customer $customer): RedirectResponse
+    public function destroy(Request $request, Customer $customer): RedirectResponse
     {
+        abort_if($request->user()->isAdmin(), 403);
         $customer->delete();
 
         return redirect()->route('customers.index')
