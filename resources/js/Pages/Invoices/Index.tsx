@@ -43,9 +43,7 @@ export default function Index({ auth, invoices }: Props) {
                                         <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                             管理番号
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                            版
-                                        </th>
+
                                         <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                             件名
                                         </th>
@@ -76,9 +74,7 @@ export default function Index({ auth, invoices }: Props) {
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                                                     {invoice.estimate_number}
                                                 </td>
-                                                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                                    v{invoice.version}
-                                                </td>
+
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                                     {invoice.title}
                                                 </td>
@@ -115,7 +111,7 @@ export default function Index({ auth, invoices }: Props) {
                                     ) : (
                                         <tr>
                                             <td
-                                                colSpan={8}
+                                                colSpan={7}
                                                 className="px-6 py-10 text-center text-sm text-gray-500"
                                             >
                                                 登録されている見積・請求がありません。

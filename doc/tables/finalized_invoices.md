@@ -1,19 +1,19 @@
-# invoice_histories テーブル
+# finalized_invoices テーブル
 
 ## 概要
-見積書・請求書の履歴スナップショットを管理するテーブル。
+確定済みの見積書・請求書データを管理するテーブル。
 
 ## テーブル構造
 
 | カラム名 | データ型 | NULL | デフォルト値 | 制約 | 説明 |
 |---------|---------|------|------------|------|------|
-| id | UUID | NO | - | PRIMARY KEY | 履歴ID |
+| id | UUID | NO | - | PRIMARY KEY | 確定データID |
 | invoice_id | UUID | NO | - | FOREIGN KEY | 見積・請求書ID |
 | user_group_id | UUID | NO | - | FOREIGN KEY | 所属ユーザーグループID |
 | customer_id | UUID | NO | - | FOREIGN KEY | 顧客ID |
-| estimate_number | VARCHAR | NO | - | - | 見積番号 |
+| estimate_number | VARCHAR | NO | - | - | 管理番号 |
 | version | INTEGER | NO | - | - | バージョン番号 |
-| status | VARCHAR | NO | - | - | ステータス |
+| document_type | VARCHAR | NO | 'estimate' | - | 帳票タイプ (estimate/invoice) |
 | title | VARCHAR | NO | - | - | 件名 |
 | estimate_date | DATE | NO | - | - | 見積日 |
 | delivery_deadline | DATE | YES | NULL | - | 納期 |
@@ -44,9 +44,9 @@
 | インデックス名 | カラム | タイプ |
 |--------------|--------|--------|
 | PRIMARY | id | PRIMARY KEY |
-| invoice_histories_invoice_id_foreign | invoice_id | FOREIGN KEY |
-| invoice_histories_user_group_id_foreign | user_group_id | FOREIGN KEY |
-| invoice_histories_customer_id_foreign | customer_id | FOREIGN KEY |
+| finalized_invoices_invoice_id_foreign | invoice_id | FOREIGN KEY |
+| finalized_invoices_user_group_id_foreign | user_group_id | FOREIGN KEY |
+| finalized_invoices_customer_id_foreign | customer_id | FOREIGN KEY |
 
 ## リレーション
 
@@ -56,9 +56,9 @@
 - `customers` テーブル (customer_id)
 
 ### 1対多のリレーション
-- `invoice_history_details` テーブル (invoice_history_id)
+- `finalized_invoice_details` テーブル (finalized_invoice_id)
 
 ## 備考
-- ステータスが「見積提出済み」または「請求書提出済み」に変更されたときにスナップショットを作成
-- 元の `invoices` テーブルのデータが変更されても履歴は保持される
-- 履歴として完全なデータを保存するため、全フィールドをコピー
+- ステータスが「見積提出済み」または「請求書提出済み」に変更されたときに作成（確定される）
+- 元の `invoices` テーブルのデータが変更（修正・再提出）されても、過去の確定データは保持される
+- 確定時の情報を完全に保存するため、全フィールドをコピー

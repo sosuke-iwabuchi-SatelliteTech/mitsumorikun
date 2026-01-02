@@ -1,14 +1,14 @@
-# invoice_history_details テーブル
+# finalized_invoice_details テーブル
 
 ## 概要
-見積書・請求書の履歴明細を管理するテーブル。
+確定済みの見積書・請求書データの明細を管理するテーブル。
 
 ## テーブル構造
 
 | カラム名 | データ型 | NULL | デフォルト値 | 制約 | 説明 |
 |---------|---------|------|------------|------|------|
-| id | UUID | NO | - | PRIMARY KEY | 履歴明細ID |
-| invoice_history_id | UUID | NO | - | FOREIGN KEY | 見積・請求書履歴ID |
+| id | UUID | NO | - | PRIMARY KEY | 確定明細ID |
+| finalized_invoice_id | UUID | NO | - | FOREIGN KEY | 確定請求書情報ID |
 | item_name | VARCHAR | NO | - | - | 品目名 |
 | quantity | DECIMAL(15,2) | NO | 1 | - | 数量 |
 | unit_price | DECIMAL(15,2) | NO | 0 | - | 単価 |
@@ -27,14 +27,14 @@
 | インデックス名 | カラム | タイプ |
 |--------------|--------|--------|
 | PRIMARY | id | PRIMARY KEY |
-| invoice_history_details_invoice_history_id_foreign | invoice_history_id | FOREIGN KEY |
+| finalized_invoice_details_finalized_invoice_id_foreign | finalized_invoice_id | FOREIGN KEY |
 
 ## リレーション
 
 ### 多対1のリレーション
-- `invoice_histories` テーブル (invoice_history_id)
+- `finalized_invoices` テーブル (finalized_invoice_id)
 
 ## 備考
-- `invoice_histories` テーブルに紐づく明細のスナップショット
-- 元の `invoice_details` テーブルのデータが変更されても履歴は保持される
-- 履歴として完全なデータを保存するため、全フィールドをコピー
+- `finalized_invoices` テーブルに紐づく明細のスナップショット
+- 元の `invoice_details` テーブルのデータが変更されても、過去の確定データは保持される
+- 確定時の情報を完全に保存するため、全フィールドをコピー

@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Invoice;
-use App\Models\InvoiceHistory;
+use App\Models\FinalizedInvoice;
 use App\Models\UserGroup;
 use Illuminate\Support\Facades\DB;
 
@@ -111,26 +111,35 @@ class InvoiceService
         });
     }
 
-    public function createSnapshot(Invoice $invoice): InvoiceHistory
+    public function finalize(Invoice $invoice): FinalizedInvoice
     {
         return DB::transaction(function () use ($invoice) {
-            $history = new InvoiceHistory();
+            $finalized = new FinalizedInvoice();
             $attributes = $invoice->getAttributes();
             
             // Set document_type based on status
             $isInvoice = in_array($invoice->status, ['invoice_creating', 'invoice_submitted', 'payment_confirmed']);
-            $attributes['document_type'] = $isInvoice ? 'invoice' : 'estimate';
+            $docType = $isInvoice ? 'invoice' : 'estimate';
+            $attributes['document_type'] = $docType;
             unset($attributes['status']);
 
-            $history->fill($attributes);
-            $history->invoice_id = $invoice->id;
-            $history->save();
+            // Calculate version based on (estimate_number, document_type)
+            $lastVersion = FinalizedInvoice::where('user_group_id', $invoice->user_group_id)
+                ->where('estimate_number', $invoice->estimate_number)
+                ->where('document_type', $docType)
+                ->max('version') ?? 0;
+            
+            $attributes['version'] = $lastVersion + 1;
+
+            $finalized->fill($attributes);
+            $finalized->invoice_id = $invoice->id;
+            $finalized->save();
 
             foreach ($invoice->details as $detail) {
-                $history->details()->create($detail->getAttributes());
+                $finalized->details()->create($detail->getAttributes());
             }
 
-            return $history;
+            return $finalized;
         });
     }
 }

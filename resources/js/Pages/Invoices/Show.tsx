@@ -47,7 +47,7 @@ export default function Show({ auth, invoice, isLatest }: Props) {
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
                         {getDocType(invoice.status)}詳細: {invoice.estimate_number} (v{invoice.version})
                     </h2>
-                    <div className="flex gap-x-3">
+                    <div className="flex items-center gap-3">
                         <Link
                             href={route('invoices.index')}
                             className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
@@ -63,10 +63,10 @@ export default function Show({ auth, invoice, isLatest }: Props) {
                             </Link>
                         )}
                         <Link
-                            href={route('invoices.history', invoice.id)}
+                            href={route('invoices.finalized', invoice.id)}
                             className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                         >
-                            履歴
+                            作成済みデータ
                         </Link>
                         {isLatest && (invoice.status === 'submitted' || invoice.status === 'invoice_submitted') && (
                             <button
@@ -233,6 +233,27 @@ export default function Show({ auth, invoice, isLatest }: Props) {
                                             <p className="font-medium">{invoice.issuer_fax || '-'}</p>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+
+                            {/* Danger Zone */}
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg border-2 border-red-100 p-6">
+                                <h4 className="text-lg font-medium mb-4 text-red-600">危険なアクション</h4>
+                                <div className="space-y-4">
+                                    <p className="text-xs text-gray-500">
+                                        この操作は取り消せません。この管理番号に関連するすべてのバージョンと作成済みデータが完全に削除されます。
+                                    </p>
+                                    <button
+                                        onClick={() => {
+                                            if (confirm('この見積（すべてのバージョン）を完全に削除しますか？\nこの操作は取り消せません。')) {
+                                                router.delete(route('invoices.destroy', invoice.id));
+                                            }
+                                        }}
+                                        disabled={processing}
+                                        className="w-full rounded-md bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 shadow-sm border border-red-200 hover:bg-red-600 hover:text-white transition-colors"
+                                    >
+                                        見積を削除する
+                                    </button>
                                 </div>
                             </div>
                         </div>

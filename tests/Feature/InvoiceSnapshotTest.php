@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Customer;
 use App\Models\Invoice;
-use App\Models\InvoiceHistory;
+use App\Models\FinalizedInvoice;
 use App\Models\User;
 use App\Models\UserGroup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -57,14 +57,14 @@ class InvoiceSnapshotTest extends TestCase
                 'status' => 'submitted',
             ]);
 
-        $this->assertEquals(1, InvoiceHistory::count());
-        $history = InvoiceHistory::first();
+        $this->assertEquals(1, FinalizedInvoice::count());
+        $finalized = FinalizedInvoice::first();
         
-        $this->assertEquals($invoice->id, $history->invoice_id);
-        $this->assertEquals('estimate', $history->document_type);
-        $this->assertEquals('Test Estimate', $history->title);
-        $this->assertCount(1, $history->details);
-        $this->assertEquals('Item 1', $history->details->first()->item_name);
+        $this->assertEquals($invoice->id, $finalized->invoice_id);
+        $this->assertEquals('estimate', $finalized->document_type);
+        $this->assertEquals('Test Estimate', $finalized->title);
+        $this->assertCount(1, $finalized->details);
+        $this->assertEquals('Item 1', $finalized->details->first()->item_name);
     }
 
     public function test_history_is_preserved_even_if_live_invoice_is_updated(): void
@@ -90,8 +90,8 @@ class InvoiceSnapshotTest extends TestCase
         // Update live invoice
         $invoice->update(['title' => 'Updated Title']);
         
-        $history = InvoiceHistory::first();
-        $this->assertEquals('V1 Title', $history->title);
+        $finalized = FinalizedInvoice::first();
+        $this->assertEquals('V1 Title', $finalized->title);
         $this->assertEquals('Updated Title', $invoice->fresh()->title);
     }
 }

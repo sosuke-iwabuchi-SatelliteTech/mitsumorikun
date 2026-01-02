@@ -2,25 +2,24 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { Invoice } from '@/types/invoice';
-import StatusBadge from '@/Components/StatusBadge';
 import { format } from 'date-fns';
 
 interface Props extends PageProps {
     invoice: Invoice;
-    versions: Invoice[];
+    finalizedInvoices: Invoice[];
 }
 
 const getDocType = (type: string) => {
     return type === 'invoice' ? '請求書' : '見積書';
 };
 
-export default function History({ auth, invoice, versions }: Props) {
+export default function FinalizedList({ auth, invoice, finalizedInvoices }: Props) {
     return (
         <AuthenticatedLayout
             header={
                 <div className="flex items-center justify-between">
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                        変更履歴: {invoice.estimate_number}
+                        作成済みデータ一覧: {invoice.estimate_number}
                     </h2>
                     <Link
                         href={route('invoices.show', invoice.id)}
@@ -31,27 +30,26 @@ export default function History({ auth, invoice, versions }: Props) {
                 </div>
             }
         >
-            <Head title="変更履歴" />
+            <Head title="作成済みデータ一覧" />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6">
                             <h3 className="text-lg font-medium text-gray-900 mb-6">
-                                {invoice.title} の履歴一覧
+                                {invoice.title} の作成済みデータ
                             </h3>
 
-                            {versions.length === 0 ? (
-                                <p className="text-gray-500 text-center py-10">バージョンがありません。</p>
+                            {!finalizedInvoices || finalizedInvoices.length === 0 ? (
+                                <p className="text-gray-500 text-center py-10">保存されたデータがありません。</p>
                             ) : (
                                 <div className="flow-root">
                                     <ul role="list" className="-mb-8">
-                                        {versions.map((version, idx) => {
-                                            const isLatest = idx === 0; // First item is the latest (ordered by version desc)
+                                        {finalizedInvoices.map((version, idx) => {
                                             return (
                                                 <li key={version.id}>
                                                     <div className="relative pb-8">
-                                                        {idx !== versions.length - 1 ? (
+                                                        {idx !== finalizedInvoices.length - 1 ? (
                                                             <span
                                                                 className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200"
                                                                 aria-hidden="true"
@@ -59,9 +57,9 @@ export default function History({ auth, invoice, versions }: Props) {
                                                         ) : null}
                                                         <div className="relative flex space-x-3">
                                                             <div>
-                                                                <span className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${isLatest ? 'bg-indigo-600' : 'bg-gray-400'}`}>
+                                                                <span className="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white bg-gray-400">
                                                                      <span className="text-white text-xs font-bold">
-                                                                         v{version.version}
+                                                                          v{version.version}
                                                                      </span>
                                                                  </span>
                                                              </div>
@@ -69,11 +67,10 @@ export default function History({ auth, invoice, versions }: Props) {
                                                                 <div>
                                                                     <p className="text-sm text-gray-500">
                                                                         <Link 
-                                                                            href={route('invoices.show', version.id)}
+                                                                            href={route('invoices.finalized.show', [invoice.id, version.id])}
                                                                             className="font-medium text-indigo-600 hover:text-indigo-900"
                                                                         >
                                                                              {getDocType(version.document_type || 'estimate')} (v{version.version})
-                                                                             {isLatest && <span className="ml-2 text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">最新</span>}
                                                                          </Link>
                                                                      </p>
                                                                     <p className="mt-1 text-sm text-gray-500">

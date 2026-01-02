@@ -66,8 +66,8 @@ class Invoice extends Model
         return $this->hasMany(InvoiceDetail::class);
     }
 
-    public function histories(): HasMany
+    public function finalizedInvoices(): HasMany
     {
-        return $this->hasMany(InvoiceHistory::class);
+        return $this->hasMany(FinalizedInvoice::class);
     }
 }

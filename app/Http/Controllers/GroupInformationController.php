@@ -54,7 +54,9 @@ class GroupInformationController extends Controller
         ]);
 
         // 選択されていない方の情報をクリア
-        if ($data['account_method'] !== 'bank') {
+        $method = $data['account_method'] ?? null;
+
+        if ($method !== 'bank') {
             $data['bank_name'] = null;
             $data['branch_name'] = null;
             $data['account_type'] = null;
@@ -62,7 +64,7 @@ class GroupInformationController extends Controller
             $data['account_holder'] = null;
         }
 
-        if ($data['account_method'] !== 'japan_post') {
+        if ($method !== 'japan_post') {
             $data['japan_post_bank_symbol'] = null;
             $data['japan_post_bank_number'] = null;
             $data['japan_post_bank_account_holder'] = null;

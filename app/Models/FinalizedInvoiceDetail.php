@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class InvoiceHistoryDetail extends Model
+class FinalizedInvoiceDetail extends Model
 {
     use HasUuids;
 
     protected $fillable = [
-        'invoice_history_id',
+        'finalized_invoice_id',
         'item_name',
         'quantity',
         'unit_price',
@@ -31,8 +31,8 @@ class InvoiceHistoryDetail extends Model
         'amount' => 'decimal:2',
     ];
 
-    public function history(): BelongsTo
+    public function finalizedInvoice(): BelongsTo
     {
-        return $this->belongsTo(InvoiceHistory::class, 'invoice_history_id');
+        return $this->belongsTo(FinalizedInvoice::class, 'finalized_invoice_id');
     }
 }

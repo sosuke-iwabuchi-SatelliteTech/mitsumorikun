@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\InvoiceRequest;
 use App\Models\Invoice;
-use App\Models\InvoiceHistory;
+use App\Models\FinalizedInvoice;
 use App\Models\Customer;
 use App\Models\InvoiceItem;
 use App\Services\InvoiceService;
@@ -77,33 +77,33 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Display the version history of the specified estimate.
+     * Display the finalized versions of the specified estimate.
      */
-    public function history(Invoice $invoice): Response
+    public function finalizedList(Invoice $invoice): Response
     {
-        // Get all versions of the same estimate from invoices table
-        $versions = Invoice::where('user_group_id', $invoice->user_group_id)
+        // Get all finalized records for the same estimate
+        $finalizedInvoices = FinalizedInvoice::where('user_group_id', $invoice->user_group_id)
             ->where('estimate_number', $invoice->estimate_number)
             ->with('customer')
-            ->orderBy('version', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
 
-        return Inertia::render('Invoices/History', [
+        return Inertia::render('Invoices/FinalizedList', [
             'invoice' => $invoice,
-            'versions' => $versions,
+            'finalizedInvoices' => $finalizedInvoices,
         ]);
     }
 
     /**
-     * Display a specific historical snapshot.
+     * Display a specific finalized document snapshot.
      */
-    public function showHistory(Invoice $invoice, InvoiceHistory $history): Response
+    public function showFinalized(Invoice $invoice, FinalizedInvoice $finalized): Response
     {
-        $history->load(['customer', 'details']);
+        $finalized->load(['customer', 'details']);
 
-        return Inertia::render('Invoices/ShowHistory', [
+        return Inertia::render('Invoices/ShowFinalized', [
             'invoice' => $invoice,
-            'history' => $history,
+            'finalized' => $finalized,
         ]);
     }
 
@@ -146,10 +146,10 @@ class InvoiceController extends Controller
 
         $invoice->update(['status' => $newStatus]);
 
-        // Create snapshot if moving to submitted status
+        // Create finalized record if moving to submitted status
         if (($oldStatus === 'creating' && $newStatus === 'submitted') ||
             ($oldStatus === 'invoice_creating' && $newStatus === 'invoice_submitted')) {
-            $this->invoiceService->createSnapshot($invoice);
+            $this->invoiceService->finalize($invoice);
         }
 
         return redirect()->back()->with('success', 'ステータスを更新しました。');
@@ -175,9 +175,12 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice): RedirectResponse
     {
-        $invoice->delete();
+        // Delete all versions of this estimate
+        Invoice::where('user_group_id', $invoice->user_group_id)
+            ->where('estimate_number', $invoice->estimate_number)
+            ->delete();
 
         return redirect()->route('invoices.index')
-            ->with('message', '見積を削除しました。');
+            ->with('message', '見積（全バージョン）を削除しました。');
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class InvoiceHistory extends Model
+class FinalizedInvoice extends Model
 {
     use HasUuids;
 
@@ -62,6 +62,6 @@ class InvoiceHistory extends Model
 
     public function details(): HasMany
     {
-        return $this->hasMany(InvoiceHistoryDetail::class);
+        return $this->hasMany(FinalizedInvoiceDetail::class, 'finalized_invoice_id');
     }
 }
