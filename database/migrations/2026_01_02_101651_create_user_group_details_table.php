@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('user_group_details', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_group_id')->unique()->constrained()->cascadeOnDelete();
+            $table->string('invoice_company_name')->nullable();
             
             // 基本情報
             $table->string('invoice_registration_number')->nullable();
@@ -25,6 +26,8 @@ return new class extends Migration
             $table->string('email')->nullable();
 
             // 口座情報
+            $table->string('account_method')->nullable();
+            $table->boolean('use_bank')->default(false);
             $table->string('bank_name')->nullable();
             $table->string('branch_name')->nullable();
             $table->string('account_type')->nullable();
@@ -32,6 +35,7 @@ return new class extends Migration
             $table->string('account_holder')->nullable();
             
             // ゆうちょ
+            $table->boolean('use_japan_post')->default(false);
             $table->string('japan_post_bank_symbol')->nullable();
             $table->string('japan_post_bank_number')->nullable();
             $table->string('japan_post_bank_account_holder')->nullable();
