@@ -63,19 +63,21 @@ export default function Show({ auth, invoice, isLatest, hasFinalized }: Props) {
                                 編集
                             </Link>
                         )}
-                        <a
-                            href={route('invoices.preview', invoice.id)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center gap-2"
-                        >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            PDFプレビュー
-                        </a>
-                        {!(['creating', 'invoice_creating'].includes(invoice.status)) && (
+                        {invoice.status !== 'rejected' && (
+                            <a
+                                href={route('invoices.preview', invoice.id)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center gap-2"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                PDFプレビュー
+                            </a>
+                        )}
+                        {!(['creating', 'invoice_creating', 'rejected'].includes(invoice.status)) && (
                             <a
                                 href={route('invoices.download', invoice.id)}
                                 className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center gap-2"
@@ -205,31 +207,140 @@ export default function Show({ auth, invoice, isLatest, hasFinalized }: Props) {
 
                             {/* Status controls */}
                             {isLatest && (
-                                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                                    <h4 className="text-lg font-medium mb-4">ステータス変更</h4>
-                                    <div className="space-y-2">
-                                        {[
-                                            { key: 'creating', label: '見積作成中' },
-                                            { key: 'submitted', label: '見積提出済み' },
-                                            { key: 'order_received', label: '受注' },
-                                            { key: 'invoice_creating', label: '請求書作成中' },
-                                            { key: 'invoice_submitted', label: '請求書提出済み' },
-                                            { key: 'payment_confirmed', label: '入金確認済み' },
-                                        ].map((s) => (
-                                            <button
-                                                key={s.key}
-                                                onClick={() => handleStatusChange(s.key as any)}
-                                                disabled={processing || invoice.status === s.key}
-                                                className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${
-                                                    invoice.status === s.key
-                                                        ? 'bg-indigo-50 text-indigo-700 font-bold'
-                                                        : 'hover:bg-gray-50 text-gray-600'
-                                                }`}
-                                            >
-                                                {s.label}
-                                            </button>
-                                        ))}
+                                <div className="space-y-6">
+                                    {/* Status Stepper */}
+                                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-6">ステータス推移</h4>
+                                        <nav aria-label="Progress">
+                                            <ol role="list" className="overflow-hidden">
+                                                {[
+                                                    { key: 'creating', label: '見積作成中' },
+                                                    { key: 'submitted', label: '見積提出済み' },
+                                                    { key: 'order_received', label: '受注' },
+                                                    { key: 'invoice_creating', label: '請求書作成中' },
+                                                    { key: 'invoice_submitted', label: '請求書提出済み' },
+                                                    { key: 'payment_confirmed', label: '入金確認済み' },
+                                                ].map((step, stepIdx, steps) => {
+                                                    const currentIndex = steps.findIndex(s => s.key === (invoice.status === 'rejected' ? 'submitted' : invoice.status));
+                                                    const isRejected = invoice.status === 'rejected' && step.key === 'submitted';
+                                                    const isCompleted = stepIdx < currentIndex;
+                                                    const isCurrent = stepIdx === currentIndex;
+                                                    const isUpcoming = stepIdx > currentIndex;
+
+                                                    return (
+                                                        <li key={step.key} className={`relative ${stepIdx !== steps.length - 1 ? 'pb-8' : ''}`}>
+                                                            {stepIdx !== steps.length - 1 ? (
+                                                                <div className={`absolute top-4 left-4 -ml-px mt-0.5 h-full w-0.5 ${isCompleted ? 'bg-indigo-600' : 'bg-gray-200'}`} aria-hidden="true" />
+                                                            ) : null}
+                                                            <div className="group relative flex items-start">
+                                                                <span className="flex h-9 items-center">
+                                                                    <span className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 ${
+                                                                        isRejected ? 'bg-red-600 border-red-600' :
+                                                                        isCompleted ? 'bg-indigo-600 border-indigo-600' : 
+                                                                        isCurrent ? 'bg-white border-indigo-600' : 
+                                                                        'bg-white border-gray-300'
+                                                                    }`}>
+                                                                        {isCompleted || isRejected ? (
+                                                                            <svg className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                                                {isRejected ? (
+                                                                                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                                                ) : (
+                                                                                    <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+                                                                                )}
+                                                                            </svg>
+                                                                        ) : (
+                                                                            <span className={`h-2.5 w-2.5 rounded-full ${isCurrent ? 'bg-indigo-600' : 'bg-transparent'}`} />
+                                                                        )}
+                                                                    </span>
+                                                                </span>
+                                                                <span className="ml-4 flex min-w-0 flex-col">
+                                                                    <span className={`text-sm font-medium ${isRejected ? 'text-red-600' : isCurrent ? 'text-indigo-600' : isCompleted ? 'text-gray-900' : 'text-gray-500'}`}>
+                                                                        {isRejected ? '提出済み (失注)' : step.label}
+                                                                    </span>
+                                                                </span>
+                                                            </div>
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ol>
+                                        </nav>
                                     </div>
+
+                                    {/* Action Buttons */}
+                                    {invoice.status !== 'payment_confirmed' && (
+                                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border border-indigo-100">
+                                            <h4 className="text-sm font-semibold text-gray-900 mb-4">次のアクション</h4>
+                                            <div className="space-y-3">
+                                                {invoice.status === 'rejected' && (
+                                                    <button
+                                                        onClick={() => handleStatusChange('submitted')}
+                                                        disabled={processing}
+                                                        className="w-full inline-flex justify-center items-center px-4 py-2 bg-white border border-indigo-300 rounded-md font-semibold text-xs text-indigo-700 uppercase tracking-widest hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                                    >
+                                                        見積提出済みに戻す
+                                                    </button>
+                                                )}
+                                                {invoice.status === 'creating' && (
+                                                    <button
+                                                        onClick={() => handleStatusChange('submitted')}
+                                                        disabled={processing}
+                                                        className="w-full inline-flex justify-center items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                                    >
+                                                        見積を提出する
+                                                    </button>
+                                                )}
+                                                {invoice.status === 'submitted' && (
+                                                    <div className="flex flex-col gap-3">
+                                                        <button
+                                                            onClick={() => handleStatusChange('order_received')}
+                                                            disabled={processing}
+                                                            className="w-full inline-flex justify-center items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                                        >
+                                                            受注確定（請求書作成へ）
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleStatusChange('rejected')}
+                                                            disabled={processing}
+                                                            className="w-full inline-flex justify-center items-center px-4 py-2 bg-white border border-red-300 rounded-md font-semibold text-xs text-red-700 uppercase tracking-widest hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                                        >
+                                                            失注とする
+                                                        </button>
+                                                    </div>
+                                                )}
+                                                {invoice.status === 'order_received' && (
+                                                    <button
+                                                        onClick={() => handleStatusChange('invoice_creating')}
+                                                        disabled={processing}
+                                                        className="w-full inline-flex justify-center items-center px-4 py-2 bg-amber-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-amber-700 focus:bg-amber-700 active:bg-amber-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                                    >
+                                                        請求書の作成を開始
+                                                    </button>
+                                                )}
+                                                {invoice.status === 'invoice_creating' && (
+                                                    <button
+                                                        onClick={() => handleStatusChange('invoice_submitted')}
+                                                        disabled={processing}
+                                                        className="w-full inline-flex justify-center items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                                    >
+                                                        請求書を提出する
+                                                    </button>
+                                                )}
+                                                {invoice.status === 'invoice_submitted' && (
+                                                    <button
+                                                        onClick={() => handleStatusChange('payment_confirmed')}
+                                                        disabled={processing}
+                                                        className="w-full inline-flex justify-center items-center px-4 py-2 bg-purple-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 focus:bg-purple-700 active:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                                    >
+                                                        入金完了を確認
+                                                    </button>
+                                                )}
+
+                                                <p className="text-xs text-gray-500 mt-2">
+                                                    ※ボタンを押すとステータスが更新されます。
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 

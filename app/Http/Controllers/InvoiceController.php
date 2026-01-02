@@ -143,7 +143,7 @@ class InvoiceController extends Controller
     public function updateStatus(Request $request, Invoice $invoice): RedirectResponse
     {
         $validated = $request->validate([
-            'status' => 'required|string|in:creating,submitted,order_received,invoice_creating,invoice_submitted,payment_confirmed',
+            'status' => 'required|string|in:creating,submitted,order_received,rejected,invoice_creating,invoice_submitted,payment_confirmed',
         ]);
 
         $oldStatus = $invoice->status;
