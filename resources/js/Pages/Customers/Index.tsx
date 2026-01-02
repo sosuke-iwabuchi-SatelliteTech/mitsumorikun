@@ -64,7 +64,7 @@ export default function Index({ auth, customers, filters }: Props) {
                             />
                             <button
                                 type="submit"
-                                className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                className="inline-flex shrink-0 items-center whitespace-nowrap rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                             >
                                 検索
                             </button>
