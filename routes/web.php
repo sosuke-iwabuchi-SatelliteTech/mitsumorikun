@@ -30,8 +30,9 @@ Route::middleware('auth')->group(function () {
         Route::get('finalized-invoices/{finalizedInvoice}/download', [\App\Http\Controllers\PdfController::class, 'downloadFinalized'])->name('finalized-invoices.download');
 
         Route::get('/group-information', [\App\Http\Controllers\GroupInformationController::class, 'edit'])->name('group-information.edit');
-    Route::patch('/group-information/basic', [\App\Http\Controllers\GroupInformationController::class, 'updateBasic'])->name('group-information.update-basic');
-    Route::patch('/group-information/account', [\App\Http\Controllers\GroupInformationController::class, 'updateAccount'])->name('group-information.update-account');
+        Route::post('/group-information/basic', [\App\Http\Controllers\GroupInformationController::class, 'updateBasic'])->name('group-information.update-basic');
+        Route::patch('/group-information/account', [\App\Http\Controllers\GroupInformationController::class, 'updateAccount'])->name('group-information.update-account');
+        Route::get('/group-information/seal', [\App\Http\Controllers\GroupInformationController::class, 'getSeal'])->name('group-information.seal');
     });
 
     // 管理者専用ルート

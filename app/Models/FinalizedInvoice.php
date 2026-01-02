@@ -60,6 +60,11 @@ class FinalizedInvoice extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function userGroup(): BelongsTo
+    {
+        return $this->belongsTo(UserGroup::class);
+    }
+
     public function details(): HasMany
     {
         return $this->hasMany(FinalizedInvoiceDetail::class, 'finalized_invoice_id');

@@ -29,8 +29,25 @@
                     @endif
                 </div>
             </td>
-            <td class="issuer-info" style="text-align: left;">
-                <div style="font-weight: bold; font-size: 12pt; margin-bottom: 5px;">{{ $invoice->issuer_name }}</div>
+            <td class="issuer-info" style="text-align: left; position: relative;">
+                <div style="font-weight: bold; font-size: 12pt; margin-bottom: 5px; position: relative; z-index: 2;">
+                    {{ $invoice->issuer_name }}
+                </div>
+                
+                {{-- 社判（角印）の表示 --}}
+                @php
+                    $sealPath = $invoice->userGroup?->detail?->seal_image_path;
+                    $sealBase64 = null;
+                    if ($sealPath && \Illuminate\Support\Facades\Storage::disk('local')->exists($sealPath)) {
+                        $sealData = \Illuminate\Support\Facades\Storage::disk('local')->get($sealPath);
+                        $sealBase64 = 'data:image/png;base64,' . base64_encode($sealData);
+                    }
+                @endphp
+                @if($sealBase64)
+                    <div style="position: absolute; top: 50px; left: 100px; z-index: 1;">
+                        <img src="{{ $sealBase64 }}" style="width: 100px; height: 100px; opacity: 0.8;">
+                    </div>
+                @endif
                 
                 @php
                     $addressParts = explode(' ', $invoice->issuer_address, 2);

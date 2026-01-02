@@ -16,6 +16,7 @@ interface UserGroupDetail {
     phone_number?: string;
     fax_number?: string;
     email?: string;
+    seal_image_path?: string;
     account_method?: 'bank' | 'japan_post' | 'none';
     bank_name?: string;
     branch_name?: string;
@@ -45,6 +46,8 @@ export default function Edit({ userGroup }: { userGroup: UserGroup }) {
         phone_number: userGroup.detail?.phone_number || '',
         fax_number: userGroup.detail?.fax_number || '',
         email: userGroup.detail?.email || '',
+        seal_image: null as File | null,
+        delete_seal: false,
     });
 
     const accountForm = useForm({
@@ -61,7 +64,17 @@ export default function Edit({ userGroup }: { userGroup: UserGroup }) {
 
     const submitBasic: FormEventHandler = (e) => {
         e.preventDefault();
-        basicForm.patch(route('group-information.update-basic'));
+        // Laravel doesn't support PATCH with multipart/form-data, so we use POST with manual _method
+        basicForm.post(route('group-information.update-basic'), {
+            forceFormData: true,
+            onSuccess: () => {
+                basicForm.setData({
+                    ...basicForm.data,
+                    seal_image: null,
+                    delete_seal: false,
+                });
+            },
+        });
     };
 
     const submitAccount: FormEventHandler = (e) => {
@@ -201,6 +214,67 @@ export default function Edit({ userGroup }: { userGroup: UserGroup }) {
                                                 onChange={(e) => basicForm.setData('email', e.target.value)}
                                             />
                                             <InputError className="mt-2" message={basicForm.errors.email} />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                        <div>
+                                            <InputLabel value="社判（角印）" />
+                                            <div className="mt-2 space-y-4">
+                                                {/* プレビュー表示 */}
+                                                {(basicForm.data.seal_image || (userGroup.detail?.seal_image_path && !basicForm.data.delete_seal)) && (
+                                                    <div className="relative inline-block border rounded p-2 bg-gray-50">
+                                                        <img
+                                                            src={basicForm.data.seal_image 
+                                                                ? URL.createObjectURL(basicForm.data.seal_image) 
+                                                                : route('group-information.seal')}
+                                                            alt="Seal Preview"
+                                                            className="h-32 w-32 object-contain"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                if (basicForm.data.seal_image) {
+                                                                    basicForm.setData('seal_image', null);
+                                                                } else {
+                                                                    basicForm.setData('delete_seal', true);
+                                                                }
+                                                            }}
+                                                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 shadow-sm"
+                                                            title="削除"
+                                                        >
+                                                            &times;
+                                                        </button>
+                                                    </div>
+                                                )}
+
+                                                <div className="flex items-center gap-4">
+                                                    <input
+                                                        type="file"
+                                                        id="seal_image"
+                                                        className="hidden"
+                                                        accept="image/png"
+                                                        onChange={(e) => {
+                                                            const file = e.target.files?.[0];
+                                                            if (file) {
+                                                                basicForm.setData({
+                                                                    ...basicForm.data,
+                                                                    seal_image: file,
+                                                                    delete_seal: false,
+                                                                });
+                                                            }
+                                                        }}
+                                                    />
+                                                    <PrimaryButton
+                                                        type="button"
+                                                        disabled={basicForm.processing}
+                                                        onClick={() => document.getElementById('seal_image')?.click()}
+                                                    >
+                                                        画像を選択
+                                                    </PrimaryButton>
+                                                    <span className="text-xs text-gray-500">※透過PNG形式, 2MB以内</span>
+                                                </div>
+                                                <InputError className="mt-2" message={basicForm.errors.seal_image} />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -20,6 +20,7 @@ class UserGroupDetail extends Model
         'phone_number',
         'fax_number',
         'email',
+        'seal_image_path',
         'account_method',
         'use_bank',
         'bank_name',

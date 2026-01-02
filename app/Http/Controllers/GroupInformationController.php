@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\GroupInformationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class GroupInformationController extends Controller
@@ -20,22 +21,52 @@ class GroupInformationController extends Controller
     public function updateBasic(GroupInformationRequest $request)
     {
         $userGroup = $request->user()->userGroup;
-        
-        $userGroup->detail()->updateOrCreate(
-            ['user_group_id' => $userGroup->id],
-            $request->only([
-                'invoice_company_name',
-                'invoice_registration_number',
-                'zip_code',
-                'address1',
-                'address2',
-                'phone_number',
-                'fax_number',
-                'email',
-            ])
-        );
+        $detail = $userGroup->detail()->firstOrCreate(['user_group_id' => $userGroup->id]);
+
+        $data = $request->only([
+            'invoice_company_name',
+            'invoice_registration_number',
+            'zip_code',
+            'address1',
+            'address2',
+            'phone_number',
+            'fax_number',
+            'email',
+        ]);
+
+        // 社判の削除処理
+        if ($request->delete_seal) {
+            if ($detail->seal_image_path) {
+                Storage::disk('local')->delete($detail->seal_image_path);
+                $data['seal_image_path'] = null;
+            }
+        }
+
+        // 社判のアップロード処理
+        if ($request->hasFile('seal_image')) {
+            // 既存画像の削除
+            if ($detail->seal_image_path) {
+                Storage::disk('local')->delete($detail->seal_image_path);
+            }
+            $path = $request->file('seal_image')->store('seals', 'local');
+            $data['seal_image_path'] = $path;
+        }
+
+        $detail->update($data);
 
         return back()->with('success', '見積/請求書記載事項を更新しました。');
+    }
+
+    public function getSeal(Request $request)
+    {
+        $userGroup = $request->user()->userGroup;
+        $detail = $userGroup->detail;
+
+        if (!$detail || !$detail->seal_image_path || !Storage::disk('local')->exists($detail->seal_image_path)) {
+            abort(404);
+        }
+
+        return response()->file(Storage::disk('local')->path($detail->seal_image_path));
     }
 
     public function updateAccount(GroupInformationRequest $request)
