@@ -16,7 +16,9 @@ class EstimateNumberService
     public function generate(string $userGroupId): string
     {
         do {
-            $number = strtoupper(Str::random(6));
+            $prefix = strtoupper(Str::random(2));
+            $suffix = str_pad((string) rand(0, 9999), 4, '0', STR_PAD_LEFT);
+            $number = $prefix . $suffix;
         } while (Invoice::where('user_group_id', $userGroupId)
             ->where('estimate_number', $number)
             ->exists());

@@ -12,6 +12,12 @@ interface Props extends PageProps {
     isLatest: boolean;
 }
 
+const getDocType = (status: Invoice['status']) => {
+    return ['invoice_creating', 'invoice_submitted', 'payment_confirmed'].includes(status) 
+        ? '請求書' 
+        : '見積書';
+};
+
 export default function Show({ auth, invoice, isLatest }: Props) {
     const [processing, setProcessing] = useState(false);
 
@@ -39,7 +45,7 @@ export default function Show({ auth, invoice, isLatest }: Props) {
             header={
                 <div className="flex items-center justify-between">
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                        見積詳細: {invoice.status.startsWith('invoice') ? 'INV' : 'EST'}-{invoice.estimate_number}-{String(invoice.version).padStart(2, '0')}
+                        {getDocType(invoice.status)}詳細: {invoice.estimate_number} (v{invoice.version})
                     </h2>
                     <div className="flex gap-x-3">
                         <Link

@@ -17,7 +17,7 @@ class InvoiceHistory extends Model
         'customer_id',
         'estimate_number',
         'version',
-        'status',
+        'document_type',
         'title',
         'estimate_date',
         'delivery_deadline',

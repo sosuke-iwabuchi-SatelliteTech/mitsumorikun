@@ -20,6 +20,7 @@ export interface Invoice {
     estimate_number: string;
     version: number;
     status: 'creating' | 'submitted' | 'order_received' | 'invoice_creating' | 'invoice_submitted' | 'payment_confirmed';
+    document_type?: 'estimate' | 'invoice';
     title: string;
     estimate_date: string;
     delivery_deadline: string | null;

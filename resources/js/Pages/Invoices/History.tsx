@@ -5,14 +5,14 @@ import { Invoice } from '@/types/invoice';
 import StatusBadge from '@/Components/StatusBadge';
 import { format } from 'date-fns';
 
-interface InvoiceHistory extends Invoice {
-    invoice_id: string;
-}
-
 interface Props extends PageProps {
     invoice: Invoice;
-    versions: InvoiceHistory[];
+    versions: Invoice[];
 }
+
+const getDocType = (type: string) => {
+    return type === 'invoice' ? '請求書' : '見積書';
+};
 
 export default function History({ auth, invoice, versions }: Props) {
     return (
@@ -42,54 +42,55 @@ export default function History({ auth, invoice, versions }: Props) {
                             </h3>
 
                             {versions.length === 0 ? (
-                                <p className="text-gray-500 text-center py-10">履歴（提出済みの断面情報）がありません。</p>
+                                <p className="text-gray-500 text-center py-10">バージョンがありません。</p>
                             ) : (
                                 <div className="flow-root">
                                     <ul role="list" className="-mb-8">
-                                        {versions.map((version, idx) => (
-                                            <li key={version.id}>
-                                                <div className="relative pb-8">
-                                                    {idx !== versions.length - 1 ? (
-                                                        <span
-                                                            className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200"
-                                                            aria-hidden="true"
-                                                        />
-                                                    ) : null}
-                                                    <div className="relative flex space-x-3">
-                                                        <div>
-                                                            <span className="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white bg-indigo-500">
-                                                                <span className="text-white text-xs font-bold">
-                                                                    V{version.version}
-                                                                </span>
-                                                            </span>
-                                                        </div>
-                                                        <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
+                                        {versions.map((version, idx) => {
+                                            const isLatest = idx === 0; // First item is the latest (ordered by version desc)
+                                            return (
+                                                <li key={version.id}>
+                                                    <div className="relative pb-8">
+                                                        {idx !== versions.length - 1 ? (
+                                                            <span
+                                                                className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200"
+                                                                aria-hidden="true"
+                                                            />
+                                                        ) : null}
+                                                        <div className="relative flex space-x-3">
                                                             <div>
-                                                                <p className="text-sm text-gray-500">
-                                                                    <Link 
-                                                                        href={route('invoices.history.show', { invoice: invoice.id, history: version.id })}
-                                                                        className="font-medium text-indigo-600 hover:text-indigo-900"
-                                                                    >
-                                                                        {version.status === 'submitted' ? '見積提出記録' : '請求書提出記録'} (Ver {version.version})
-                                                                    </Link>
-                                                                    <span className="ml-2">
-                                                                        <StatusBadge status={version.status} />
-                                                                    </span>
-                                                                </p>
-                                                                <p className="mt-1 text-sm text-gray-500">
-                                                                    金額: ¥{Number(version.total_amount).toLocaleString()}
-                                                                </p>
-                                                            </div>
-                                                            <div className="whitespace-nowrap text-right text-sm text-gray-500">
-                                                                <time dateTime={version.created_at}>
-                                                                    {format(new Date(version.created_at), 'yyyy-MM-dd HH:mm')}
-                                                                </time>
+                                                                <span className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white ${isLatest ? 'bg-indigo-600' : 'bg-gray-400'}`}>
+                                                                     <span className="text-white text-xs font-bold">
+                                                                         v{version.version}
+                                                                     </span>
+                                                                 </span>
+                                                             </div>
+                                                            <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
+                                                                <div>
+                                                                    <p className="text-sm text-gray-500">
+                                                                        <Link 
+                                                                            href={route('invoices.show', version.id)}
+                                                                            className="font-medium text-indigo-600 hover:text-indigo-900"
+                                                                        >
+                                                                             {getDocType(version.document_type || 'estimate')} (v{version.version})
+                                                                             {isLatest && <span className="ml-2 text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">最新</span>}
+                                                                         </Link>
+                                                                     </p>
+                                                                    <p className="mt-1 text-sm text-gray-500">
+                                                                        金額: ¥{Number(version.total_amount).toLocaleString()}
+                                                                    </p>
+                                                                </div>
+                                                                <div className="whitespace-nowrap text-right text-sm text-gray-500">
+                                                                    <time dateTime={version.created_at}>
+                                                                        {format(new Date(version.created_at), 'yyyy-MM-dd HH:mm')}
+                                                                    </time>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </li>
-                                        ))}
+                                                </li>
+                                            );
+                                        })}
                                     </ul>
                                 </div>
                             )}

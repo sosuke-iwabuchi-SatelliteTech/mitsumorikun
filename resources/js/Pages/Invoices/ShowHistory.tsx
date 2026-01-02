@@ -11,13 +11,17 @@ interface Props extends PageProps {
     history: Invoice;
 }
 
+const getDocType = (type: string) => {
+    return type === 'invoice' ? '請求書' : '見積書';
+};
+
 export default function ShowHistory({ auth, invoice, history }: Props) {
     return (
         <AuthenticatedLayout
             header={
                 <div className="flex items-center justify-between">
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                        見積履歴詳細: {history.estimate_number} (Ver {history.version})
+                        {getDocType(history.document_type || 'estimate')}履歴詳細: {history.estimate_number} (v{history.version})
                     </h2>
                     <div className="flex items-center gap-3">
                         <Link
@@ -30,7 +34,7 @@ export default function ShowHistory({ auth, invoice, history }: Props) {
                 </div>
             }
         >
-            <Head title={`見積履歴詳細 (V${history.version})`} />
+            <Head title={`${getDocType(history.document_type || 'estimate')}履歴詳細 (v${history.version})`} />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
@@ -57,12 +61,11 @@ export default function ShowHistory({ auth, invoice, history }: Props) {
                                 <div className="flex items-start justify-between mb-8 pb-4 border-b border-gray-100">
                                     <div>
                                         <h3 className="text-2xl font-bold text-gray-900">{history.title}</h3>
-                                        <p className="text-gray-500 mt-1">管理番号: EST-{history.estimate_number}-{String(history.version).padStart(2, '0')}</p>
+                                        <p className="text-gray-500 mt-1">管理番号: {history.estimate_number} {getDocType(history.document_type || 'estimate')} (v{history.version})</p>
                                     </div>
                                     <div className="text-right">
-                                        <StatusBadge status={history.status} />
-                                        <p className="mt-2 text-sm text-gray-500">
-                                            見積日: {format(new Date(history.estimate_date), 'yyyy/MM/dd', { locale: ja })}
+                                        <p className="text-sm text-gray-500">
+                                            作成日: {format(new Date(history.created_at), 'yyyy/MM/dd', { locale: ja })}
                                         </p>
                                     </div>
                                 </div>

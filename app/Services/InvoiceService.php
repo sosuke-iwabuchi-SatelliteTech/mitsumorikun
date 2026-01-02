@@ -115,7 +115,14 @@ class InvoiceService
     {
         return DB::transaction(function () use ($invoice) {
             $history = new InvoiceHistory();
-            $history->fill($invoice->getAttributes());
+            $attributes = $invoice->getAttributes();
+            
+            // Set document_type based on status
+            $isInvoice = in_array($invoice->status, ['invoice_creating', 'invoice_submitted', 'payment_confirmed']);
+            $attributes['document_type'] = $isInvoice ? 'invoice' : 'estimate';
+            unset($attributes['status']);
+
+            $history->fill($attributes);
             $history->invoice_id = $invoice->id;
             $history->save();
 

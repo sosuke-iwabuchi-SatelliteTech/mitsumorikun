@@ -81,10 +81,11 @@ class InvoiceController extends Controller
      */
     public function history(Invoice $invoice): Response
     {
-        $versions = $invoice->histories()
+        // Get all versions of the same estimate from invoices table
+        $versions = Invoice::where('user_group_id', $invoice->user_group_id)
+            ->where('estimate_number', $invoice->estimate_number)
             ->with('customer')
             ->orderBy('version', 'desc')
-            ->orderBy('created_at', 'desc')
             ->get();
 
         return Inertia::render('Invoices/History', [

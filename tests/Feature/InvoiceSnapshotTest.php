@@ -61,7 +61,7 @@ class InvoiceSnapshotTest extends TestCase
         $history = InvoiceHistory::first();
         
         $this->assertEquals($invoice->id, $history->invoice_id);
-        $this->assertEquals('submitted', $history->status);
+        $this->assertEquals('estimate', $history->document_type);
         $this->assertEquals('Test Estimate', $history->title);
         $this->assertCount(1, $history->details);
         $this->assertEquals('Item 1', $history->details->first()->item_name);

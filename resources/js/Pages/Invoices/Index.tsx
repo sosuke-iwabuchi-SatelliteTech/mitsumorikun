@@ -44,6 +44,9 @@ export default function Index({ auth, invoices }: Props) {
                                             管理番号
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                            版
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                             件名
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
@@ -71,7 +74,10 @@ export default function Index({ auth, invoices }: Props) {
                                                 className="transition-colors duration-150 hover:bg-gray-50"
                                             >
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
-                                                    {invoice.status.startsWith('invoice') ? 'INV' : 'EST'}-{invoice.estimate_number}-{String(invoice.version).padStart(2, '0')}
+                                                    {invoice.estimate_number}
+                                                </td>
+                                                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                                                    v{invoice.version}
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                                     {invoice.title}
@@ -109,7 +115,7 @@ export default function Index({ auth, invoices }: Props) {
                                     ) : (
                                         <tr>
                                             <td
-                                                colSpan={7}
+                                                colSpan={8}
                                                 className="px-6 py-10 text-center text-sm text-gray-500"
                                             >
                                                 登録されている見積・請求がありません。
