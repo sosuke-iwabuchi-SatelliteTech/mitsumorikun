@@ -75,6 +75,14 @@ export default function AuthenticatedLayout({
                                 )}
                                 {user.role === 'general' && (
                                     <NavLink
+                                        href={route('invoices.index')}
+                                        active={route().current('invoices.*')}
+                                    >
+                                        見積管理
+                                    </NavLink>
+                                )}
+                                {user.role === 'general' && (
+                                    <NavLink
                                         href={route('invoice-items.index')}
                                         active={route().current('invoice-items.*')}
                                     >
@@ -219,6 +227,14 @@ export default function AuthenticatedLayout({
                                     active={route().current('customers.*')}
                                 >
                                     顧客マスタ
+                                </ResponsiveNavLink>
+                            )}
+                            {user.role === 'general' && (
+                                <ResponsiveNavLink
+                                    href={route('invoices.index')}
+                                    active={route().current('invoices.*')}
+                                >
+                                    見積管理
                                 </ResponsiveNavLink>
                             )}
                             {user.role === 'general' && (

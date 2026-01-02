@@ -17,6 +17,12 @@ Route::middleware('auth')->group(function () {
     Route::middleware('general')->group(function () {
         Route::resource('customers', \App\Http\Controllers\CustomerController::class);
         Route::resource('invoice-items', \App\Http\Controllers\InvoiceItemController::class);
+        
+        Route::resource('invoices', \App\Http\Controllers\InvoiceController::class);
+        Route::get('invoices/{invoice}/history', [\App\Http\Controllers\InvoiceController::class, 'history'])->name('invoices.history');
+        Route::get('invoices/{invoice}/history/{history}', [\App\Http\Controllers\InvoiceController::class, 'showHistory'])->name('invoices.history.show');
+        Route::post('invoices/{invoice}/revision', [\App\Http\Controllers\InvoiceController::class, 'revision'])->name('invoices.revision');
+        Route::patch('invoices/{invoice}/status', [\App\Http\Controllers\InvoiceController::class, 'updateStatus'])->name('invoices.status');
 
         Route::get('/group-information', [\App\Http\Controllers\GroupInformationController::class, 'edit'])->name('group-information.edit');
     Route::patch('/group-information/basic', [\App\Http\Controllers\GroupInformationController::class, 'updateBasic'])->name('group-information.update-basic');
