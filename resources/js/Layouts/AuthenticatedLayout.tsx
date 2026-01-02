@@ -81,6 +81,14 @@ export default function AuthenticatedLayout({
                                         見積項目マスタ
                                     </NavLink>
                                 )}
+                                {user.role === 'general' && (
+                                    <NavLink
+                                        href={route('group-information.edit')}
+                                        active={route().current('group-information.*')}
+                                    >
+                                        会社情報管理
+                                    </NavLink>
+                                )}
                                 {user.role === 'admin' && (
                                     <NavLink
                                         href={route('admin.users.index')}
@@ -219,6 +227,14 @@ export default function AuthenticatedLayout({
                                     active={route().current('invoice-items.*')}
                                 >
                                     見積項目マスタ
+                                </ResponsiveNavLink>
+                            )}
+                            {user.role === 'general' && (
+                                <ResponsiveNavLink
+                                    href={route('group-information.edit')}
+                                    active={route().current('group-information.*')}
+                                >
+                                    会社情報管理
                                 </ResponsiveNavLink>
                             )}
                         {user.role === 'admin' && (

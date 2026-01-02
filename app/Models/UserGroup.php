@@ -20,6 +20,11 @@ class UserGroup extends Model
         return $this->hasMany(User::class);
     }
 
+    public function detail(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(UserGroupDetail::class);
+    }
+
     public function scopeSearch(Builder $query, ?string $search)
     {
         return $query->when($search, function ($q) use ($search) {

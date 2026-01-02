@@ -17,6 +17,10 @@ Route::middleware('auth')->group(function () {
     Route::middleware('general')->group(function () {
         Route::resource('customers', \App\Http\Controllers\CustomerController::class);
         Route::resource('invoice-items', \App\Http\Controllers\InvoiceItemController::class);
+
+        Route::get('/group-information', [\App\Http\Controllers\GroupInformationController::class, 'edit'])->name('group-information.edit');
+    Route::patch('/group-information/basic', [\App\Http\Controllers\GroupInformationController::class, 'updateBasic'])->name('group-information.update-basic');
+    Route::patch('/group-information/account', [\App\Http\Controllers\GroupInformationController::class, 'updateAccount'])->name('group-information.update-account');
     });
 
     // 管理者専用ルート
