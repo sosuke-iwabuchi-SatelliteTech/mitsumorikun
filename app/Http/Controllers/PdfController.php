@@ -24,6 +24,9 @@ class PdfController extends Controller
 
     public function download(Invoice $invoice)
     {
+        if (in_array($invoice->status, ['creating', 'invoice_creating'])) {
+            abort(403, '作成中のデータはPDF出力できません。');
+        }
         $type = $this->getDocumentType($invoice->status);
         return $this->pdfService->generate($invoice, $type)->download("{$invoice->estimate_number}.pdf");
     }
@@ -42,7 +45,7 @@ class PdfController extends Controller
 
     private function getDocumentType(string $status): string
     {
-        if (str_contains($status, '請求書')) {
+        if (in_array($status, ['invoice_creating', 'invoice_submitted', 'payment_confirmed'])) {
             return 'invoice';
         }
         return 'estimate';

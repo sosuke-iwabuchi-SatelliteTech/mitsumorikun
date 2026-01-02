@@ -70,9 +70,14 @@ class InvoiceController extends Controller
             ->where('version', '>', $invoice->version)
             ->exists();
 
+        $hasFinalized = FinalizedInvoice::where('user_group_id', $invoice->user_group_id)
+            ->where('estimate_number', $invoice->estimate_number)
+            ->exists();
+
         return Inertia::render('Invoices/Show', [
             'invoice' => $invoice,
             'isLatest' => $isLatest,
+            'hasFinalized' => $hasFinalized,
         ]);
     }
 

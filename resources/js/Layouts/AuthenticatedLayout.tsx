@@ -78,7 +78,7 @@ export default function AuthenticatedLayout({
                                         href={route('invoices.index')}
                                         active={route().current('invoices.*')}
                                     >
-                                        見積管理
+                                        見積・請求管理
                                     </NavLink>
                                 )}
                                 {user.role === 'general' && (
@@ -234,7 +234,7 @@ export default function AuthenticatedLayout({
                                     href={route('invoices.index')}
                                     active={route().current('invoices.*')}
                                 >
-                                    見積管理
+                                    見積・請求管理
                                 </ResponsiveNavLink>
                             )}
                             {user.role === 'general' && (
