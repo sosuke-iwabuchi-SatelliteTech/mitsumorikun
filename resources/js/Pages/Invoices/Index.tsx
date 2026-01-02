@@ -95,7 +95,7 @@ export default function Index({ auth, invoices }: Props) {
                                                     >
                                                         詳細
                                                     </Link>
-                                                    {invoice.status === 'creating' && (
+                                                    {(invoice.status === 'creating' || invoice.status === 'invoice_creating') && (
                                                         <Link
                                                             href={route('invoices.edit', invoice.id)}
                                                             className="text-amber-600 hover:text-amber-900"

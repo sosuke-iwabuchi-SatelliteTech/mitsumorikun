@@ -48,7 +48,7 @@ export default function Show({ auth, invoice, isLatest }: Props) {
                         >
                             戻る
                         </Link>
-                        {isLatest && invoice.status === 'creating' && (
+                        {isLatest && (invoice.status === 'creating' || invoice.status === 'invoice_creating') && (
                             <Link
                                 href={route('invoices.edit', invoice.id)}
                                 className="rounded-md bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-500"
