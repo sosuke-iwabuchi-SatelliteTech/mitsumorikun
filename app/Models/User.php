@@ -59,6 +59,11 @@ class User extends Authenticatable
         return $this->role === UserRole::ADMIN;
     }
 
+    public function isGeneral(): bool
+    {
+        return $this->role === UserRole::GENERAL;
+    }
+
     public function userGroup(): BelongsTo
     {
         return $this->belongsTo(UserGroup::class);

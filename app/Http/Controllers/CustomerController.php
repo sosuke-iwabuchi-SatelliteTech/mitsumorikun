@@ -15,7 +15,6 @@ class CustomerController extends Controller
      */
     public function index(Request $request): Response
     {
-        abort_if($request->user()->isAdmin(), 403);
         $query = Customer::query();
         $customers = Customer::search($request->get('search'))
             ->filterAndSort($request, ['name', 'contact_person_name', 'email', 'phone_number'], 'name', 'asc');
@@ -31,8 +30,6 @@ class CustomerController extends Controller
      */
     public function create(Request $request): Response
     {
-        abort_if($request->user()->isAdmin(), 403);
-
         return Inertia::render('Customers/Create');
     }
 
@@ -41,7 +38,6 @@ class CustomerController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        abort_if($request->user()->isAdmin(), 403);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'contact_person_name' => 'nullable|string|max:255',
@@ -63,8 +59,6 @@ class CustomerController extends Controller
      */
     public function show(Request $request, Customer $customer): Response
     {
-        abort_if($request->user()->isAdmin(), 403);
-
         return Inertia::render('Customers/Show', [
             'customer' => $customer,
         ]);
@@ -75,8 +69,6 @@ class CustomerController extends Controller
      */
     public function edit(Request $request, Customer $customer): Response
     {
-        abort_if($request->user()->isAdmin(), 403);
-
         return Inertia::render('Customers/Edit', [
             'customer' => $customer,
         ]);
@@ -87,7 +79,6 @@ class CustomerController extends Controller
      */
     public function update(Request $request, Customer $customer): RedirectResponse
     {
-        abort_if($request->user()->isAdmin(), 403);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'contact_person_name' => 'nullable|string|max:255',
@@ -109,7 +100,6 @@ class CustomerController extends Controller
      */
     public function destroy(Request $request, Customer $customer): RedirectResponse
     {
-        abort_if($request->user()->isAdmin(), 403);
         $customer->delete();
 
         return redirect()->route('customers.index')

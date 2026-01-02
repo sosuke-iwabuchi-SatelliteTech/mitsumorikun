@@ -13,12 +13,6 @@ class ImpersonationController extends Controller
      */
     public function store(User $user): RedirectResponse
     {
-        // Admin middleware should handle the initial check,
-        // but double-check here too for safety.
-        if (! Auth::user()->isAdmin()) {
-            abort(403);
-        }
-
         if (Auth::id() === $user->id) {
             return redirect()->back()->with('error', '自分自身を代理ログインすることはできません。');
         }

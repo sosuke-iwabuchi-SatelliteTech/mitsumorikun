@@ -15,8 +15,6 @@ class InvoiceItemController extends Controller
      */
     public function index(Request $request): Response
     {
-        abort_if($request->user()->isAdmin(), 403);
-
         $items = InvoiceItem::search($request->get('search'))
             ->filterAndSort($request, ['name', 'unit_price', 'quantity'], 'name', 'asc');
 
@@ -31,8 +29,6 @@ class InvoiceItemController extends Controller
      */
     public function create(Request $request): Response
     {
-        abort_if($request->user()->isAdmin(), 403);
-
         return Inertia::render('InvoiceItems/Create');
     }
 
@@ -41,8 +37,6 @@ class InvoiceItemController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        abort_if($request->user()->isAdmin(), 403);
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'quantity' => 'required|numeric|min:0',
@@ -64,8 +58,6 @@ class InvoiceItemController extends Controller
      */
     public function show(Request $request, InvoiceItem $invoiceItem): Response
     {
-        abort_if($request->user()->isAdmin(), 403);
-
         return Inertia::render('InvoiceItems/Show', [
             'item' => $invoiceItem,
         ]);
@@ -76,8 +68,6 @@ class InvoiceItemController extends Controller
      */
     public function edit(Request $request, InvoiceItem $invoiceItem): Response
     {
-        abort_if($request->user()->isAdmin(), 403);
-
         return Inertia::render('InvoiceItems/Edit', [
             'item' => $invoiceItem,
         ]);
@@ -88,8 +78,6 @@ class InvoiceItemController extends Controller
      */
     public function update(Request $request, InvoiceItem $invoiceItem): RedirectResponse
     {
-        abort_if($request->user()->isAdmin(), 403);
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'quantity' => 'required|numeric|min:0',
@@ -111,8 +99,6 @@ class InvoiceItemController extends Controller
      */
     public function destroy(Request $request, InvoiceItem $invoiceItem): RedirectResponse
     {
-        abort_if($request->user()->isAdmin(), 403);
-
         $invoiceItem->delete();
 
         return redirect()->route('invoice-items.index')

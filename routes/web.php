@@ -23,8 +23,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::resource('customers', \App\Http\Controllers\CustomerController::class);
-    Route::resource('invoice-items', \App\Http\Controllers\InvoiceItemController::class);
+    Route::middleware('general')->group(function () {
+        Route::resource('customers', \App\Http\Controllers\CustomerController::class);
+        Route::resource('invoice-items', \App\Http\Controllers\InvoiceItemController::class);
+    });
 
     // 管理者専用ルート
     Route::middleware('admin')->group(function () {
