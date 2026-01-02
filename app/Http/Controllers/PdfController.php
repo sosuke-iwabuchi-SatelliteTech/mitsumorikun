@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Invoice;
+use App\Models\FinalizedInvoice;
+use App\Services\PdfService;
+use Illuminate\Http\Request;
+
+class PdfController extends Controller
+{
+    protected $pdfService;
+
+    public function __construct(PdfService $pdfService)
+    {
+        $this->pdfService = $pdfService;
+    }
+
+    public function preview(Invoice $invoice)
+    {
+        $type = $this->getDocumentType($invoice->status);
+        return $this->pdfService->generate($invoice, $type)->stream("preview_{$invoice->estimate_number}.pdf");
+    }
+
+    public function download(Invoice $invoice)
+    {
+        $type = $this->getDocumentType($invoice->status);
+        return $this->pdfService->generate($invoice, $type)->download("{$invoice->estimate_number}.pdf");
+    }
+
+    public function previewFinalized(FinalizedInvoice $finalizedInvoice)
+    {
+        $type = $finalizedInvoice->document_type === 'invoice' ? 'invoice' : 'estimate';
+        return $this->pdfService->generate($finalizedInvoice, $type)->stream("{$finalizedInvoice->estimate_number}.pdf");
+    }
+
+    public function downloadFinalized(FinalizedInvoice $finalizedInvoice)
+    {
+        $type = $finalizedInvoice->document_type === 'invoice' ? 'invoice' : 'estimate';
+        return $this->pdfService->generate($finalizedInvoice, $type)->download("{$finalizedInvoice->estimate_number}.pdf");
+    }
+
+    private function getDocumentType(string $status): string
+    {
+        if (str_contains($status, '請求書')) {
+            return 'invoice';
+        }
+        return 'estimate';
+    }
+}

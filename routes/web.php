@@ -24,6 +24,11 @@ Route::middleware('auth')->group(function () {
         Route::post('invoices/{invoice}/revision', [\App\Http\Controllers\InvoiceController::class, 'revision'])->name('invoices.revision');
         Route::patch('invoices/{invoice}/status', [\App\Http\Controllers\InvoiceController::class, 'updateStatus'])->name('invoices.status');
 
+        Route::get('invoices/{invoice}/preview', [\App\Http\Controllers\PdfController::class, 'preview'])->name('invoices.preview');
+        Route::get('invoices/{invoice}/download', [\App\Http\Controllers\PdfController::class, 'download'])->name('invoices.download');
+        Route::get('finalized-invoices/{finalizedInvoice}/preview', [\App\Http\Controllers\PdfController::class, 'previewFinalized'])->name('finalized-invoices.preview');
+        Route::get('finalized-invoices/{finalizedInvoice}/download', [\App\Http\Controllers\PdfController::class, 'downloadFinalized'])->name('finalized-invoices.download');
+
         Route::get('/group-information', [\App\Http\Controllers\GroupInformationController::class, 'edit'])->name('group-information.edit');
     Route::patch('/group-information/basic', [\App\Http\Controllers\GroupInformationController::class, 'updateBasic'])->name('group-information.update-basic');
     Route::patch('/group-information/account', [\App\Http\Controllers\GroupInformationController::class, 'updateAccount'])->name('group-information.update-account');
