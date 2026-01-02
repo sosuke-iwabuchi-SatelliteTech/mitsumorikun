@@ -30,6 +30,20 @@ export interface Customer {
     updated_at: string;
 }
 
+export interface InvoiceItem {
+    id: number;
+    user_group_id: number;
+    name: string;
+    quantity: number;
+    unit_price: number;
+    unit: string | null;
+    tax_type: 'inc' | 'exc';
+    tax_rate: 8 | 10;
+    remarks: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {

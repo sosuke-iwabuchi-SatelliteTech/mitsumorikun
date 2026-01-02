@@ -73,6 +73,14 @@ export default function AuthenticatedLayout({
                                         顧客マスタ
                                     </NavLink>
                                 )}
+                                {user.role === 'general' && (
+                                    <NavLink
+                                        href={route('invoice-items.index')}
+                                        active={route().current('invoice-items.*')}
+                                    >
+                                        見積項目マスタ
+                                    </NavLink>
+                                )}
                                 {user.role === 'admin' && (
                                     <NavLink
                                         href={route('admin.users.index')}
@@ -198,13 +206,21 @@ export default function AuthenticatedLayout({
                             Dashboard
                         </ResponsiveNavLink>
                         {user.role === 'general' && (
-                            <ResponsiveNavLink
-                                href={route('customers.index')}
-                                active={route().current('customers.*')}
-                            >
-                                顧客マスタ
-                            </ResponsiveNavLink>
-                        )}
+                                <ResponsiveNavLink
+                                    href={route('customers.index')}
+                                    active={route().current('customers.*')}
+                                >
+                                    顧客マスタ
+                                </ResponsiveNavLink>
+                            )}
+                            {user.role === 'general' && (
+                                <ResponsiveNavLink
+                                    href={route('invoice-items.index')}
+                                    active={route().current('invoice-items.*')}
+                                >
+                                    見積項目マスタ
+                                </ResponsiveNavLink>
+                            )}
                         {user.role === 'admin' && (
                             <ResponsiveNavLink
                                 href={route('admin.users.index')}
