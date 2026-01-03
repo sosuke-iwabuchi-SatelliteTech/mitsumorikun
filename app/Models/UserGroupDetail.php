@@ -41,6 +41,6 @@ class UserGroupDetail extends Model
 
     public function userGroup(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(UserGroup::class);
+        return $this->belongsTo(UserGroup::class)->withTrashed();
     }
 }

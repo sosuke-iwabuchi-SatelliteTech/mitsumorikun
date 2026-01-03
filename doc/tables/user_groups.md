@@ -11,6 +11,7 @@
 | name | VARCHAR | NO | - | - | グループ名 |
 | created_at | TIMESTAMP | YES | NULL | - | 作成日時 |
 | updated_at | TIMESTAMP | YES | NULL | - | 更新日時 |
+| deleted_at | TIMESTAMP | YES | NULL | - | 削除日時 (論理削除用) |
 
 ## インデックス
 
@@ -26,7 +27,7 @@
 - `invoice_items` テーブル (user_group_id)
 - `user_group_details` テーブル (user_group_id)
 - `invoices` テーブル (user_group_id)
-- `invoice_histories` テーブル (user_group_id)
+- `finalized_invoices` テーブル (user_group_id)
 
 ## 備考
 - 各ユーザーグループは複数のユーザーを持つことができる

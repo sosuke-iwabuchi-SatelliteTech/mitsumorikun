@@ -18,6 +18,7 @@
 | remarks | TEXT | YES | NULL | - | 備考 |
 | created_at | TIMESTAMP | YES | NULL | - | 作成日時 |
 | updated_at | TIMESTAMP | YES | NULL | - | 更新日時 |
+| deleted_at | TIMESTAMP | YES | NULL | - | 削除日時 (論理削除用) |
 
 ## インデックス
 
@@ -33,7 +34,7 @@
 
 ### 1対多のリレーション
 - `invoices` テーブル (customer_id)
-- `invoice_histories` テーブル (customer_id)
+- `finalized_invoices` テーブル (customer_id)
 
 ## 備考
 - 一般ユーザーのみがアクセス可能

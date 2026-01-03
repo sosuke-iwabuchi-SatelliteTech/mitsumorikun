@@ -9,13 +9,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use FilterableAndSortable, HasFactory, HasUuids, Notifiable;
+    use FilterableAndSortable, HasFactory, HasUuids, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -66,7 +67,7 @@ class User extends Authenticatable
 
     public function userGroup(): BelongsTo
     {
-        return $this->belongsTo(UserGroup::class);
+        return $this->belongsTo(UserGroup::class)->withTrashed();
     }
 
     public function scopeSearch(Builder $query, ?string $search)

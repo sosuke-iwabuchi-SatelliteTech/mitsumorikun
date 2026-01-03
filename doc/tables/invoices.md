@@ -37,6 +37,7 @@
 | japan_post_bank_account_holder | VARCHAR | YES | NULL | - | ゆうちょ銀行口座名義(スナップショット) |
 | created_at | TIMESTAMP | YES | NULL | - | 作成日時 |
 | updated_at | TIMESTAMP | YES | NULL | - | 更新日時 |
+| deleted_at | TIMESTAMP | YES | NULL | - | 削除日時 (論理削除用) |
 
 ## インデックス
 
@@ -53,7 +54,7 @@
 
 ### 1対多のリレーション
 - `invoice_details` テーブル (invoice_id)
-- `invoice_histories` テーブル (invoice_id)
+- `finalized_invoices` テーブル (invoice_id)
 
 ## ステータス一覧
 

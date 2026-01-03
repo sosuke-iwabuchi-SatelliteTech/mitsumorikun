@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Models\Scopes\UserGroupScope;
 use App\Traits\FilterableAndSortable;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 #[ScopedBy(UserGroupScope::class)]
 class InvoiceItem extends Model
 {
-    use FilterableAndSortable, HasFactory;
+    use FilterableAndSortable, HasFactory, SoftDeletes;
 
     protected $fillable = [
         'user_group_id',

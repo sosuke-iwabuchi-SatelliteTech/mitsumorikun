@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Invoice extends Model
 {
     /** @use HasFactory<\Database\Factories\InvoiceFactory> */
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
         'user_group_id',
@@ -53,7 +54,7 @@ class Invoice extends Model
 
     public function userGroup(): BelongsTo
     {
-        return $this->belongsTo(UserGroup::class);
+        return $this->belongsTo(UserGroup::class)->withTrashed();
     }
 
     public function customer(): BelongsTo

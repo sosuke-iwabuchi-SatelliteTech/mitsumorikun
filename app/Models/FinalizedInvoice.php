@@ -52,7 +52,7 @@ class FinalizedInvoice extends Model
 
     public function invoice(): BelongsTo
     {
-        return $this->belongsTo(Invoice::class);
+        return $this->belongsTo(Invoice::class)->withTrashed();
     }
 
     public function customer(): BelongsTo
@@ -62,7 +62,7 @@ class FinalizedInvoice extends Model
 
     public function userGroup(): BelongsTo
     {
-        return $this->belongsTo(UserGroup::class);
+        return $this->belongsTo(UserGroup::class)->withTrashed();
     }
 
     public function details(): HasMany
