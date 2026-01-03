@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background: Green Rounded Square -->
+  <rect x="0" y="0" width="512" height="512" rx="100" ry="100" fill="#4ADE80" />
+  
+  <!-- Fairy Silhouette (White) -->
+  <g fill="#FFFFFF" transform="translate(100, 100) scale(0.6)">
+    <!-- Head -->
+    <circle cx="260" cy="150" r="60" />
+    
+    <!-- Body -->
+    <path d="M260 220 C 220 220 180 300 160 400 L 360 400 C 340 300 300 220 260 220 Z" />
+    
+    <!-- Wings (Leaf style) -->
+    <path d="M200 250 C 100 200 50 100 50 50 C 50 50 150 100 220 220 Z" />
+    <path d="M320 250 C 420 200 470 100 470 50 C 470 50 370 100 300 220 Z" />
+    
+    <!-- Lower Wings -->
+    <path d="M200 300 C 120 350 80 400 80 400 C 80 400 150 380 220 320 Z" opacity="0.9" />
+    <path d="M320 300 C 400 350 440 400 440 400 C 440 400 370 380 300 320 Z" opacity="0.9" />
+  </g>
+</svg>
