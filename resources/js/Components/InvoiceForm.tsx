@@ -5,7 +5,9 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { useEffect } from 'react';
+import Modal from '@/Components/Modal';
+import SecondaryButton from '@/Components/SecondaryButton';
+import { useEffect, useState } from 'react';
 
 interface InvoiceItemMaster {
     id: number;
@@ -48,18 +50,15 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
             amount: Number(d.amount),
             group_name: d.group_name,
             remarks: d.remarks,
-        })) || [{
-            item_name: '',
-            quantity: 1,
-            unit_price: 0,
-            unit: '',
-            tax_rate: 0.10,
-            tax_classification: 'exclusive' as const,
-            amount: 0,
-            group_name: '',
-            remarks: '',
-        }]
+        })) || []
     });
+
+    const [isMasterModalOpen, setIsMasterModalOpen] = useState(false);
+    const [masterSearchQuery, setMasterSearchQuery] = useState('');
+
+    const filteredMasterItems = invoiceItems.filter(item =>
+        item.name.toLowerCase().includes(masterSearchQuery.toLowerCase())
+    );
 
     const calculateTotals = (details: any[]) => {
         let total = 0;
@@ -112,22 +111,20 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
         setData('details', newDetails);
     };
 
-    const handleItemSelect = (index: number, itemId: string) => {
-        const item = invoiceItems.find(i => String(i.id) === itemId);
-        if (item) {
-            const newDetails = [...data.details];
-            newDetails[index] = {
-                ...newDetails[index],
-                item_name: item.name,
-                quantity: Number(item.quantity),
-                unit_price: Number(item.unit_price),
-                unit: item.unit,
-                tax_rate: item.tax_rate / 100,
-                tax_classification: item.tax_type === 'inc' ? 'inclusive' : 'exclusive',
-                amount: Number(item.quantity) * Number(item.unit_price)
-            };
-            setData('details', newDetails);
-        }
+    const handleMasterSelect = (item: InvoiceItemMaster) => {
+        setData('details', [...data.details, {
+            item_name: item.name,
+            quantity: Number(item.quantity),
+            unit_price: Number(item.unit_price),
+            unit: item.unit,
+            tax_rate: item.tax_rate / 100,
+            tax_classification: item.tax_type === 'inc' ? 'inclusive' : 'exclusive',
+            amount: Number(item.quantity) * Number(item.unit_price),
+            group_name: '',
+            remarks: item.remarks || '',
+        }]);
+        setIsMasterModalOpen(false);
+        setMasterSearchQuery('');
     };
 
     const submit = (e: React.FormEvent) => {
@@ -208,23 +205,15 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
             <div className="mt-8">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-medium text-gray-900">見積明細</h3>
-                    <button
-                        type="button"
-                        onClick={addLine}
-                        className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                    >
-                        行追加
-                    </button>
                 </div>
 
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">マスタ選択</th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">品名</th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase w-20">数量</th>
-                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">単位</th>
+                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase w-20">単位</th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">単価</th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">金額</th>
                                 <th className="px-3 py-3"></th>
@@ -233,18 +222,6 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                         <tbody className="bg-white divide-y divide-gray-200">
                             {data.details.map((line, index) => (
                                 <tr key={index}>
-                                    <td className="px-3 py-2">
-                                        <select
-                                            className="block w-full rounded-md border-gray-300 text-sm"
-                                            onChange={(e) => handleItemSelect(index, e.target.value)}
-                                            value=""
-                                        >
-                                            <option value="">選択...</option>
-                                            {invoiceItems.map(item => (
-                                                <option key={item.id} value={item.id}>{item.name}</option>
-                                            ))}
-                                        </select>
-                                    </td>
                                     <td className="px-3 py-2">
                                         <TextInput
                                             className="block w-full text-sm"
@@ -293,6 +270,32 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                                     </td>
                                 </tr>
                             ))}
+                            <tr>
+                                <td colSpan={6} className="px-3 py-4">
+                                    <div className="flex gap-x-2">
+                                        <button
+                                            type="button"
+                                            onClick={addLine}
+                                            className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                        >
+                                            <svg className="-ml-0.5 mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                            </svg>
+                                            行追加
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsMasterModalOpen(true)}
+                                            className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                        >
+                                            <svg className="-ml-0.5 mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                                            </svg>
+                                            マスタから引用
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -318,6 +321,65 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                     保存する
                 </PrimaryButton>
             </div>
+
+            <Modal show={isMasterModalOpen} onClose={() => setIsMasterModalOpen(false)} maxWidth="2xl">
+                <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-medium text-gray-900">マスタから引用</h2>
+                        <button onClick={() => setIsMasterModalOpen(false)} className="text-gray-400 hover:text-gray-500">
+                            <span className="sr-only">閉じる</span>
+                            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div className="mb-4">
+                        <TextInput
+                            type="text"
+                            placeholder="品名で検索..."
+                            className="block w-full"
+                            value={masterSearchQuery}
+                            onChange={(e) => setMasterSearchQuery(e.target.value)}
+                            autoFocus
+                        />
+                    </div>
+
+                    <div className="max-h-96 overflow-y-auto border rounded-md">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50 sticky top-0">
+                                <tr>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">品名</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase w-32">単価</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase w-20">単位</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {filteredMasterItems.map((item) => (
+                                    <tr key={item.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleMasterSelect(item)}>
+                                        <td className="px-4 py-3 text-sm text-gray-900">{item.name}</td>
+                                        <td className="px-4 py-3 text-sm text-gray-500">¥{item.unit_price.toLocaleString()}</td>
+                                        <td className="px-4 py-3 text-sm text-gray-500">{item.unit}</td>
+                                    </tr>
+                                ))}
+                                {filteredMasterItems.length === 0 && (
+                                    <tr>
+                                        <td colSpan={3} className="px-4 py-8 text-center text-sm text-gray-500">
+                                            見つかりませんでした
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="mt-6 flex justify-end">
+                        <SecondaryButton onClick={() => setIsMasterModalOpen(false)} disabled={false}>
+                            キャンセル
+                        </SecondaryButton>
+                    </div>
+                </div>
+            </Modal>
         </form>
     );
 }
