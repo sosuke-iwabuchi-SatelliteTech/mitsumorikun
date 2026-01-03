@@ -8,6 +8,7 @@ import TextInput from '@/Components/TextInput';
 import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface InvoiceItemMaster {
     id: number;
@@ -207,7 +208,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                     <h3 className="text-lg font-medium text-gray-900">見積明細</h3>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="hidden md:block overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
@@ -220,84 +221,170 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {data.details.map((line, index) => (
-                                <tr key={index}>
-                                    <td className="px-3 py-2">
-                                        <TextInput
-                                            className="block w-full text-sm"
-                                            value={line.item_name}
-                                            onChange={(e) => updateLine(index, 'item_name', e.target.value)}
-                                            required
-                                        />
-                                    </td>
-                                    <td className="px-3 py-2">
+                            <AnimatePresence initial={false}>
+                                {data.details.map((line, index) => (
+                                    <motion.tr
+                                        key={index}
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, x: -20 }}
+                                        transition={{ duration: 0.2 }}
+                                    >
+                                        <td className="px-3 py-2">
+                                            <TextInput
+                                                className="block w-full text-sm"
+                                                value={line.item_name}
+                                                onChange={(e) => updateLine(index, 'item_name', e.target.value)}
+                                                required
+                                            />
+                                        </td>
+                                        <td className="px-3 py-2">
+                                            <TextInput
+                                                type="number"
+                                                step="0.01"
+                                                className="block w-full text-sm"
+                                                value={line.quantity}
+                                                onChange={(e) => updateLine(index, 'quantity', e.target.value)}
+                                                required
+                                            />
+                                        </td>
+                                        <td className="px-3 py-2">
+                                            <TextInput
+                                                className="block w-full text-sm"
+                                                value={line.unit || ''}
+                                                onChange={(e) => updateLine(index, 'unit', e.target.value)}
+                                            />
+                                        </td>
+                                        <td className="px-3 py-2">
+                                            <TextInput
+                                                type="number"
+                                                className="block w-full text-sm"
+                                                value={line.unit_price}
+                                                onChange={(e) => updateLine(index, 'unit_price', e.target.value)}
+                                                required
+                                            />
+                                        </td>
+                                        <td className="px-3 py-2 text-sm text-right font-medium">
+                                            ¥{(line.quantity * line.unit_price).toLocaleString()}
+                                        </td>
+                                        <td className="px-3 py-2 text-right">
+                                            <button
+                                                type="button"
+                                                onClick={() => removeLine(index)}
+                                                className="text-red-600 hover:text-red-900"
+                                            >
+                                                削除
+                                            </button>
+                                        </td>
+                                    </motion.tr>
+                                ))}
+                            </AnimatePresence>
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Mobile view */}
+                <div className="md:hidden space-y-4">
+                    <AnimatePresence initial={false}>
+                        {data.details.map((line, index) => (
+                            <motion.div
+                                key={index}
+                                layout
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95, height: 0, marginBottom: 0, overflow: 'hidden' }}
+                                transition={{ duration: 0.2 }}
+                                className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm space-y-3"
+                            >
+                                <div className="flex justify-between items-start">
+                                    <span className="text-xs font-bold text-gray-500 uppercase">明細 #{index + 1}</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => removeLine(index)}
+                                        className="text-red-600 hover:text-red-900 text-sm"
+                                    >
+                                        削除
+                                    </button>
+                                </div>
+                                
+                                <div>
+                                    <InputLabel value="品名" />
+                                    <TextInput
+                                        className="mt-1 block w-full text-sm"
+                                        value={line.item_name}
+                                        onChange={(e) => updateLine(index, 'item_name', e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <InputLabel value="数量" />
                                         <TextInput
                                             type="number"
                                             step="0.01"
-                                            className="block w-full text-sm"
+                                            className="mt-1 block w-full text-sm"
                                             value={line.quantity}
                                             onChange={(e) => updateLine(index, 'quantity', e.target.value)}
                                             required
                                         />
-                                    </td>
-                                    <td className="px-3 py-2">
+                                    </div>
+                                    <div>
+                                        <InputLabel value="単位" />
                                         <TextInput
-                                            className="block w-full text-sm"
+                                            className="mt-1 block w-full text-sm"
                                             value={line.unit || ''}
                                             onChange={(e) => updateLine(index, 'unit', e.target.value)}
                                         />
-                                    </td>
-                                    <td className="px-3 py-2">
-                                        <TextInput
-                                            type="number"
-                                            className="block w-full text-sm"
-                                            value={line.unit_price}
-                                            onChange={(e) => updateLine(index, 'unit_price', e.target.value)}
-                                            required
-                                        />
-                                    </td>
-                                    <td className="px-3 py-2 text-sm text-right font-medium">
-                                        ¥{(line.quantity * line.unit_price).toLocaleString()}
-                                    </td>
-                                    <td className="px-3 py-2 text-right">
-                                        <button
-                                            type="button"
-                                            onClick={() => removeLine(index)}
-                                            className="text-red-600 hover:text-red-900"
-                                        >
-                                            削除
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                            <tr>
-                                <td colSpan={6} className="px-3 py-4">
-                                    <div className="flex gap-x-2">
-                                        <button
-                                            type="button"
-                                            onClick={addLine}
-                                            className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                        >
-                                            <svg className="-ml-0.5 mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                            </svg>
-                                            行追加
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setIsMasterModalOpen(true)}
-                                            className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                        >
-                                            <svg className="-ml-0.5 mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                                            </svg>
-                                            マスタから引用
-                                        </button>
                                     </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                </div>
+
+                                <div>
+                                    <InputLabel value="単価" />
+                                    <TextInput
+                                        type="number"
+                                        className="mt-1 block w-full text-sm"
+                                        value={line.unit_price}
+                                        onChange={(e) => updateLine(index, 'unit_price', e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="flex justify-between items-center pt-2 border-t text-sm">
+                                    <span className="text-gray-500">金額:</span>
+                                    <span className="font-bold">¥{(line.quantity * line.unit_price).toLocaleString()}</span>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                    {data.details.length === 0 && (
+                        <div className="text-center py-8 text-sm text-gray-500 border-2 border-dashed border-gray-200 rounded-lg">
+                            明細がありません
+                        </div>
+                    )}
+                </div>
+
+                <div className="mt-4 flex gap-x-2">
+                    <button
+                        type="button"
+                        onClick={addLine}
+                        className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                    >
+                        <svg className="-ml-0.5 mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        行追加
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setIsMasterModalOpen(true)}
+                        className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                    >
+                        <svg className="-ml-0.5 mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                        マスタから引用
+                    </button>
                 </div>
             </div>
 
