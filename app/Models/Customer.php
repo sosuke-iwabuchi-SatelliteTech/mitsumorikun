@@ -10,13 +10,14 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
 #[ScopedBy(UserGroupScope::class)]
 class Customer extends Model
 {
     /** @use HasFactory<\Database\Factories\CustomerFactory> */
-    use FilterableAndSortable, HasFactory, HasUuids;
+    use FilterableAndSortable, HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
         'user_group_id',

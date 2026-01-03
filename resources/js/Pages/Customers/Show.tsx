@@ -22,6 +22,12 @@ export default function Show({ auth, customer }: Props) {
                     </h2>
                     <div className="flex gap-3">
                         <Link
+                            href={route('customers.index')}
+                            className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                        >
+                            一覧に戻る
+                        </Link>
+                        <Link
                             href={route('customers.edit', customer.id)}
                             className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                         >
@@ -104,14 +110,6 @@ export default function Show({ auth, customer }: Props) {
                         </div>
                     </div>
 
-                    <div className="mt-6">
-                        <Link
-                            href={route('customers.index')}
-                            className="text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-                        >
-                            &larr; 顧客管理一覧に戻る
-                        </Link>
-                    </div>
                 </div>
             </div>
         </AuthenticatedLayout>
