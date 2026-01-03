@@ -1,5 +1,6 @@
 import { useForm } from '@inertiajs/react';
-import axios from 'axios';
+import api from '@/Utils/api';
+import { handleApiError, ValidationErrors } from '@/Utils/apiErrors';
 import { Invoice, InvoiceDetail } from '@/types/invoice';
 import { Customer } from '@/types';
 import InputError from '@/Components/InputError';
@@ -167,7 +168,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
     };
 
     const [isSubmittingQuickCustomer, setIsSubmittingQuickCustomer] = useState(false);
-    const [ajaxErrors, setAjaxErrors] = useState<Record<string, string>>({});
+    const [ajaxErrors, setAjaxErrors] = useState<ValidationErrors>({});
 
     const handleQuickCustomerSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -176,9 +177,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
         setAjaxErrors({});
 
         try {
-            const response = await axios.post(route('customers.store'), customerData, {
-                headers: { 'Accept': 'application/json' }
-            });
+            const response = await api.post(route('customers.store'), customerData);
 
             const newCustomer = response.data.customer;
             setLocalCustomers(prev => [...prev, newCustomer]);
@@ -189,15 +188,11 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
             resetCustomer();
             setCustomerSearchQuery('');
         } catch (error: any) {
-            if (error.response?.status === 422) {
-                const errors = error.response.data.errors;
-                const formattedErrors: Record<string, string> = {};
-                Object.keys(errors).forEach(key => {
-                    formattedErrors[key] = errors[key][0];
-                });
-                setAjaxErrors(formattedErrors);
+            const { errors, message } = handleApiError(error);
+            if (errors) {
+                setAjaxErrors(errors);
             } else {
-                alert('登録に失敗しました。');
+                alert(message);
             }
         } finally {
             setIsSubmittingQuickCustomer(false);
