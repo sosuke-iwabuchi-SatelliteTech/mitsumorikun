@@ -28,11 +28,12 @@ class InvoiceController extends Controller
         $invoices = Invoice::where('user_group_id', $userGroup->id)
             ->whereRaw('version = (select max(version) from invoices as i2 where i2.estimate_number = invoices.estimate_number and i2.user_group_id = invoices.user_group_id)')
             ->with('customer')
-            ->orderBy('estimate_number', 'desc')
-            ->paginate($request->get('per_page', 15));
+            ->search($request->get('search'))
+            ->filterAndSort($request, ['estimate_number', 'title', 'estimate_date', 'total_amount'], 'estimate_number', 'desc');
 
         return Inertia::render('Invoices/Index', [
             'invoices' => $invoices,
+            'filters' => $request->only(['search', 'sort_by', 'sort_direction', 'per_page']),
         ]);
     }
 

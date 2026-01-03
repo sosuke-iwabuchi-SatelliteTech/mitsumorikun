@@ -5,14 +5,33 @@ import { Invoice } from '@/types/invoice';
 import { useState } from 'react';
 import Pagination from '@/Components/Pagination';
 import StatusBadge from '@/Components/StatusBadge';
+import SortableHeader from '@/Components/SortableHeader';
+import PerPageSelector from '@/Components/PerPageSelector';
+import { usePageParams } from '@/Hooks/usePageParams';
 import { formatDate } from '@/Utils/date';
 
 interface Props extends PageProps {
     invoices: PaginatedData<Invoice>;
+    filters: {
+        search: string;
+        sort_by: string;
+        sort_direction: 'asc' | 'desc';
+        per_page: number;
+    };
 }
 
-export default function Index({ auth, invoices }: Props) {
-    // Simple index for now, can add filtering later if needed
+export default function Index({ auth, invoices, filters }: Props) {
+    const [search, setSearch] = useState(filters.search || '');
+    const { params, sortBy, sortDirection, perPage } = usePageParams();
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        router.get(
+            route('invoices.index'),
+            { ...params, search, page: 1 },
+            { preserveState: true }
+        );
+    };
     
     return (
         <AuthenticatedLayout
@@ -34,6 +53,33 @@ export default function Index({ auth, invoices }: Props) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="mb-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
+                        <form
+                            onSubmit={handleSearch}
+                            className="flex w-full max-w-md items-center gap-2"
+                        >
+                            <input
+                                type="text"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="顧客名、管理番号、件名で検索..."
+                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            />
+                            <button
+                                type="submit"
+                                className="inline-flex shrink-0 items-center whitespace-nowrap rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                            >
+                                検索
+                            </button>
+                        </form>
+
+                        <PerPageSelector
+                            currentPerPage={perPage}
+                            queryParams={params}
+                            routeName="invoices.index"
+                        />
+                    </div>
+
                     <div className="overflow-hidden border border-gray-100 bg-white shadow-sm sm:rounded-lg">
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-200">
@@ -42,22 +88,42 @@ export default function Index({ auth, invoices }: Props) {
                                         <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                             ステータス
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                            管理番号
-                                        </th>
-
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                            件名
-                                        </th>
+                                        <SortableHeader
+                                            label="管理番号"
+                                            sortField="estimate_number"
+                                            currentSort={sortBy}
+                                            currentDirection={sortDirection}
+                                            queryParams={params}
+                                            routeName="invoices.index"
+                                        />
+                                        <SortableHeader
+                                            label="件名"
+                                            sortField="title"
+                                            currentSort={sortBy}
+                                            currentDirection={sortDirection}
+                                            queryParams={params}
+                                            routeName="invoices.index"
+                                        />
                                         <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                             顧客
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                            見積日
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 text-right">
-                                            合計金額
-                                        </th>
+                                        <SortableHeader
+                                            label="見積日"
+                                            sortField="estimate_date"
+                                            currentSort={sortBy}
+                                            currentDirection={sortDirection}
+                                            queryParams={params}
+                                            routeName="invoices.index"
+                                        />
+                                        <SortableHeader
+                                            label="合計金額"
+                                            sortField="total_amount"
+                                            currentSort={sortBy}
+                                            currentDirection={sortDirection}
+                                            queryParams={params}
+                                            routeName="invoices.index"
+                                            className="text-right"
+                                        />
                                         <th className="relative px-6 py-3">
                                             <span className="sr-only">詳細</span>
                                         </th>

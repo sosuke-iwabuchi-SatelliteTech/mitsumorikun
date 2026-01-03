@@ -8,6 +8,7 @@ interface Props {
     currentDirection: 'asc' | 'desc';
     queryParams: Record<string, any>;
     routeName: string;
+    className?: string;
 }
 
 export default function SortableHeader({
@@ -17,13 +18,14 @@ export default function SortableHeader({
     currentDirection,
     queryParams,
     routeName,
+    className = 'text-left',
 }: Props) {
     const isActive = sortField === currentSort;
     const nextDirection =
         isActive && currentDirection === 'asc' ? 'desc' : 'asc';
 
     return (
-        <th scope="col" className="px-6 py-3 text-left">
+        <th scope="col" className={`px-6 py-3 ${className}`}>
             <Link
                 href={route(routeName, {
                     ...queryParams,

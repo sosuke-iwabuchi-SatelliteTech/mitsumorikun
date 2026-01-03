@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Traits\FilterableAndSortable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Invoice extends Model
 {
     /** @use HasFactory<\Database\Factories\InvoiceFactory> */
-    use HasFactory, HasUuids, SoftDeletes;
+    use FilterableAndSortable, HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
         'user_group_id',
@@ -70,5 +72,18 @@ class Invoice extends Model
     public function finalizedInvoices(): HasMany
     {
         return $this->hasMany(FinalizedInvoice::class);
+    }
+
+    public function scopeSearch(Builder $query, ?string $search)
+    {
+        return $query->when($search, function ($q) use ($search) {
+            $q->where(function ($q) use ($search) {
+                $q->where('estimate_number', 'like', "%{$search}%")
+                    ->orWhere('title', 'like', "%{$search}%")
+                    ->orWhereHas('customer', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            });
+        });
     }
 }
