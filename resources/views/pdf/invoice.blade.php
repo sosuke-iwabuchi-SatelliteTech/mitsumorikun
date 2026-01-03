@@ -73,13 +73,19 @@
         <span style="font-size: 10pt;">(消費税込み)</span>
     </div>
 
+    @php
+        $allTaxExclusive = $details->every(fn($detail) => $detail->tax_classification === 'exclusive');
+    @endphp
+
     <table class="details-table">
         <thead>
             <tr>
-                <th style="width: 37%; letter-spacing: 30px; text-indent: 30px;">項目</th>
+                <th style="width: {{ $allTaxExclusive ? '42%' : '37%' }}; letter-spacing: 30px; text-indent: 30px;">項目</th>
                 <th style="width: 7%;">数量</th>
                 <th style="width: 5%;">単位</th>
-                <th style="width: 5%;">税</th>
+                @if(!$allTaxExclusive)
+                    <th style="width: 5%;">税</th>
+                @endif
                 <th style="width: 13%; letter-spacing: 10px; text-indent: 10px;">単価</th>
                 <th style="width: 13%; letter-spacing: 10px; text-indent: 10px;">金額</th>
                 <th style="width: 20%; letter-spacing: 30px; text-indent: 30px;">備考</th>
@@ -91,7 +97,9 @@
                     <td>{{ $detail->item_name }}</td>
                     <td class="text-right">{{ $detail->quantity == (int)$detail->quantity ? number_format($detail->quantity, 0) : number_format($detail->quantity, 2) }}</td>
                     <td class="text-center">{{ $detail->unit }}</td>
-                    <td class="text-center">{{ $detail->tax_classification === 'inclusive' ? '込' : '別' }}</td>
+                    @if(!$allTaxExclusive)
+                        <td class="text-center">{{ $detail->tax_classification === 'inclusive' ? '込' : '別' }}</td>
+                    @endif
                     <td class="text-right">{{ number_format($detail->unit_price, 0) }}</td>
                     <td class="text-right">{{ number_format($detail->amount, 0) }}</td>
                     <td style="font-size: 7pt;">{{ $detail->remarks }}</td>
@@ -104,7 +112,9 @@
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
-                    <td>&nbsp;</td>
+                    @if(!$allTaxExclusive)
+                        <td>&nbsp;</td>
+                    @endif
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
@@ -113,7 +123,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="5" rowspan="3" style="vertical-align: top; padding: 5px;">
+                <td colspan="{{ $allTaxExclusive ? 4 : 5 }}" rowspan="3" style="vertical-align: top; padding: 5px;">
                     <div style="font-size: 7pt;">【備考】</div>
                     <div style="font-size: 7pt; margin-top: 5px; min-height: 40px;">
                         {!! nl2br(e($invoice->remarks)) !!}

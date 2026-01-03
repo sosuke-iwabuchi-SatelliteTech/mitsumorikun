@@ -49,7 +49,6 @@ class InvoiceServiceTest extends TestCase
                     'item_name' => 'Work 1',
                     'quantity' => 2,
                     'unit_price' => 1000,
-                    'tax_rate' => 0.10,
                     'tax_classification' => 'exclusive',
                     'amount' => 2000,
                 ],
@@ -118,7 +117,6 @@ class InvoiceServiceTest extends TestCase
                     'item_name' => 'Decimal Item',
                     'quantity' => 1.5,
                     'unit_price' => 1001,
-                    'tax_rate' => 0.10,
                     'tax_classification' => 'exclusive',
                     'amount' => 1501.5, // 1001 * 1.5 = 1501.5
                 ],
@@ -150,7 +148,6 @@ class InvoiceServiceTest extends TestCase
                     'item_name' => 'Discount Item',
                     'quantity' => 1,
                     'unit_price' => -100000,
-                    'tax_rate' => 0.10,
                     'tax_classification' => 'inclusive',
                     'amount' => -100000,
                 ],

@@ -37,7 +37,6 @@ class InvoiceRequest extends FormRequest
             'details.*.quantity' => 'required|numeric',
             'details.*.unit_price' => 'required|numeric',
             'details.*.unit' => 'nullable|string|max:50',
-            'details.*.tax_rate' => 'required|numeric',
             'details.*.tax_classification' => 'required|string|in:inclusive,exclusive',
             'details.*.amount' => 'required|numeric',
             'details.*.group_name' => 'nullable|string|max:255',
