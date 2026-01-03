@@ -101,4 +101,36 @@ class InvoiceServiceTest extends TestCase
         $this->assertEquals('Test Corp', $invoice->issuer_name);
         $this->assertEquals('Updated Corp', $newInvoice->issuer_name);
     }
+
+    public function test_floors_tax_and_total_amount(): void
+    {
+        $customer = Customer::create([
+            'user_group_id' => $this->userGroup->id,
+            'name' => 'Test Customer',
+        ]);
+
+        $data = [
+            'customer_id' => $customer->id,
+            'title' => 'Test Rounding',
+            'estimate_date' => '2026-01-01',
+            'details' => [
+                [
+                    'item_name' => 'Decimal Item',
+                    'quantity' => 1.5,
+                    'unit_price' => 1001,
+                    'tax_rate' => 0.10,
+                    'tax_classification' => 'exclusive',
+                    'amount' => 1501.5, // 1001 * 1.5 = 1501.5
+                ],
+            ],
+            'total_amount' => 1651.65, // (1501.5) * 1.1 = 1651.65
+            'tax_amount' => 150.15,   // 1501.5 * 0.1 = 150.15
+        ];
+
+        $invoice = $this->service->create($this->userGroup, $data);
+
+        $this->assertEquals(1501, $invoice->details->first()->amount);
+        $this->assertEquals(150, $invoice->tax_amount);
+        $this->assertEquals(1651, $invoice->total_amount);
+    }
 }

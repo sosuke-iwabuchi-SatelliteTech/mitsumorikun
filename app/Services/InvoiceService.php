@@ -19,6 +19,8 @@ class InvoiceService
             $detail = $userGroup->detail;
 
             $invoice = new Invoice();
+            $data['total_amount'] = floor($data['total_amount'] ?? 0);
+            $data['tax_amount'] = floor($data['tax_amount'] ?? 0);
             $invoice->fill($data);
             $invoice->user_group_id = $userGroup->id;
             $invoice->estimate_number = $this->estimateNumberService->generate($userGroup->id);
@@ -48,6 +50,7 @@ class InvoiceService
 
             if (isset($data['details'])) {
                 foreach ($data['details'] as $index => $detailData) {
+                    $detailData['amount'] = floor($detailData['amount'] ?? 0);
                     $invoice->details()->create(array_merge($detailData, ['display_order' => $index]));
                 }
             }
@@ -59,11 +62,14 @@ class InvoiceService
     public function update(Invoice $invoice, array $data): Invoice
     {
         return DB::transaction(function () use ($invoice, $data) {
+            $data['total_amount'] = floor($data['total_amount'] ?? 0);
+            $data['tax_amount'] = floor($data['tax_amount'] ?? 0);
             $invoice->update($data);
 
             if (isset($data['details'])) {
                 $invoice->details()->delete();
                 foreach ($data['details'] as $index => $detailData) {
+                    $detailData['amount'] = floor($detailData['amount'] ?? 0);
                     $invoice->details()->create(array_merge($detailData, ['display_order' => $index]));
                 }
             }

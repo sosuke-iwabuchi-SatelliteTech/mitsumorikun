@@ -65,10 +65,10 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
         let tax = 0;
 
         details.forEach(item => {
-            const amount = Number(item.quantity) * Number(item.unit_price);
+            const amount = Math.floor(Number(item.quantity) * Number(item.unit_price));
             total += amount;
             if (item.tax_classification === 'exclusive') {
-                tax += amount * Number(item.tax_rate);
+                tax += Math.floor(amount * Number(item.tax_rate));
             }
         });
 
@@ -105,7 +105,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
         newDetails[index] = { ...newDetails[index], [field]: value };
         
         if (field === 'quantity' || field === 'unit_price') {
-            newDetails[index].amount = Number(newDetails[index].quantity) * Number(newDetails[index].unit_price);
+            newDetails[index].amount = Math.floor(Number(newDetails[index].quantity) * Number(newDetails[index].unit_price));
         }
 
         setData('details', newDetails);
@@ -119,7 +119,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
             unit: item.unit,
             tax_rate: item.tax_rate / 100,
             tax_classification: item.tax_type === 'inc' ? 'inclusive' : 'exclusive',
-            amount: Number(item.quantity) * Number(item.unit_price),
+            amount: Math.floor(Number(item.quantity) * Number(item.unit_price)),
             group_name: '',
             remarks: item.remarks || '',
         }]);
