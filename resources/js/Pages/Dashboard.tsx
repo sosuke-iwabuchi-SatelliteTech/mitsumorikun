@@ -61,57 +61,65 @@ export default function Dashboard({ invoiceStats }: PageProps<DashboardProps>) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="flex items-center justify-between p-6 text-gray-900 border-b border-gray-100">
-                            <div className="text-lg font-medium">見積・請求 状況サマリ</div>
-                            {user.role === 'general' && (
+                    {user.role === 'general' ? (
+                        <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                            <div className="flex items-center justify-between p-6 text-gray-900 border-b border-gray-100">
+                                <div className="text-lg font-medium">見積・請求 状況サマリ</div>
                                 <Link
                                     href={route('invoices.index')}
                                     className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 >
                                     一覧を表示 &rarr;
                                 </Link>
-                            )}
-                        </div>
-                        <div className="p-6">
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead>
-                                        <tr>
-                                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                ステータス
-                                            </th>
-                                            <th className="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                件数
-                                            </th>
-                                            <th className="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                合計金額
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                        {statusOrder.map((status) => {
-                                            const stat = statsMap[status] || { count: 0, total_amount: 0 };
-                                            return (
-                                                <tr key={status}>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                        {statusLabels[status]}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">
-                                                        {stat.count} 件
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900 font-semibold">
-                                                        {formatCurrency(stat.total_amount)}
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
+                            </div>
+                            <div className="p-6">
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full divide-y divide-gray-200">
+                                        <thead>
+                                            <tr>
+                                                <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    ステータス
+                                                </th>
+                                                <th className="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    件数
+                                                </th>
+                                                <th className="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    合計金額
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
+                                            {statusOrder.map((status) => {
+                                                const stat = statsMap[status] || { count: 0, total_amount: 0 };
+                                                return (
+                                                    <tr key={status}>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                            {statusLabels[status]}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500">
+                                                            {stat.count} 件
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900 font-semibold">
+                                                            {formatCurrency(stat.total_amount)}
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
+                    ) : (
+                        <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                            <div className="p-6 text-gray-900">
+                                <h3 className="text-lg font-medium">ようこそ、管理者さん</h3>
+                                <p className="mt-1 text-sm text-gray-600">
+                                    左のメニューからユーザー管理やグループ管理を行えます。
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </AuthenticatedLayout>

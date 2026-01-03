@@ -56,10 +56,20 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
 
     const [isMasterModalOpen, setIsMasterModalOpen] = useState(false);
     const [masterSearchQuery, setMasterSearchQuery] = useState('');
+    const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
+    const [customerSearchQuery, setCustomerSearchQuery] = useState('');
 
     const filteredMasterItems = invoiceItems.filter(item =>
         item.name.toLowerCase().includes(masterSearchQuery.toLowerCase())
     );
+
+    const filteredCustomers = customers.filter(customer =>
+        customer.name.toLowerCase().includes(customerSearchQuery.toLowerCase()) ||
+        customer.contact_person_name?.toLowerCase().includes(customerSearchQuery.toLowerCase()) ||
+        customer.address?.toLowerCase().includes(customerSearchQuery.toLowerCase())
+    );
+
+    const selectedCustomer = customers.find(c => c.id.toString() === data.customer_id.toString());
 
     const calculateTotals = (details: any[]) => {
         let grandTotal = 0;
@@ -136,6 +146,12 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
         setMasterSearchQuery('');
     };
 
+    const handleCustomerSelect = (customer: Customer) => {
+        setData('customer_id', customer.id);
+        setIsCustomerModalOpen(false);
+        setCustomerSearchQuery('');
+    };
+
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
         if (submitMethod === 'post') post(submitRoute);
@@ -147,19 +163,15 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
         <form onSubmit={submit} className="space-y-6">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
-                    <InputLabel htmlFor="customer_id" value="顧客" />
-                    <select
-                        id="customer_id"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        value={data.customer_id}
-                        onChange={(e) => setData('customer_id', e.target.value)}
-                        required
-                    >
-                        <option value="">選択してください</option>
-                        {customers.map((c) => (
-                            <option key={c.id} value={c.id}>{c.name}</option>
-                        ))}
-                    </select>
+                    <InputLabel htmlFor="customer_name" value="顧客" />
+                    <TextInput
+                        id="customer_name"
+                        className="mt-1 block w-full bg-gray-50 cursor-pointer"
+                        value={selectedCustomer?.name || ''}
+                        readOnly
+                        placeholder="顧客を選択してください"
+                        onClick={() => setIsCustomerModalOpen(true)}
+                    />
                     <InputError message={errors.customer_id} className="mt-2" />
                 </div>
 
@@ -516,6 +528,64 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
 
                     <div className="mt-6 flex justify-end">
                         <SecondaryButton onClick={() => setIsMasterModalOpen(false)} disabled={false}>
+                            キャンセル
+                        </SecondaryButton>
+                    </div>
+                </div>
+            </Modal>
+            <Modal show={isCustomerModalOpen} onClose={() => setIsCustomerModalOpen(false)} maxWidth="2xl">
+                <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-medium text-gray-900">顧客を選択</h2>
+                        <button onClick={() => setIsCustomerModalOpen(false)} className="text-gray-400 hover:text-gray-500">
+                            <span className="sr-only">閉じる</span>
+                            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div className="mb-4">
+                        <TextInput
+                            type="text"
+                            placeholder="顧客名、担当者名、住所で検索..."
+                            className="block w-full"
+                            value={customerSearchQuery}
+                            onChange={(e) => setCustomerSearchQuery(e.target.value)}
+                            autoFocus
+                        />
+                    </div>
+
+                    <div className="max-h-96 overflow-y-auto border rounded-md">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50 sticky top-0">
+                                <tr>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">顧客名</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">担当者</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">住所</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {filteredCustomers.map((customer) => (
+                                    <tr key={customer.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleCustomerSelect(customer)}>
+                                        <td className="px-4 py-3 text-sm text-gray-900 font-medium">{customer.name}</td>
+                                        <td className="px-4 py-3 text-sm text-gray-500">{customer.contact_person_name}</td>
+                                        <td className="px-4 py-3 text-sm text-gray-500 truncate max-w-xs">{customer.address}</td>
+                                    </tr>
+                                ))}
+                                {filteredCustomers.length === 0 && (
+                                    <tr>
+                                        <td colSpan={3} className="px-4 py-8 text-center text-sm text-gray-500">
+                                            見つかりませんでした
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="mt-6 flex justify-end">
+                        <SecondaryButton onClick={() => setIsCustomerModalOpen(false)}>
                             キャンセル
                         </SecondaryButton>
                     </div>
