@@ -9,6 +9,7 @@ import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { formatDate } from '@/Utils/date';
 
 interface InvoiceItemMaster {
     id: number;
@@ -33,11 +34,11 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
     const { data, setData, post, put, patch, processing, errors } = useForm({
         customer_id: invoice?.customer_id || '',
         title: invoice?.title || '',
-        estimate_date: invoice?.estimate_date ? invoice.estimate_date.split('T')[0] : new Date().toISOString().split('T')[0],
-        delivery_deadline: invoice?.delivery_deadline ? invoice.delivery_deadline.split('T')[0] : '',
+        estimate_date: formatDate(invoice?.estimate_date || new Date().toISOString(), 'yyyy-MM-dd'),
+        delivery_deadline: formatDate(invoice?.delivery_deadline, 'yyyy-MM-dd') === '-' ? '' : formatDate(invoice?.delivery_deadline, 'yyyy-MM-dd'),
         construction_address: invoice?.construction_address || '',
         payment_terms: invoice?.payment_terms || '',
-        expiration_date: invoice?.expiration_date ? invoice.expiration_date.split('T')[0] : '',
+        expiration_date: formatDate(invoice?.expiration_date, 'yyyy-MM-dd') === '-' ? '' : formatDate(invoice?.expiration_date, 'yyyy-MM-dd'),
         remarks: invoice?.remarks || '',
         total_amount: invoice?.total_amount || 0,
         tax_amount: invoice?.tax_amount || 0,
