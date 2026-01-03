@@ -1,5 +1,6 @@
 import { useForm } from '@inertiajs/react';
 import api from '@/Utils/api';
+import { customerService } from '@/Services/customers';
 import { handleApiError, ValidationErrors } from '@/Utils/apiErrors';
 import { Invoice, InvoiceDetail } from '@/types/invoice';
 import { Customer } from '@/types';
@@ -177,9 +178,9 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
         setAjaxErrors({});
 
         try {
-            const response = await api.post(route('customers.store'), customerData);
+            const data = await customerService.store(customerData);
 
-            const newCustomer = response.data.customer;
+            const newCustomer = data.customer;
             setLocalCustomers(prev => [...prev, newCustomer]);
             setData('customer_id', newCustomer.id);
             
