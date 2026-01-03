@@ -1,4 +1,5 @@
 import { useForm } from '@inertiajs/react';
+import axios from 'axios';
 import { Invoice, InvoiceDetail } from '@/types/invoice';
 import { Customer } from '@/types';
 import InputError from '@/Components/InputError';
@@ -7,7 +8,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDate } from '@/Utils/date';
 
@@ -31,6 +32,11 @@ interface Props {
 }
 
 export default function InvoiceForm({ invoice, customers, invoiceItems, submitRoute, submitMethod }: Props) {
+    const [localCustomers, setLocalCustomers] = useState<Customer[]>(customers);
+
+    useEffect(() => {
+        setLocalCustomers(customers);
+    }, [customers]);
     const { data, setData, post, put, patch, processing, errors } = useForm({
         customer_id: invoice?.customer_id || '',
         title: invoice?.title || '',
@@ -58,18 +64,25 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
     const [masterSearchQuery, setMasterSearchQuery] = useState('');
     const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
     const [customerSearchQuery, setCustomerSearchQuery] = useState('');
+    const [isQuickCreateOpen, setIsQuickCreateOpen] = useState(false);
+
+    const { data: customerData, setData: setCustomerData, post: postCustomer, processing: customerProcessing, errors: customerErrors, reset: resetCustomer } = useForm({
+        name: '',
+        contact_person_name: '',
+        address: '',
+    });
 
     const filteredMasterItems = invoiceItems.filter(item =>
         item.name.toLowerCase().includes(masterSearchQuery.toLowerCase())
     );
 
-    const filteredCustomers = customers.filter(customer =>
+    const filteredCustomers = localCustomers.filter(customer =>
         customer.name.toLowerCase().includes(customerSearchQuery.toLowerCase()) ||
         customer.contact_person_name?.toLowerCase().includes(customerSearchQuery.toLowerCase()) ||
         customer.address?.toLowerCase().includes(customerSearchQuery.toLowerCase())
     );
 
-    const selectedCustomer = customers.find(c => c.id.toString() === data.customer_id.toString());
+    const selectedCustomer = localCustomers.find(c => c.id === data.customer_id);
 
     const calculateTotals = (details: any[]) => {
         let grandTotal = 0;
@@ -150,6 +163,45 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
         setData('customer_id', customer.id);
         setIsCustomerModalOpen(false);
         setCustomerSearchQuery('');
+        setIsQuickCreateOpen(false);
+    };
+
+    const [isSubmittingQuickCustomer, setIsSubmittingQuickCustomer] = useState(false);
+    const [ajaxErrors, setAjaxErrors] = useState<Record<string, string>>({});
+
+    const handleQuickCustomerSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsSubmittingQuickCustomer(true);
+        setAjaxErrors({});
+
+        try {
+            const response = await axios.post(route('customers.store'), customerData, {
+                headers: { 'Accept': 'application/json' }
+            });
+
+            const newCustomer = response.data.customer;
+            setLocalCustomers(prev => [...prev, newCustomer]);
+            setData('customer_id', newCustomer.id);
+            
+            setIsCustomerModalOpen(false);
+            setIsQuickCreateOpen(false);
+            resetCustomer();
+            setCustomerSearchQuery('');
+        } catch (error: any) {
+            if (error.response?.status === 422) {
+                const errors = error.response.data.errors;
+                const formattedErrors: Record<string, string> = {};
+                Object.keys(errors).forEach(key => {
+                    formattedErrors[key] = errors[key][0];
+                });
+                setAjaxErrors(formattedErrors);
+            } else {
+                alert('登録に失敗しました。');
+            }
+        } finally {
+            setIsSubmittingQuickCustomer(false);
+        }
     };
 
     const submit = (e: React.FormEvent) => {
@@ -160,7 +212,8 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
     };
 
     return (
-        <form onSubmit={submit} className="space-y-6">
+        <Fragment>
+            <form onSubmit={submit} className="space-y-6">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
                     <InputLabel htmlFor="customer_name" value="顧客" />
@@ -474,8 +527,9 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                     保存する
                 </PrimaryButton>
             </div>
+        </form>
 
-            <Modal show={isMasterModalOpen} onClose={() => setIsMasterModalOpen(false)} maxWidth="2xl">
+        <Modal show={isMasterModalOpen} onClose={() => setIsMasterModalOpen(false)} maxWidth="2xl">
                 <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-lg font-medium text-gray-900">マスタから引用</h2>
@@ -545,44 +599,108 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                         </button>
                     </div>
 
-                    <div className="mb-4">
-                        <TextInput
-                            type="text"
-                            placeholder="顧客名、担当者名、住所で検索..."
-                            className="block w-full"
-                            value={customerSearchQuery}
-                            onChange={(e) => setCustomerSearchQuery(e.target.value)}
-                            autoFocus
-                        />
+                    <div className="mb-4 flex items-center justify-between gap-x-4">
+                        <div className="flex-grow">
+                            <TextInput
+                                type="text"
+                                placeholder="顧客名、担当者名、住所で検索..."
+                                className="block w-full"
+                                value={customerSearchQuery}
+                                onChange={(e) => {
+                                    setCustomerSearchQuery(e.target.value);
+                                    if (isQuickCreateOpen) setIsQuickCreateOpen(false);
+                                }}
+                                autoFocus
+                            />
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setIsQuickCreateOpen(!isQuickCreateOpen)}
+                            className="inline-flex items-center rounded-md bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-indigo-100"
+                        >
+                            {isQuickCreateOpen ? '検索に戻る' : '新規登録'}
+                        </button>
                     </div>
 
-                    <div className="max-h-96 overflow-y-auto border rounded-md">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50 sticky top-0">
-                                <tr>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">顧客名</th>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">担当者</th>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">住所</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {filteredCustomers.map((customer) => (
-                                    <tr key={customer.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleCustomerSelect(customer)}>
-                                        <td className="px-4 py-3 text-sm text-gray-900 font-medium">{customer.name}</td>
-                                        <td className="px-4 py-3 text-sm text-gray-500">{customer.contact_person_name}</td>
-                                        <td className="px-4 py-3 text-sm text-gray-500 truncate max-w-xs">{customer.address}</td>
-                                    </tr>
-                                ))}
-                                {filteredCustomers.length === 0 && (
+                    {!isQuickCreateOpen ? (
+                        <div className="max-h-96 overflow-y-auto border rounded-md">
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50 sticky top-0">
                                     <tr>
-                                        <td colSpan={3} className="px-4 py-8 text-center text-sm text-gray-500">
-                                            見つかりませんでした
-                                        </td>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">顧客名</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">担当者</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">住所</th>
                                     </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {filteredCustomers.map((customer) => (
+                                        <tr key={customer.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleCustomerSelect(customer)}>
+                                            <td className="px-4 py-3 text-sm text-gray-900 font-medium">{customer.name}</td>
+                                            <td className="px-4 py-3 text-sm text-gray-500">{customer.contact_person_name}</td>
+                                            <td className="px-4 py-3 text-sm text-gray-500 truncate max-w-xs">{customer.address}</td>
+                                        </tr>
+                                    ))}
+                                    {filteredCustomers.length === 0 && (
+                                        <tr>
+                                            <td colSpan={3} className="px-4 py-8 text-center text-sm text-gray-500">
+                                                <p>見つかりませんでした</p>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setIsQuickCreateOpen(true);
+                                                        setCustomerData('name', customerSearchQuery);
+                                                    }}
+                                                    className="mt-2 text-indigo-600 hover:text-indigo-500 font-medium"
+                                                >
+                                                    「{customerSearchQuery}」で新規登録する
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <form onSubmit={handleQuickCustomerSubmit} className="space-y-4 p-4 border rounded-md bg-gray-50">
+                            <h3 className="text-sm font-bold text-gray-700">顧客の簡易登録</h3>
+                            <div>
+                                <InputLabel value="顧客名称" />
+                                <TextInput
+                                    className="mt-1 block w-full"
+                                    value={customerData.name}
+                                    onChange={(e) => setCustomerData('name', e.target.value)}
+                                    required
+                                />
+                                <InputError message={ajaxErrors.name} className="mt-2" />
+                            </div>
+                            <div>
+                                <InputLabel value="担当者名" />
+                                <TextInput
+                                    className="mt-1 block w-full"
+                                    value={customerData.contact_person_name}
+                                    onChange={(e) => setCustomerData('contact_person_name', e.target.value)}
+                                />
+                                <InputError message={ajaxErrors.contact_person_name} className="mt-2" />
+                            </div>
+                            <div>
+                                <InputLabel value="住所" />
+                                <TextInput
+                                    className="mt-1 block w-full"
+                                    value={customerData.address}
+                                    onChange={(e) => setCustomerData('address', e.target.value)}
+                                />
+                                <InputError message={ajaxErrors.address} className="mt-2" />
+                            </div>
+                            <div className="flex justify-end gap-x-2 pt-2">
+                                <SecondaryButton onClick={() => setIsQuickCreateOpen(false)}>
+                                    キャンセル
+                                </SecondaryButton>
+                                <PrimaryButton disabled={isSubmittingQuickCustomer}>
+                                    登録して選択
+                                </PrimaryButton>
+                            </div>
+                        </form>
+                    )}
 
                     <div className="mt-6 flex justify-end">
                         <SecondaryButton onClick={() => setIsCustomerModalOpen(false)}>
@@ -591,6 +709,6 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                     </div>
                 </div>
             </Modal>
-        </form>
+        </Fragment>
     );
 }

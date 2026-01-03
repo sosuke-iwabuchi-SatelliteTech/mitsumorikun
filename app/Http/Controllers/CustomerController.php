@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -36,7 +37,7 @@ class CustomerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -48,7 +49,14 @@ class CustomerController extends Controller
             'remarks' => 'nullable|string',
         ]);
 
-        Customer::create($validated);
+        $customer = Customer::create($validated);
+ 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => '顧客を登録しました。',
+                'customer' => $customer
+            ]);
+        }
 
         return redirect()->route('customers.index')
             ->with('message', '顧客を登録しました。');

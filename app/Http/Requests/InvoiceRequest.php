@@ -43,4 +43,26 @@ class InvoiceRequest extends FormRequest
             'details.*.remarks' => 'nullable|string',
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'customer_id' => '顧客',
+            'title' => '件名',
+            'estimate_date' => '見積日',
+            'delivery_deadline' => '受け渡し期日',
+            'construction_address' => '工事場所',
+            'payment_terms' => '支払い条件',
+            'expiration_date' => '見積有効期限',
+            'remarks' => '備考',
+            'total_amount' => '合計金額',
+            'tax_amount' => '消費税',
+            'details' => '明細',
+            'details.*.item_name' => '品名',
+            'details.*.quantity' => '数量',
+            'details.*.unit_price' => '単価',
+            'details.*.unit' => '単位',
+            'details.*.tax_classification' => '税区分',
+        ];
+    }
 }

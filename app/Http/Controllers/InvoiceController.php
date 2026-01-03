@@ -42,7 +42,7 @@ class InvoiceController extends Controller
     public function create(): Response
     {
         return Inertia::render('Invoices/Create', [
-            'customers' => Customer::all(['id', 'name']),
+            'customers' => Customer::all(['id', 'name', 'contact_person_name', 'address']),
             'invoiceItems' => InvoiceItem::all(),
         ]);
     }
@@ -121,7 +121,7 @@ class InvoiceController extends Controller
 
         return Inertia::render('Invoices/Edit', [
             'invoice' => $invoice,
-            'customers' => Customer::all(['id', 'name']),
+            'customers' => Customer::all(['id', 'name', 'contact_person_name', 'address']),
             'invoiceItems' => InvoiceItem::all(),
         ]);
     }
