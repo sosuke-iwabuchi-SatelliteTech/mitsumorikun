@@ -2,8 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { Invoice } from '@/types/invoice';
-import { format } from 'date-fns';
-import { ja } from 'date-fns/locale';
+import { formatDate } from '@/Utils/date';
 
 interface Props extends PageProps {
     invoice: Invoice;
@@ -68,7 +67,7 @@ export default function ShowFinalized({ auth, invoice, finalized }: Props) {
                             </div>
                             <div className="ml-3">
                                 <p className="text-sm text-amber-700">
-                                    これは {format(new Date(finalized.created_at), 'yyyy年MM月dd日 HH:mm', { locale: ja })} に保存された確定データです。閲覧専用であり、現在のデータには影響しません。
+                                    これは {formatDate(finalized.created_at, 'yyyy年MM月dd日 HH:mm')} に保存された確定データです。閲覧専用であり、現在のデータには影響しません。
                                 </p>
                             </div>
                         </div>
@@ -85,7 +84,7 @@ export default function ShowFinalized({ auth, invoice, finalized }: Props) {
                                     </div>
                                     <div className="text-right">
                                         <p className="text-sm text-gray-500">
-                                            作成日: {format(new Date(finalized.created_at), 'yyyy/MM/dd', { locale: ja })}
+                                            作成日: {formatDate(finalized.created_at)}
                                         </p>
                                     </div>
                                 </div>
@@ -97,11 +96,11 @@ export default function ShowFinalized({ auth, invoice, finalized }: Props) {
                                     </div>
                                     <div>
                                         <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">有効期限</h4>
-                                        <p className="text-gray-900">{finalized.expiration_date ? format(new Date(finalized.expiration_date.split('T')[0]), 'yyyy/MM/dd', { locale: ja }) : '-'}</p>
+                                        <p className="text-gray-900">{formatDate(finalized.expiration_date)}</p>
                                     </div>
                                     <div>
                                         <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">納入期限</h4>
-                                        <p className="text-gray-900">{finalized.delivery_deadline ? format(new Date(finalized.delivery_deadline.split('T')[0]), 'yyyy/MM/dd', { locale: ja }) : '-'}</p>
+                                        <p className="text-gray-900">{formatDate(finalized.delivery_deadline)}</p>
                                     </div>
                                     <div>
                                         <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">工事場所 / 支払条件</h4>

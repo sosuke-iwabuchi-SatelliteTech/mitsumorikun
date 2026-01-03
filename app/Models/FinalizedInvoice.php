@@ -43,9 +43,9 @@ class FinalizedInvoice extends Model
     ];
 
     protected $casts = [
-        'estimate_date' => 'date',
-        'delivery_deadline' => 'date',
-        'expiration_date' => 'date',
+        'estimate_date' => 'date:Y-m-d',
+        'delivery_deadline' => 'date:Y-m-d',
+        'expiration_date' => 'date:Y-m-d',
         'total_amount' => 'decimal:2',
         'tax_amount' => 'decimal:2',
     ];

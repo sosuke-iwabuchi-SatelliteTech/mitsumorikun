@@ -5,8 +5,7 @@ import { Invoice } from '@/types/invoice';
 import { useState } from 'react';
 import Pagination from '@/Components/Pagination';
 import StatusBadge from '@/Components/StatusBadge';
-import { format } from 'date-fns';
-import { ja } from 'date-fns/locale';
+import { formatDate } from '@/Utils/date';
 
 interface Props extends PageProps {
     invoices: PaginatedData<Invoice>;
@@ -90,7 +89,7 @@ export default function Index({ auth, invoices }: Props) {
                                                     {invoice.customer?.name || '-'}
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                                    {invoice.estimate_date ? format(new Date(invoice.estimate_date), 'yyyy/MM/dd', { locale: ja }) : '-'}
+                                                    {formatDate(invoice.estimate_date)}
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 text-right">
                                                     ¥{Number(invoice.total_amount).toLocaleString()}

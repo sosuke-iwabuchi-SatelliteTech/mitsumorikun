@@ -3,8 +3,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { Invoice } from '@/types/invoice';
 import StatusBadge from '@/Components/StatusBadge';
-import { format } from 'date-fns';
-import { ja } from 'date-fns/locale';
+import { formatDate } from '@/Utils/date';
 import { useState } from 'react';
 
 interface Props extends PageProps {
@@ -130,15 +129,15 @@ export default function Show({ auth, invoice, isLatest, hasFinalized }: Props) {
                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                     <div>
                                         <p className="text-gray-500 uppercase text-xs">見積日</p>
-                                        <p className="font-medium">{invoice.estimate_date ? format(new Date(invoice.estimate_date.split('T')[0]), 'yyyy年MM月dd日', { locale: ja }) : '-'}</p>
+                                        <p className="font-medium">{formatDate(invoice.estimate_date)}</p>
                                     </div>
                                     <div>
                                         <p className="text-gray-500 uppercase text-xs">有効期限</p>
-                                        <p className="font-medium">{invoice.expiration_date ? format(new Date(invoice.expiration_date.split('T')[0]), 'yyyy年MM月dd日', { locale: ja }) : '-'}</p>
+                                        <p className="font-medium">{formatDate(invoice.expiration_date)}</p>
                                     </div>
                                     <div>
                                         <p className="text-gray-500 uppercase text-xs">受け渡し期日</p>
-                                        <p className="font-medium">{invoice.delivery_deadline ? format(new Date(invoice.delivery_deadline.split('T')[0]), 'yyyy年MM月dd日', { locale: ja }) : '-'}</p>
+                                        <p className="font-medium">{formatDate(invoice.delivery_deadline)}</p>
                                     </div>
                                     <div>
                                         <p className="text-gray-500 uppercase text-xs">工事場所</p>
