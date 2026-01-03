@@ -383,7 +383,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                         <svg className="-ml-0.5 mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                         </svg>
-                        マスタから引用
+                        登録ずみから引用
                     </button>
                 </div>
             </div>

@@ -39,7 +39,7 @@ export default function Index({ auth, items, filters }: Props) {
             header={
                 <div className="flex items-center justify-between">
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                        見積項目マスタ
+                        見積項目管理
                     </h2>
                     <Link
                         href={route('invoice-items.create')}
@@ -50,7 +50,7 @@ export default function Index({ auth, items, filters }: Props) {
                 </div>
             }
         >
-            <Head title="見積項目マスタ" />
+            <Head title="見積項目管理" />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">

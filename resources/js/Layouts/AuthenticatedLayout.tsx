@@ -86,7 +86,7 @@ export default function AuthenticatedLayout({
                                         href={route('invoice-items.index')}
                                         active={route().current('invoice-items.*')}
                                     >
-                                        見積項目マスタ
+                                        見積項目管理
                                     </NavLink>
                                 )}
                                 {user.role === 'general' && (
@@ -242,7 +242,7 @@ export default function AuthenticatedLayout({
                                     href={route('invoice-items.index')}
                                     active={route().current('invoice-items.*')}
                                 >
-                                    見積項目マスタ
+                                    見積項目管理
                                 </ResponsiveNavLink>
                             )}
                             {user.role === 'general' && (
