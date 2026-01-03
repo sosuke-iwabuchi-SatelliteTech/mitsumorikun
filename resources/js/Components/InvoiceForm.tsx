@@ -1,4 +1,4 @@
-import { useForm } from '@inertiajs/react';
+import { useForm, Link } from '@inertiajs/react';
 import api from '@/Utils/api';
 import { customerService } from '@/Services/customers';
 import { handleApiError, ValidationErrors } from '@/Utils/apiErrors';
@@ -31,9 +31,10 @@ interface Props {
     invoiceItems: InvoiceItemMaster[];
     submitRoute: string;
     submitMethod: 'post' | 'put' | 'patch';
+    backRoute: string;
 }
 
-export default function InvoiceForm({ invoice, customers, invoiceItems, submitRoute, submitMethod }: Props) {
+export default function InvoiceForm({ invoice, customers, invoiceItems, submitRoute, submitMethod, backRoute }: Props) {
     const [localCustomers, setLocalCustomers] = useState<Customer[]>(customers);
 
     useEffect(() => {
@@ -519,6 +520,12 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
             </div>
 
             <div className="flex justify-end gap-x-4">
+                <Link
+                    href={backRoute}
+                    className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center"
+                >
+                    キャンセル
+                </Link>
                 <PrimaryButton disabled={processing}>
                     保存する
                 </PrimaryButton>

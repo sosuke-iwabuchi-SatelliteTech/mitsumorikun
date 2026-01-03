@@ -28,6 +28,7 @@ export default function Create({ auth, customers, invoiceItems }: Props) {
                                 invoiceItems={invoiceItems}
                                 submitRoute={route('invoices.store')}
                                 submitMethod="post"
+                                backRoute={route('invoices.index')}
                             />
                         </div>
                     </div>

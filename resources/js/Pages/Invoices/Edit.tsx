@@ -31,6 +31,7 @@ export default function Edit({ auth, invoice, customers, invoiceItems }: Props) 
                                 invoiceItems={invoiceItems}
                                 submitRoute={route('invoices.update', invoice.id)}
                                 submitMethod="patch"
+                                backRoute={route('invoices.show', invoice.id)}
                             />
                         </div>
                     </div>
