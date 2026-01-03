@@ -18,11 +18,11 @@ export default function ShowFinalized({ auth, invoice, finalized }: Props) {
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-0">
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
                         {getDocType(finalized.document_type || 'estimate')}確定データ詳細: {finalized.estimate_number} (v{finalized.version})
                     </h2>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                         <a
                             href={route('finalized-invoices.preview', finalized.id)}
                             target="_blank"

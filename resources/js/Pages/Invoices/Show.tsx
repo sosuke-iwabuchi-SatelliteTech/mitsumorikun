@@ -44,11 +44,11 @@ export default function Show({ auth, invoice, isLatest, hasFinalized }: Props) {
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-0">
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
                         {getDocType(invoice.status)}詳細: {invoice.estimate_number} (v{invoice.version})
                     </h2>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                         <Link
                             href={route('invoices.index')}
                             className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"

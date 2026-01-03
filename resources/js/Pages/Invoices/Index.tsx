@@ -41,6 +41,9 @@ export default function Index({ auth, invoices }: Props) {
                                 <thead className="bg-gray-50">
                                     <tr>
                                         <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                            ステータス
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                             管理番号
                                         </th>
 
@@ -52,9 +55,6 @@ export default function Index({ auth, invoices }: Props) {
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                             見積日
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                            ステータス
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 text-right">
                                             合計金額
@@ -76,6 +76,9 @@ export default function Index({ auth, invoices }: Props) {
                                                     )
                                                 }
                                             >
+                                                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                                                    <StatusBadge status={invoice.status} />
+                                                </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                                                     {invoice.estimate_number}
                                                 </td>
@@ -88,9 +91,6 @@ export default function Index({ auth, invoices }: Props) {
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                                     {invoice.estimate_date ? format(new Date(invoice.estimate_date), 'yyyy/MM/dd', { locale: ja }) : '-'}
-                                                </td>
-                                                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                                    <StatusBadge status={invoice.status} />
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 text-right">
                                                     ¥{Number(invoice.total_amount).toLocaleString()}
