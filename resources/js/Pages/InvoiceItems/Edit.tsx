@@ -19,7 +19,6 @@ export default function Edit({ auth, item }: Props) {
         unit_price: item.unit_price,
         unit: item.unit || '',
         tax_type: item.tax_type,
-        tax_rate: item.tax_rate,
         remarks: item.remarks || '',
     });
 
@@ -112,63 +111,33 @@ export default function Edit({ auth, item }: Props) {
                                     <InputError message={errors.unit} className="mt-2" />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <InputLabel value="税区分" />
-                                        <div className="mt-2 flex gap-4">
-                                            <label className="inline-flex items-center">
-                                                <input
-                                                    type="radio"
-                                                    className="form-radio text-indigo-600"
-                                                    name="tax_type"
-                                                    value="exc"
-                                                    checked={data.tax_type === 'exc'}
-                                                    onChange={handleChange as any}
-                                                />
-                                                <span className="ml-2">税抜</span>
-                                            </label>
-                                            <label className="inline-flex items-center">
-                                                <input
-                                                    type="radio"
-                                                    className="form-radio text-indigo-600"
-                                                    name="tax_type"
-                                                    value="inc"
-                                                    checked={data.tax_type === 'inc'}
-                                                    onChange={handleChange as any}
-                                                />
-                                                <span className="ml-2">税込</span>
-                                            </label>
-                                        </div>
-                                        <InputError message={errors.tax_type} className="mt-2" />
+                                <div>
+                                    <InputLabel value="税区分" />
+                                    <div className="mt-2 flex gap-4">
+                                        <label className="inline-flex items-center">
+                                            <input
+                                                type="radio"
+                                                className="form-radio text-indigo-600"
+                                                name="tax_type"
+                                                value="exc"
+                                                checked={data.tax_type === 'exc'}
+                                                onChange={handleChange as any}
+                                            />
+                                            <span className="ml-2">税抜</span>
+                                        </label>
+                                        <label className="inline-flex items-center">
+                                            <input
+                                                type="radio"
+                                                className="form-radio text-indigo-600"
+                                                name="tax_type"
+                                                value="inc"
+                                                checked={data.tax_type === 'inc'}
+                                                onChange={handleChange as any}
+                                            />
+                                            <span className="ml-2">税込</span>
+                                        </label>
                                     </div>
-                                    <div>
-                                        <InputLabel value="税率" />
-                                        <div className="mt-2 flex gap-4">
-                                            <label className="inline-flex items-center">
-                                                <input
-                                                    type="radio"
-                                                    className="form-radio text-indigo-600"
-                                                    name="tax_rate"
-                                                    value="10"
-                                                    checked={data.tax_rate == 10}
-                                                    onChange={handleChange as any}
-                                                />
-                                                <span className="ml-2">10%</span>
-                                            </label>
-                                            <label className="inline-flex items-center">
-                                                <input
-                                                    type="radio"
-                                                    className="form-radio text-indigo-600"
-                                                    name="tax_rate"
-                                                    value="8"
-                                                    checked={data.tax_rate == 8}
-                                                    onChange={handleChange as any}
-                                                />
-                                                <span className="ml-2">8%</span>
-                                            </label>
-                                        </div>
-                                        <InputError message={errors.tax_rate} className="mt-2" />
-                                    </div>
+                                    <InputError message={errors.tax_type} className="mt-2" />
                                 </div>
 
                                 <div>

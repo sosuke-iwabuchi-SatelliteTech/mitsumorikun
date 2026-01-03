@@ -54,10 +54,6 @@ export default function Show({ auth, item }: Props) {
                                     <dt className="text-sm font-medium text-gray-500">税区分</dt>
                                     <dd className="mt-1 text-sm text-gray-900">{item.tax_type === 'inc' ? '税込' : '税抜'}</dd>
                                 </div>
-                                <div className="sm:col-span-1">
-                                    <dt className="text-sm font-medium text-gray-500">税率</dt>
-                                    <dd className="mt-1 text-sm text-gray-900">{item.tax_rate}%</dd>
-                                </div>
                                 <div className="sm:col-span-2">
                                     <dt className="text-sm font-medium text-gray-500">備考</dt>
                                     <dd className="mt-1 text-sm text-gray-900 whitespace-pre-wrap">{item.remarks || '-'}</dd>

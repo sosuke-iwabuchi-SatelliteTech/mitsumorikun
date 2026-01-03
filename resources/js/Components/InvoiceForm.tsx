@@ -46,7 +46,6 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
             quantity: Number(d.quantity),
             unit_price: Number(d.unit_price),
             unit: d.unit,
-            tax_rate: Number(d.tax_rate),
             tax_classification: d.tax_classification,
             amount: Number(d.amount),
             group_name: d.group_name,
@@ -67,7 +66,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
 
         details.forEach(item => {
             const amount = Math.floor(Number(item.quantity) * Number(item.unit_price));
-            const taxRate = Number(item.tax_rate);
+            const taxRate = 0.10;
             
             if (item.tax_classification === 'exclusive') {
                 const tax = Math.trunc(amount * taxRate);
@@ -97,7 +96,6 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
             quantity: 1,
             unit_price: 0,
             unit: '',
-            tax_rate: 0.10,
             tax_classification: 'exclusive',
             amount: 0,
             group_name: '',
@@ -128,7 +126,6 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
             quantity: Number(item.quantity),
             unit_price: Number(item.unit_price),
             unit: item.unit,
-            tax_rate: item.tax_rate / 100,
             tax_classification: item.tax_type === 'inc' ? 'inclusive' : 'exclusive',
             amount: Math.floor(Number(item.quantity) * Number(item.unit_price)),
             group_name: '',

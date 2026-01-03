@@ -43,9 +43,10 @@ class InvoiceItemController extends Controller
             'unit_price' => 'required|numeric',
             'unit' => 'nullable|string|max:50',
             'tax_type' => 'required|in:inc,exc',
-            'tax_rate' => 'required|in:8,10',
             'remarks' => 'nullable|string',
         ]);
+
+        $validated['tax_rate'] = 10;
 
         InvoiceItem::create($validated);
 
@@ -84,9 +85,10 @@ class InvoiceItemController extends Controller
             'unit_price' => 'required|numeric',
             'unit' => 'nullable|string|max:50',
             'tax_type' => 'required|in:inc,exc',
-            'tax_rate' => 'required|in:8,10',
             'remarks' => 'nullable|string',
         ]);
+
+        $validated['tax_rate'] = 10;
 
         $invoiceItem->update($validated);
 
