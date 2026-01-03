@@ -33,11 +33,11 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
     const { data, setData, post, put, patch, processing, errors } = useForm({
         customer_id: invoice?.customer_id || '',
         title: invoice?.title || '',
-        estimate_date: invoice?.estimate_date ? new Date(invoice.estimate_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-        delivery_deadline: invoice?.delivery_deadline ? new Date(invoice.delivery_deadline).toISOString().split('T')[0] : '',
+        estimate_date: invoice?.estimate_date ? invoice.estimate_date.split('T')[0] : new Date().toISOString().split('T')[0],
+        delivery_deadline: invoice?.delivery_deadline ? invoice.delivery_deadline.split('T')[0] : '',
         construction_address: invoice?.construction_address || '',
         payment_terms: invoice?.payment_terms || '',
-        expiration_date: invoice?.expiration_date ? new Date(invoice.expiration_date).toISOString().split('T')[0] : '',
+        expiration_date: invoice?.expiration_date ? invoice.expiration_date.split('T')[0] : '',
         remarks: invoice?.remarks || '',
         total_amount: invoice?.total_amount || 0,
         tax_amount: invoice?.tax_amount || 0,
@@ -190,6 +190,30 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                         onChange={(e) => setData('delivery_deadline', e.target.value)}
                     />
                     <InputError message={errors.delivery_deadline} className="mt-2" />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="payment_terms" value="支払い条件" />
+                    <TextInput
+                        id="payment_terms"
+                        className="mt-1 block w-full"
+                        value={data.payment_terms}
+                        onChange={(e) => setData('payment_terms', e.target.value)}
+                        placeholder="末日締め翌月末払い 等"
+                    />
+                    <InputError message={errors.payment_terms} className="mt-2" />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="expiration_date" value="見積有効期限" />
+                    <TextInput
+                        id="expiration_date"
+                        type="date"
+                        className="mt-1 block w-full"
+                        value={data.expiration_date}
+                        onChange={(e) => setData('expiration_date', e.target.value)}
+                    />
+                    <InputError message={errors.expiration_date} className="mt-2" />
                 </div>
 
                 <div className="md:col-span-2">

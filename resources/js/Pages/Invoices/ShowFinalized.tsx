@@ -97,11 +97,11 @@ export default function ShowFinalized({ auth, invoice, finalized }: Props) {
                                     </div>
                                     <div>
                                         <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">有効期限</h4>
-                                        <p className="text-gray-900">{finalized.expiration_date ? format(new Date(finalized.expiration_date), 'yyyy/MM/dd', { locale: ja }) : '-'}</p>
+                                        <p className="text-gray-900">{finalized.expiration_date ? format(new Date(finalized.expiration_date.split('T')[0]), 'yyyy/MM/dd', { locale: ja }) : '-'}</p>
                                     </div>
                                     <div>
                                         <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">納入期限</h4>
-                                        <p className="text-gray-900">{finalized.delivery_deadline ? format(new Date(finalized.delivery_deadline), 'yyyy/MM/dd', { locale: ja }) : '-'}</p>
+                                        <p className="text-gray-900">{finalized.delivery_deadline ? format(new Date(finalized.delivery_deadline.split('T')[0]), 'yyyy/MM/dd', { locale: ja }) : '-'}</p>
                                     </div>
                                     <div>
                                         <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">工事場所 / 支払条件</h4>
@@ -131,7 +131,7 @@ export default function ShowFinalized({ auth, invoice, finalized }: Props) {
                                                         {detail.item_name}
                                                         {detail.remarks && <span className="block text-xs text-gray-400 mt-1">{detail.remarks}</span>}
                                                     </td>
-                                                    <td className="px-4 py-4 text-sm text-gray-500 text-right">{Number(detail.quantity).toLocaleString()} {detail.unit}</td>
+                                                    <td className="px-4 py-4 text-sm text-gray-500 text-right">{Number(detail.quantity).toLocaleString(undefined, { maximumFractionDigits: 2 })} {detail.unit}</td>
                                                     <td className="px-4 py-4 text-sm text-gray-500 text-right">¥{Number(detail.unit_price).toLocaleString()}</td>
                                                     <td className="px-4 py-4 text-sm text-gray-900 font-medium text-right">¥{Number(detail.amount).toLocaleString()}</td>
                                                 </tr>
