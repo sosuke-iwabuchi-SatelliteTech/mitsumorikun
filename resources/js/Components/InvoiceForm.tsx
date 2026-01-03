@@ -62,18 +62,28 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
     );
 
     const calculateTotals = (details: any[]) => {
-        let total = 0;
-        let tax = 0;
+        let grandTotal = 0;
+        let totalTax = 0;
 
         details.forEach(item => {
             const amount = Math.floor(Number(item.quantity) * Number(item.unit_price));
-            total += amount;
+            const taxRate = Number(item.tax_rate);
+            
             if (item.tax_classification === 'exclusive') {
-                tax += Math.floor(amount * Number(item.tax_rate));
+                const tax = Math.trunc(amount * taxRate);
+                grandTotal += amount + tax;
+                totalTax += tax;
+            } else {
+                // For inclusive, the amount already includes tax.
+                // Tax = Amount - (Amount / (1 + rate))
+                // We truncate the tax amount to round towards zero for both positive and negative values.
+                const tax = Math.trunc(amount - (amount / (1 + taxRate)));
+                grandTotal += amount;
+                totalTax += tax;
             }
         });
 
-        return { total_amount: total + tax, tax_amount: tax };
+        return { total_amount: grandTotal, tax_amount: totalTax };
     };
 
     useEffect(() => {
@@ -105,7 +115,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
         const newDetails = [...data.details];
         newDetails[index] = { ...newDetails[index], [field]: value };
         
-        if (field === 'quantity' || field === 'unit_price') {
+        if (field === 'quantity' || field === 'unit_price' || field === 'tax_classification') {
             newDetails[index].amount = Math.floor(Number(newDetails[index].quantity) * Number(newDetails[index].unit_price));
         }
 
@@ -239,6 +249,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">品名</th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase w-20">数量</th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase w-20">単位</th>
+                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase w-24">税</th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">単価</th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">金額</th>
                                 <th className="px-3 py-3"></th>
@@ -278,6 +289,16 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                                                 value={line.unit || ''}
                                                 onChange={(e) => updateLine(index, 'unit', e.target.value)}
                                             />
+                                        </td>
+                                        <td className="px-3 py-2">
+                                            <select
+                                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
+                                                value={line.tax_classification}
+                                                onChange={(e) => updateLine(index, 'tax_classification', e.target.value)}
+                                            >
+                                                <option value="exclusive">別</option>
+                                                <option value="inclusive">込</option>
+                                            </select>
                                         </td>
                                         <td className="px-3 py-2">
                                             <TextInput
@@ -360,6 +381,17 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                                             value={line.unit || ''}
                                             onChange={(e) => updateLine(index, 'unit', e.target.value)}
                                         />
+                                    </div>
+                                    <div>
+                                        <InputLabel value="税" />
+                                        <select
+                                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
+                                            value={line.tax_classification}
+                                            onChange={(e) => updateLine(index, 'tax_classification', e.target.value)}
+                                        >
+                                            <option value="exclusive">別</option>
+                                            <option value="inclusive">込</option>
+                                        </select>
                                     </div>
                                 </div>
 

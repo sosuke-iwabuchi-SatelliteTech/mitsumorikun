@@ -102,7 +102,7 @@ class InvoiceServiceTest extends TestCase
         $this->assertEquals('Updated Corp', $newInvoice->issuer_name);
     }
 
-    public function test_floors_tax_and_total_amount(): void
+    public function test_truncates_tax_and_total_amount(): void
     {
         $customer = Customer::create([
             'user_group_id' => $this->userGroup->id,
@@ -132,5 +132,40 @@ class InvoiceServiceTest extends TestCase
         $this->assertEquals(1501, $invoice->details->first()->amount);
         $this->assertEquals(150, $invoice->tax_amount);
         $this->assertEquals(1651, $invoice->total_amount);
+    }
+
+    public function test_truncates_negative_tax_and_total_amount(): void
+    {
+        $customer = Customer::create([
+            'user_group_id' => $this->userGroup->id,
+            'name' => 'Test Customer',
+        ]);
+
+        $data = [
+            'customer_id' => $customer->id,
+            'title' => 'Test Negative Rounding',
+            'estimate_date' => '2026-01-01',
+            'details' => [
+                [
+                    'item_name' => 'Discount Item',
+                    'quantity' => 1,
+                    'unit_price' => -100000,
+                    'tax_rate' => 0.10,
+                    'tax_classification' => 'inclusive',
+                    'amount' => -100000,
+                ],
+            ],
+            // For inclusive -100,000:
+            // Base = -100,000 / 1.1 = -90,909.0909...
+            // Tax = -100,000 - (-90,909.0909...) = -9,090.9090...
+            // Truncated Tax = -9090
+            'total_amount' => -100000,
+            'tax_amount' => -9090.9, 
+        ];
+
+        $invoice = $this->service->create($this->userGroup, $data);
+
+        $this->assertEquals(-9090, $invoice->tax_amount);
+        $this->assertEquals(-100000, $invoice->total_amount);
     }
 }
