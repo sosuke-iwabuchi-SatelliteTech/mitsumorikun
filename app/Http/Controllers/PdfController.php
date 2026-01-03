@@ -28,7 +28,8 @@ class PdfController extends Controller
             abort(403, '作成中のデータはPDF出力できません。');
         }
         $type = $this->getDocumentType($invoice->status);
-        return $this->pdfService->generate($invoice, $type)->download("{$invoice->estimate_number}.pdf");
+        return $this->pdfService->generate($invoice, $type)
+            ->download($this->getDownloadFilename($invoice, $type));
     }
 
     public function previewFinalized(FinalizedInvoice $finalizedInvoice)
@@ -40,7 +41,14 @@ class PdfController extends Controller
     public function downloadFinalized(FinalizedInvoice $finalizedInvoice)
     {
         $type = $finalizedInvoice->document_type === 'invoice' ? 'invoice' : 'estimate';
-        return $this->pdfService->generate($finalizedInvoice, $type)->download("{$finalizedInvoice->estimate_number}.pdf");
+        return $this->pdfService->generate($finalizedInvoice, $type)
+            ->download($this->getDownloadFilename($finalizedInvoice, $type));
+    }
+
+    private function getDownloadFilename($model, string $type): string
+    {
+        $prefix = $type === 'invoice' ? '請求書' : '見積書';
+        return "{$prefix}[{$model->estimate_number}]{$model->title}.pdf";
     }
 
     private function getDocumentType(string $status): string
