@@ -116,13 +116,8 @@ export default function Index({ auth, items, filters }: Props) {
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                             税区分 / 税率
                                         </th>
-                                        <th
-                                            scope="col"
-                                            className="relative px-6 py-3"
-                                        >
-                                            <span className="sr-only">
-                                                操作
-                                            </span>
+                                        <th className="relative px-6 py-3">
+                                            <span className="sr-only">詳細</span>
                                         </th>
                                     </tr>
                                 </thead>
@@ -131,7 +126,15 @@ export default function Index({ auth, items, filters }: Props) {
                                         items.data.map((item) => (
                                             <tr
                                                 key={item.id}
-                                                className="transition-colors duration-150 hover:bg-gray-50"
+                                                className="cursor-pointer transition-colors duration-150 hover:bg-gray-50"
+                                                onClick={() =>
+                                                    router.get(
+                                                        route(
+                                                            'invoice-items.show',
+                                                            item.id
+                                                        )
+                                                    )
+                                                }
                                             >
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                                                     {item.name}
@@ -148,23 +151,14 @@ export default function Index({ auth, items, filters }: Props) {
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                                     {item.tax_type === 'inc' ? '税込' : '税抜'} / {item.tax_rate}%
                                                 </td>
-                                                <td className="flex justify-end gap-3 whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                                                    <Link
-                                                        href={route(
-                                                            'invoice-items.edit',
-                                                            item.id
-                                                        )}
-                                                        className="text-amber-600 hover:text-amber-900"
-                                                    >
-                                                        編集
-                                                    </Link>
+                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                                                 </td>
                                             </tr>
                                         ))
                                     ) : (
                                         <tr>
                                             <td
-                                                colSpan={6}
+                                                colSpan={5}
                                                 className="px-6 py-10 text-center text-sm text-gray-500"
                                             >
                                                 登録されている見積項目がいません。

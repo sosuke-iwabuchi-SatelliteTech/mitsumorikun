@@ -59,26 +59,21 @@ export default function AuthenticatedLayout({
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
-                                >
-                                    Dashboard
-                                </NavLink>
-                                {user.role === 'general' && (
-                                    <NavLink
-                                        href={route('customers.index')}
-                                        active={route().current('customers.*')}
-                                    >
-                                        顧客マスタ
-                                    </NavLink>
-                                )}
                                 {user.role === 'general' && (
                                     <NavLink
                                         href={route('invoices.index')}
                                         active={route().current('invoices.*')}
                                     >
                                         見積・請求管理
+                                    </NavLink>
+                                )}
+
+                                {user.role === 'general' && (
+                                    <NavLink
+                                        href={route('customers.index')}
+                                        active={route().current('customers.*')}
+                                    >
+                                        顧客管理
                                     </NavLink>
                                 )}
                                 {user.role === 'general' && (
@@ -215,26 +210,21 @@ export default function AuthenticatedLayout({
                     }
                 >
                     <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
-                        >
-                            Dashboard
-                        </ResponsiveNavLink>
                         {user.role === 'general' && (
-                                <ResponsiveNavLink
-                                    href={route('customers.index')}
-                                    active={route().current('customers.*')}
-                                >
-                                    顧客マスタ
-                                </ResponsiveNavLink>
-                            )}
-                            {user.role === 'general' && (
                                 <ResponsiveNavLink
                                     href={route('invoices.index')}
                                     active={route().current('invoices.*')}
                                 >
                                     見積・請求管理
+                                </ResponsiveNavLink>
+                            )}
+
+                            {user.role === 'general' && (
+                                <ResponsiveNavLink
+                                    href={route('customers.index')}
+                                    active={route().current('customers.*')}
+                                >
+                                    顧客管理
                                 </ResponsiveNavLink>
                             )}
                             {user.role === 'general' && (

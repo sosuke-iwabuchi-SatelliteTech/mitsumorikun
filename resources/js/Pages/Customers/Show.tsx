@@ -109,7 +109,7 @@ export default function Show({ auth, customer }: Props) {
                             href={route('customers.index')}
                             className="text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
                         >
-                            &larr; 録一覧に戻る
+                            &larr; 顧客管理一覧に戻る
                         </Link>
                     </div>
                 </div>

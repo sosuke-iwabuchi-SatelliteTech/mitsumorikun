@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import { Invoice } from '@/types/invoice';
 import { format } from 'date-fns';
@@ -48,7 +48,10 @@ export default function FinalizedList({ auth, invoice, finalizedInvoices }: Prop
                                         {finalizedInvoices.map((version, idx) => {
                                             return (
                                                 <li key={version.id}>
-                                                    <div className="relative pb-8">
+                                                    <div 
+                                                        className="relative pb-8 cursor-pointer group"
+                                                        onClick={() => router.get(route('invoices.finalized.show', [invoice.id, version.id]))}
+                                                    >
                                                         {idx !== finalizedInvoices.length - 1 ? (
                                                             <span
                                                                 className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200"
@@ -57,7 +60,7 @@ export default function FinalizedList({ auth, invoice, finalizedInvoices }: Prop
                                                         ) : null}
                                                         <div className="relative flex space-x-3">
                                                             <div>
-                                                                <span className="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white bg-gray-400">
+                                                                <span className="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white bg-gray-400 group-hover:bg-indigo-500 transition-colors">
                                                                      <span className="text-white text-xs font-bold">
                                                                           v{version.version}
                                                                      </span>
@@ -66,12 +69,9 @@ export default function FinalizedList({ auth, invoice, finalizedInvoices }: Prop
                                                             <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
                                                                 <div>
                                                                     <p className="text-sm text-gray-500">
-                                                                        <Link 
-                                                                            href={route('invoices.finalized.show', [invoice.id, version.id])}
-                                                                            className="font-medium text-indigo-600 hover:text-indigo-900"
-                                                                        >
+                                                                        <span className="font-medium text-indigo-600 group-hover:text-indigo-900">
                                                                              {getDocType(version.document_type || 'estimate')} (v{version.version})
-                                                                         </Link>
+                                                                         </span>
                                                                      </p>
                                                                     <p className="mt-1 text-sm text-gray-500">
                                                                         金額: ¥{Number(version.total_amount).toLocaleString()}

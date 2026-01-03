@@ -60,7 +60,7 @@ export default function Index({ auth, invoices }: Props) {
                                             合計金額
                                         </th>
                                         <th className="relative px-6 py-3">
-                                            <span className="sr-only">操作</span>
+                                            <span className="sr-only">詳細</span>
                                         </th>
                                     </tr>
                                 </thead>
@@ -69,7 +69,12 @@ export default function Index({ auth, invoices }: Props) {
                                         invoices.data.map((invoice) => (
                                             <tr
                                                 key={invoice.id}
-                                                className="transition-colors duration-150 hover:bg-gray-50"
+                                                className="cursor-pointer transition-colors duration-150 hover:bg-gray-50"
+                                                onClick={() =>
+                                                    router.get(
+                                                        route('invoices.show', invoice.id)
+                                                    )
+                                                }
                                             >
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                                                     {invoice.estimate_number}
@@ -90,21 +95,7 @@ export default function Index({ auth, invoices }: Props) {
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 text-right">
                                                     ¥{Number(invoice.total_amount).toLocaleString()}
                                                 </td>
-                                                <td className="flex justify-end gap-3 whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                                                    <Link
-                                                        href={route('invoices.show', invoice.id)}
-                                                        className="text-indigo-600 hover:text-indigo-900"
-                                                    >
-                                                        詳細
-                                                    </Link>
-                                                    {(invoice.status === 'creating' || invoice.status === 'invoice_creating') && (
-                                                        <Link
-                                                            href={route('invoices.edit', invoice.id)}
-                                                            className="text-amber-600 hover:text-amber-900"
-                                                        >
-                                                            編集
-                                                        </Link>
-                                                    )}
+                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                                                 </td>
                                             </tr>
                                         ))

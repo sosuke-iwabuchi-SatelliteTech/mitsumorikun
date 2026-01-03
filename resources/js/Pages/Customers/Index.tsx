@@ -35,7 +35,7 @@ export default function Index({ auth, customers, filters }: Props) {
             header={
                 <div className="flex items-center justify-between">
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                        顧客マスタ
+                        顧客管理
                     </h2>
                     <Link
                         href={route('customers.create')}
@@ -46,7 +46,7 @@ export default function Index({ auth, customers, filters }: Props) {
                 </div>
             }
         >
-            <Head title="顧客マスタ" />
+            <Head title="顧客管理" />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -114,14 +114,6 @@ export default function Index({ auth, customers, filters }: Props) {
                                             queryParams={params}
                                             routeName="customers.index"
                                         />
-                                        <th
-                                            scope="col"
-                                            className="relative px-6 py-3"
-                                        >
-                                            <span className="sr-only">
-                                                操作
-                                            </span>
-                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
@@ -129,7 +121,15 @@ export default function Index({ auth, customers, filters }: Props) {
                                         customers.data.map((customer) => (
                                             <tr
                                                 key={customer.id}
-                                                className="transition-colors duration-150 hover:bg-gray-50"
+                                                className="cursor-pointer transition-colors duration-150 hover:bg-gray-50"
+                                                onClick={() =>
+                                                    router.get(
+                                                        route(
+                                                            'customers.show',
+                                                            customer.id
+                                                        )
+                                                    )
+                                                }
                                             >
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                                                     {customer.name}
@@ -145,25 +145,7 @@ export default function Index({ auth, customers, filters }: Props) {
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                                     {customer.email || '-'}
                                                 </td>
-                                                <td className="flex justify-end gap-3 whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                                                    <Link
-                                                        href={route(
-                                                            'customers.show',
-                                                            customer.id
-                                                        )}
-                                                        className="text-indigo-600 hover:text-indigo-900"
-                                                    >
-                                                        詳細
-                                                    </Link>
-                                                    <Link
-                                                        href={route(
-                                                            'customers.edit',
-                                                            customer.id
-                                                        )}
-                                                        className="text-amber-600 hover:text-amber-900"
-                                                    >
-                                                        編集
-                                                    </Link>
+                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                                                 </td>
                                             </tr>
                                         ))

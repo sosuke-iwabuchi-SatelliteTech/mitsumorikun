@@ -112,9 +112,7 @@ export default function Index({ userGroups, filters }: Props) {
                                             作成日
                                         </th>
                                         <th className="relative px-6 py-3">
-                                            <span className="sr-only">
-                                                操作
-                                            </span>
+                                            <span className="sr-only">編集</span>
                                         </th>
                                     </tr>
                                 </thead>
@@ -122,7 +120,15 @@ export default function Index({ userGroups, filters }: Props) {
                                     {userGroups.data.map((group) => (
                                         <tr
                                             key={group.id}
-                                            className="hover:bg-gray-50"
+                                            className="cursor-pointer transition-colors duration-150 hover:bg-gray-50"
+                                            onClick={() =>
+                                                router.get(
+                                                    route(
+                                                        'admin.user-groups.edit',
+                                                        group.id
+                                                    )
+                                                )
+                                            }
                                         >
                                             <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                                                 {group.name}
@@ -135,29 +141,7 @@ export default function Index({ userGroups, filters }: Props) {
                                                     group.created_at
                                                 ).toLocaleDateString('ja-JP')}
                                             </td>
-                                            <td className="space-x-4 whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                                                <Link
-                                                    href={route(
-                                                        'admin.user-groups.edit',
-                                                        group.id
-                                                    )}
-                                                    className="text-indigo-600 hover:text-indigo-900"
-                                                >
-                                                    編集
-                                                </Link>
-                                                {group.users_count === 0 && (
-                                                    <button
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                group.id,
-                                                                group.name
-                                                            )
-                                                        }
-                                                        className="text-red-600 hover:text-red-900"
-                                                    >
-                                                        削除
-                                                    </button>
-                                                )}
+                                            <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                                             </td>
                                         </tr>
                                     ))}
