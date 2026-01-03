@@ -113,4 +113,25 @@ class PdfFilenameTest extends TestCase
         $response->assertStatus(200);
         $this->assertStringContainsString($encodedFilename, $response->headers->get('Content-Disposition'));
     }
+
+    public function test_cannot_download_pdf_for_payment_confirmed_status()
+    {
+        $invoice = Invoice::create([
+            'user_group_id' => $this->userGroup->id,
+            'customer_id' => $this->customer->id,
+            'estimate_number' => 'INV-RESTRICT',
+            'status' => 'payment_confirmed',
+            'title' => '制限テスト',
+            'estimate_date' => now(),
+            'total_amount' => 5000,
+            'tax_amount' => 500,
+            'issuer_name' => 'Issuer',
+        ]);
+
+        $response = $this->actingAs($this->user)->get(route('invoices.download', $invoice));
+        $response->assertStatus(403);
+
+        $response = $this->actingAs($this->user)->get(route('invoices.preview', $invoice));
+        $response->assertStatus(403);
+    }
 }

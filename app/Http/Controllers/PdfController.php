@@ -18,6 +18,9 @@ class PdfController extends Controller
 
     public function preview(Invoice $invoice)
     {
+        if ($invoice->status === 'payment_confirmed') {
+            abort(403, '入金確認済みのデータは確定情報から出力してください。');
+        }
         $type = $this->getDocumentType($invoice->status);
         return $this->pdfService->generate($invoice, $type)->stream("preview_{$invoice->estimate_number}.pdf");
     }
@@ -26,6 +29,9 @@ class PdfController extends Controller
     {
         if (in_array($invoice->status, ['creating', 'invoice_creating'])) {
             abort(403, '作成中のデータはPDF出力できません。');
+        }
+        if ($invoice->status === 'payment_confirmed') {
+            abort(403, '入金確認済みのデータは確定情報から出力してください。');
         }
         $type = $this->getDocumentType($invoice->status);
         return $this->pdfService->generate($invoice, $type)
