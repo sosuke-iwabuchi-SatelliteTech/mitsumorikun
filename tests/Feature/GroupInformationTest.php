@@ -36,7 +36,7 @@ class GroupInformationTest extends TestCase
 
         // Update basic info
         $this->actingAs($user)
-            ->patch('/group-information/basic', [
+            ->post('/group-information/basic', [
                 'invoice_registration_number' => 'T1234567890123',
                 'zip_code' => '123-4567',
                 'address1' => '東京都渋谷区',

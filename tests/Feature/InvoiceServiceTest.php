@@ -165,4 +165,109 @@ class InvoiceServiceTest extends TestCase
         $this->assertEquals(-9090, $invoice->tax_amount);
         $this->assertEquals(-100000, $invoice->total_amount);
     }
+
+    public function test_update_modifies_invoice_and_replaces_details(): void
+    {
+        $customer = Customer::create([
+            'user_group_id' => $this->userGroup->id,
+            'name' => 'Test Customer',
+        ]);
+
+        $invoice = $this->service->create($this->userGroup, [
+            'customer_id' => $customer->id,
+            'title' => 'Original Job',
+            'estimate_date' => '2026-01-01',
+            'details' => [
+                [
+                    'item_name' => 'Original Item',
+                    'quantity' => 1,
+                    'unit_price' => 1000,
+                    'tax_classification' => 'exclusive',
+                    'amount' => 1000,
+                ],
+            ],
+            'total_amount' => 1100,
+            'tax_amount' => 100,
+        ]);
+
+        $originalDetailId = $invoice->details->first()->id;
+
+        $updateData = [
+            'title' => 'Updated Job',
+            'details' => [
+                [
+                    'item_name' => 'New Item',
+                    'quantity' => 2,
+                    'unit_price' => 2000,
+                    'tax_classification' => 'exclusive',
+                    'amount' => 4000,
+                ],
+            ],
+            'total_amount' => 4400,
+            'tax_amount' => 400,
+        ];
+
+        $updatedInvoice = $this->service->update($invoice, $updateData);
+
+        // Verify Invoice Fields
+        $this->assertEquals('Updated Job', $updatedInvoice->title);
+        $this->assertEquals(4400, $updatedInvoice->total_amount);
+
+        // Verify Details Replaced
+        $this->assertDatabaseMissing('invoice_details', ['id' => $originalDetailId]);
+        $this->assertDatabaseHas('invoice_details', [
+            'invoice_id' => $invoice->id,
+            'item_name' => 'New Item',
+        ]);
+        $this->assertCount(1, $updatedInvoice->refresh()->details);
+    }
+
+    public function test_finalize_creates_finalized_invoice(): void
+    {
+        $customer = Customer::create([
+            'user_group_id' => $this->userGroup->id,
+            'name' => 'Test Customer',
+        ]);
+
+        $invoice = $this->service->create($this->userGroup, [
+            'customer_id' => $customer->id,
+            'title' => 'Finalize Test',
+            'estimate_date' => '2026-01-01',
+            'status' => 'creating', // Should result in 'estimate' type
+            'details' => [
+                [
+                    'item_name' => 'Item 1',
+                    'amount' => 1000,
+                ],
+            ],
+            'total_amount' => 1000,
+            'tax_amount' => 0,
+        ]);
+
+        $finalized = $this->service->finalize($invoice);
+
+        $this->assertDatabaseHas('finalized_invoices', [
+            'id' => $finalized->id,
+            'invoice_id' => $invoice->id,
+            'document_type' => 'estimate',
+            'version' => 1,
+            'title' => 'Finalize Test',
+        ]);
+
+        $this->assertDatabaseHas('finalized_invoice_details', [
+            'finalized_invoice_id' => $finalized->id,
+            'item_name' => 'Item 1',
+        ]);
+
+        // Test Version Increment
+        $finalized2 = $this->service->finalize($invoice);
+        $this->assertEquals(2, $finalized2->version);
+
+        // Test Invoice Type
+        $invoice->update(['status' => 'invoice_creating']);
+        $finalizedInvoiceType = $this->service->finalize($invoice);
+
+        $this->assertEquals('invoice', $finalizedInvoiceType->document_type);
+        $this->assertEquals(1, $finalizedInvoiceType->version); // First version for this type
+    }
 }
