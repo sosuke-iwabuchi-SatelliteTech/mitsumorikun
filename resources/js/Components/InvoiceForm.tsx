@@ -1,5 +1,4 @@
-import { useForm, Link } from '@inertiajs/react';
-import { router } from '@inertiajs/react';
+import { useForm, Link, router } from '@inertiajs/react';
 import api from '@/Utils/api';
 import { customerService } from '@/Services/customers';
 import { handleApiError, ValidationErrors } from '@/Utils/apiErrors';
@@ -12,8 +11,9 @@ import TextInput from '@/Components/TextInput';
 import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { useEffect, useState, Fragment } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { formatDate } from '@/Utils/date';
+import { GripVertical } from 'lucide-react';
 
 import { EstimateTemplate } from '@/types/estimateTemplate';
 
@@ -38,6 +38,19 @@ interface Props {
     backRoute: string;
 }
 
+interface FormDetail {
+    id?: string;
+    tempId: string;
+    item_name: string;
+    quantity: number | string;
+    unit_price: number | string;
+    unit: string | null;
+    tax_classification: 'inclusive' | 'exclusive';
+    amount: number;
+    group_name: string | null;
+    remarks: string | null;
+}
+
 export default function InvoiceForm({ invoice, customers, invoiceItems, estimateTemplates, submitRoute, submitMethod, backRoute }: Props) {
     const [localCustomers, setLocalCustomers] = useState<Customer[]>(customers);
     
@@ -51,7 +64,19 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, estimate
     useEffect(() => {
         setLocalCustomers(customers);
     }, [customers]);
-    const { data, setData, post, put, patch, processing, errors } = useForm({
+    const { data, setData, post, put, patch, processing, errors } = useForm<{
+        customer_id: string;
+        title: string;
+        estimate_date: string;
+        delivery_deadline: string;
+        construction_address: string;
+        payment_terms: string;
+        expiration_date: string;
+        remarks: string;
+        total_amount: number;
+        tax_amount: number;
+        details: FormDetail[];
+    }>({
         customer_id: invoice?.customer_id || '',
         title: invoice?.title || '',
         estimate_date: formatDate(invoice?.estimate_date || new Date().toISOString(), 'yyyy-MM-dd'),
@@ -62,7 +87,9 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, estimate
         remarks: invoice?.remarks || '',
         total_amount: invoice?.total_amount || 0,
         tax_amount: invoice?.tax_amount || 0,
-        details: invoice?.details?.map(d => ({
+        details: invoice?.details?.map((d, index) => ({
+            id: d.id, // Keep existing ID if present
+            tempId: d.id || `existing-${index}`,
             item_name: d.item_name,
             quantity: Number(d.quantity),
             unit_price: Number(d.unit_price),
@@ -136,6 +163,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, estimate
 
     const addLine = () => {
         setData('details', [...data.details, {
+            tempId: `new-${Date.now()}-${data.details.length}`,
             item_name: '',
             quantity: 1,
             unit_price: 0,
@@ -166,6 +194,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, estimate
 
     const handleMasterSelect = (item: InvoiceItemMaster) => {
         setData('details', [...data.details, {
+            tempId: `new-${Date.now()}-${data.details.length}`,
             item_name: item.name,
             quantity: Number(item.quantity),
             unit_price: Number(item.unit_price),
@@ -222,8 +251,9 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, estimate
         if (!template.details) return;
         
         const newDetails = [...data.details];
-        template.details.forEach(detail => {
+        template.details.forEach((detail, index) => {
             newDetails.push({
+                tempId: `template-${Date.now()}-${index}`,
                 item_name: detail.item_name,
                 quantity: Number(detail.quantity),
                 unit_price: Number(detail.unit_price),
@@ -371,6 +401,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, estimate
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
+                                <th className="px-1 py-3 w-8"></th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">品名</th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase w-20">数量</th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase w-20">単位</th>
@@ -380,16 +411,30 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, estimate
                                 <th className="px-3 py-3"></th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <Reorder.Group 
+                            axis="y" 
+                            values={data.details} 
+                            onReorder={(newDetails) => setData('details', newDetails)}
+                            as="tbody" 
+                            className="bg-white divide-y divide-gray-200"
+                        >
                             <AnimatePresence initial={false}>
                                 {data.details.map((line, index) => (
-                                    <motion.tr
-                                        key={index}
+                                    <Reorder.Item
+                                        key={line.tempId}
+                                        value={line}
+                                        as="tr"
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, x: -20 }}
                                         transition={{ duration: 0.2 }}
+                                        className="bg-white"
                                     >
+                                        <td className="px-1 py-2 text-center">
+                                            <div className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600">
+                                                <GripVertical className="h-4 w-4" />
+                                            </div>
+                                        </td>
                                         <td className="px-3 py-2">
                                             <TextInput
                                                 className="block w-full text-sm"
@@ -435,7 +480,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, estimate
                                             />
                                         </td>
                                         <td className="px-3 py-2 text-sm text-right font-medium">
-                                            ¥{(line.quantity * line.unit_price).toLocaleString()}
+                                            ¥{(Number(line.quantity) * Number(line.unit_price)).toLocaleString()}
                                         </td>
                                         <td className="px-3 py-2 text-right">
                                             <button
@@ -446,98 +491,110 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, estimate
                                                 削除
                                             </button>
                                         </td>
-                                    </motion.tr>
+                                    </Reorder.Item>
                                 ))}
                             </AnimatePresence>
-                        </tbody>
+                        </Reorder.Group>
                     </table>
                 </div>
 
                 {/* Mobile view */}
                 <div className="md:hidden space-y-4">
-                    <AnimatePresence initial={false}>
-                        {data.details.map((line, index) => (
-                            <motion.div
-                                key={index}
-                                layout
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95, height: 0, marginBottom: 0, overflow: 'hidden' }}
-                                transition={{ duration: 0.2 }}
-                                className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm space-y-3"
-                            >
-                                <div className="flex justify-between items-start">
-                                    <span className="text-xs font-bold text-gray-500 uppercase">明細 #{index + 1}</span>
-                                    <button
-                                        type="button"
-                                        onClick={() => removeLine(index)}
-                                        className="text-red-600 hover:text-red-900 text-sm"
-                                    >
-                                        削除
-                                    </button>
-                                </div>
-                                
-                                <div>
-                                    <InputLabel value="品名" />
-                                    <TextInput
-                                        className="mt-1 block w-full text-sm"
-                                        value={line.item_name}
-                                        onChange={(e) => updateLine(index, 'item_name', e.target.value)}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
+                    <Reorder.Group 
+                        axis="y" 
+                        values={data.details} 
+                        onReorder={(newDetails) => setData('details', newDetails)}
+                        className="space-y-4"
+                    >
+                        <AnimatePresence initial={false}>
+                            {data.details.map((line, index) => (
+                                <Reorder.Item
+                                    key={line.tempId}
+                                    value={line}
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95, height: 0, marginBottom: 0, overflow: 'hidden' }}
+                                    transition={{ duration: 0.2 }}
+                                    className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm space-y-3 relative"
+                                >
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex items-center gap-2">
+                                            <div className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600">
+                                                <GripVertical className="h-4 w-4" />
+                                            </div>
+                                            <span className="text-xs font-bold text-gray-500 uppercase">明細 #{index + 1}</span>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => removeLine(index)}
+                                            className="text-red-600 hover:text-red-900 text-sm"
+                                        >
+                                            削除
+                                        </button>
+                                    </div>
+                                    
                                     <div>
-                                        <InputLabel value="数量" />
+                                        <InputLabel value="品名" />
                                         <TextInput
-                                            type="number"
-                                            step="0.01"
                                             className="mt-1 block w-full text-sm"
-                                            value={line.quantity}
-                                            onChange={(e) => updateLine(index, 'quantity', e.target.value)}
+                                            value={line.item_name}
+                                            onChange={(e) => updateLine(index, 'item_name', e.target.value)}
                                             required
                                         />
                                     </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <InputLabel value="数量" />
+                                            <TextInput
+                                                type="number"
+                                                step="0.01"
+                                                className="mt-1 block w-full text-sm"
+                                                value={line.quantity}
+                                                onChange={(e) => updateLine(index, 'quantity', e.target.value)}
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <InputLabel value="単位" />
+                                            <TextInput
+                                                className="mt-1 block w-full text-sm"
+                                                value={line.unit || ''}
+                                                onChange={(e) => updateLine(index, 'unit', e.target.value)}
+                                            />
+                                        </div>
+                                        <div>
+                                            <InputLabel value="税" />
+                                            <select
+                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
+                                                value={line.tax_classification}
+                                                onChange={(e) => updateLine(index, 'tax_classification', e.target.value)}
+                                            >
+                                                <option value="exclusive">別</option>
+                                                <option value="inclusive">込</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
                                     <div>
-                                        <InputLabel value="単位" />
+                                        <InputLabel value="単価" />
                                         <TextInput
+                                            type="number"
                                             className="mt-1 block w-full text-sm"
-                                            value={line.unit || ''}
-                                            onChange={(e) => updateLine(index, 'unit', e.target.value)}
+                                            value={line.unit_price}
+                                            onChange={(e) => updateLine(index, 'unit_price', e.target.value)}
+                                            required
                                         />
                                     </div>
-                                    <div>
-                                        <InputLabel value="税" />
-                                        <select
-                                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
-                                            value={line.tax_classification}
-                                            onChange={(e) => updateLine(index, 'tax_classification', e.target.value)}
-                                        >
-                                            <option value="exclusive">別</option>
-                                            <option value="inclusive">込</option>
-                                        </select>
+
+                                    <div className="flex justify-between items-center pt-2 border-t text-sm">
+                                        <span className="text-gray-500">金額:</span>
+                                        <span className="font-bold">¥{(Number(line.quantity) * Number(line.unit_price)).toLocaleString()}</span>
                                     </div>
-                                </div>
-
-                                <div>
-                                    <InputLabel value="単価" />
-                                    <TextInput
-                                        type="number"
-                                        className="mt-1 block w-full text-sm"
-                                        value={line.unit_price}
-                                        onChange={(e) => updateLine(index, 'unit_price', e.target.value)}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="flex justify-between items-center pt-2 border-t text-sm">
-                                    <span className="text-gray-500">金額:</span>
-                                    <span className="font-bold">¥{(line.quantity * line.unit_price).toLocaleString()}</span>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </AnimatePresence>
+                                </Reorder.Item>
+                            ))}
+                        </AnimatePresence>
+                    </Reorder.Group>
                     {data.details.length === 0 && (
                         <div className="text-center py-8 text-sm text-gray-500 border-2 border-dashed border-gray-200 rounded-lg">
                             明細がありません
