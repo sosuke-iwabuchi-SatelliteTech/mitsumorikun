@@ -47,7 +47,12 @@
             font-size: 24pt;
             letter-spacing: 10px;
             margin-bottom: 20px;
+        }
+        .title span {
             border-bottom: 2px solid #000;
+            display: inline-block;
+            line-height: 1;
+            padding-bottom: 5px;
         }
         .header-table {
             width: 100%;

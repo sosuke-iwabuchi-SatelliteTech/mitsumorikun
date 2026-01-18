@@ -5,7 +5,7 @@
         No. INV-{{ $invoice->estimate_number }}-{{ sprintf('%02d', $invoice->version) }}<br>
         日付： {{ $invoice->estimate_date->format('Y年m月d日') }}
     </div>
-    <div class="title" style="letter-spacing: 30px; text-indent: 30px;">御見積書</div>
+    <div class="title" style="letter-spacing: 30px; text-indent: 30px;"><span>見積書</span></div>
 
     <table class="header-table">
         <tr>
