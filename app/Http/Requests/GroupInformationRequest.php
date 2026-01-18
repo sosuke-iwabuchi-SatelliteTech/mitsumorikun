@@ -43,6 +43,7 @@ class GroupInformationRequest extends FormRequest
             'japan_post_bank_account_holder' => 'nullable|string|max:255',
             'seal_image' => 'nullable|image|mimes:png|max:2048',
             'delete_seal' => 'nullable|boolean',
+            'pdf_font' => 'nullable|string|in:ipa,klee',
         ];
     }
 }

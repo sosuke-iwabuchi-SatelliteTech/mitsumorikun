@@ -43,6 +43,7 @@ class GroupInformationTest extends TestCase
                 'address2' => '1-2-3',
                 'phone_number' => '03-1234-5678',
                 'email' => 'test@example.com',
+                'pdf_font' => 'klee',
             ])
             ->assertRedirect();
 
@@ -62,6 +63,7 @@ class GroupInformationTest extends TestCase
             'user_group_id' => $userGroup->id,
             'invoice_registration_number' => 'T1234567890123',
             'bank_name' => 'テスト銀行',
+            'pdf_font' => 'klee',
         ]);
     }
 }

@@ -26,6 +26,7 @@ interface UserGroupDetail {
     japan_post_bank_symbol?: string;
     japan_post_bank_number?: string;
     japan_post_bank_account_holder?: string;
+    pdf_font?: 'ipa' | 'klee';
 }
 
 interface UserGroup {
@@ -46,6 +47,7 @@ export default function Edit({ userGroup }: { userGroup: UserGroup }) {
         phone_number: userGroup.detail?.phone_number || '',
         fax_number: userGroup.detail?.fax_number || '',
         email: userGroup.detail?.email || '',
+        pdf_font: userGroup.detail?.pdf_font || 'ipa',
         seal_image: null as File | null,
         delete_seal: false,
     });
@@ -276,6 +278,36 @@ export default function Edit({ userGroup }: { userGroup: UserGroup }) {
                                                 <InputError className="mt-2" message={basicForm.errors.seal_image} />
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div className="border-t pt-6">
+                                        <InputLabel htmlFor="pdf_font" value="PDFフォント設定" />
+                                        <div className="mt-2 flex gap-8">
+                                            <label className="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="radio"
+                                                    name="pdf_font"
+                                                    value="ipa"
+                                                    checked={basicForm.data.pdf_font === 'ipa'}
+                                                    onChange={(e) => basicForm.setData('pdf_font', 'ipa')}
+                                                    className="border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                                                />
+                                                <span className="text-sm font-medium text-gray-700">IPAexゴシック (標準)</span>
+                                            </label>
+                                            <label className="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="radio"
+                                                    name="pdf_font"
+                                                    value="klee"
+                                                    checked={basicForm.data.pdf_font === 'klee'}
+                                                    onChange={(e) => basicForm.setData('pdf_font', 'klee')}
+                                                    className="border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                                                />
+                                                <span className="text-sm font-medium text-gray-700">Klee One</span>
+                                            </label>
+                                        </div>
+                                        <InputError className="mt-2" message={basicForm.errors.pdf_font} />
+                                        <p className="mt-2 text-xs text-gray-500">※見積書、請求書のPDF出力時に適用されます。</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4 border-t pt-6">

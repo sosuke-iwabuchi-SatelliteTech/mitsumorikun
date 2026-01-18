@@ -22,4 +22,9 @@
 /vendor
 Homestead.json
 Homestead.yaml
-Thumbs.db
+
+# dompdf generated font files
+/storage/fonts/*
+!/storage/fonts/KleeOne-Regular.ttf
+!/storage/fonts/KleeOne-SemiBold.ttf
+!/storage/fonts/ipaexg.ttf

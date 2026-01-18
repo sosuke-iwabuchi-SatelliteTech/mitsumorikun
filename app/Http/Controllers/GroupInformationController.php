@@ -32,6 +32,7 @@ class GroupInformationController extends Controller
             'phone_number',
             'fax_number',
             'email',
+            'pdf_font',
         ]);
 
         // 社判の削除処理

@@ -32,6 +32,7 @@ class UserGroupDetail extends Model
         'japan_post_bank_symbol',
         'japan_post_bank_number',
         'japan_post_bank_account_holder',
+        'pdf_font',
     ];
 
     protected $casts = [

@@ -15,16 +15,49 @@
             font-weight: bold;
             src: url('{{ storage_path('fonts/ipaexg.ttf') }}') format('truetype');
         }
+        @font-face {
+            font-family: 'KleeOne';
+            font-style: normal;
+            font-weight: normal;
+            src: url('{{ storage_path('fonts/KleeOne-Regular.ttf') }}') format('truetype');
+        }
+        @font-face {
+            font-family: 'KleeOne';
+            font-style: normal;
+            font-weight: bold;
+            src: url('{{ storage_path('fonts/KleeOne-SemiBold.ttf') }}') format('truetype');
+        }
+        @php
+            $fontFamily = 'IPAexGothic';
+            $fontSize = '10pt';
+            $lineHeight = '1.2';
+            $tablePadding = '5px';
+            $elementMargin = '20px';
+            $issuerPaddingTop = '40px';
+            $pageMarginV = '30px'; // Slightly tighter margin to give more breathing room
+            $titleFontSize = '24pt';
+            $pdfFont = $invoice->userGroup?->detail?->pdf_font ?? 'ipa';
+            
+            // KleeはIPAに比べて行間（行高さ）が広いため、IPAに合わせるために
+            // 行間を詰めたり、余白を調整したりする。
+            if ($pdfFont === 'klee') {
+                $fontFamily = 'KleeOne';
+                $lineHeight = '1.0'; // Tighten line-height for Klee
+                $tablePadding = '4px 5px'; // Adjust padding
+                $elementMargin = '15px'; // Tighten slightly
+                $issuerPaddingTop = '30px'; // Tightened
+            }
+        @endphp
         body {
-            font-family: 'IPAexGothic', sans-serif;
-            font-size: 10pt;
-            line-height: 1.2;
+            font-family: '{{ $fontFamily }}', sans-serif;
+            font-size: {{ $fontSize }};
+            line-height: {{ $lineHeight }};
             color: #333;
             margin: 0;
             padding: 0;
         }
         @page {
-            margin: 40px 50px;
+            margin: {{ $pageMarginV }} 50px;
         }
         .footer {
             position: fixed;
@@ -44,9 +77,9 @@
         }
         .title {
             text-align: center;
-            font-size: 24pt;
+            font-size: {{ $titleFontSize }};
             letter-spacing: 10px;
-            margin-bottom: 20px;
+            margin-bottom: {{ $elementMargin }};
         }
         .title span {
             border-bottom: 2px solid #000;
@@ -56,7 +89,7 @@
         }
         .header-table {
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: {{ $elementMargin }};
         }
         .header-table td {
             vertical-align: top;
@@ -67,7 +100,7 @@
         .issuer-info {
             width: 50%;
             text-align: left;
-            padding-top: 40px;
+            padding-top: {{ $issuerPaddingTop }};
         }
         .customer-name {
             font-size: 14pt;
@@ -77,7 +110,7 @@
             margin-bottom: 5px;
         }
         .total-amount-box {
-            margin: 10px auto 20px auto;
+            margin: 10px auto {{ $elementMargin }} auto;
             font-size: 18pt;
             border-bottom: 3px double #000;
             padding: 5px 20px;
@@ -88,17 +121,18 @@
         .details-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: {{ $elementMargin }};
         }
         .details-table th {
             background-color: #f2f2f2;
             border: 1px solid #000;
-            padding: 5px;
+            padding: {{ $tablePadding }};
             text-align: center;
         }
         .details-table td {
             border: 1px solid #000;
-            padding: 5px;
+            padding: {{ $tablePadding }};
+            height: 22px; /* 固定の高さを指定してフォントによる差を最小限にする */
         }
         .text-right {
             text-align: right;
@@ -129,7 +163,7 @@
             $x = 280;
             $y = 810;
             $text = "{PAGE_NUM} / {PAGE_COUNT}";
-            $font = $fontMetrics->get_font("IPAexGothic", "normal");
+            $font = $fontMetrics->get_font("{{ $fontFamily }}", "normal");
             $size = 9;
             $color = array(0.4,0.4,0.4);
             $word_space = 0.0;  //  default
