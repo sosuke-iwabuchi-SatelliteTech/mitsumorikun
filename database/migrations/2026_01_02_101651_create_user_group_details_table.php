@@ -39,8 +39,11 @@ return new class extends Migration
             $table->string('japan_post_bank_symbol')->nullable();
             $table->string('japan_post_bank_number')->nullable();
             $table->string('japan_post_bank_account_holder')->nullable();
+            $table->string('seal_image_path')->nullable();
+            $table->string('pdf_font')->nullable();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

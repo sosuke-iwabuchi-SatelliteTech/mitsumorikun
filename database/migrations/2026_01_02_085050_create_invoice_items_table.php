@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('tax_rate')->default(10);
             $table->text('remarks')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

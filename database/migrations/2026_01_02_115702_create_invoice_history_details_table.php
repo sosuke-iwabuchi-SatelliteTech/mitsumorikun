@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('invoice_history_details', function (Blueprint $table) {
+        Schema::create('finalized_invoice_details', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('invoice_history_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('finalized_invoice_id')->constrained()->cascadeOnDelete();
 
             $table->string('item_name');
             $table->decimal('quantity', 15, 2)->default(1);
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('invoice_history_details');
+        Schema::dropIfExists('finalized_invoice_details');
     }
 };

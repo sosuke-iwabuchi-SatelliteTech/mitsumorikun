@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('invoice_histories', function (Blueprint $table) {
+        Schema::create('finalized_invoices', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('invoice_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('invoice_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignUuid('user_group_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('customer_id')->constrained()->cascadeOnDelete();
 
             $table->string('estimate_number');
-            $table->integer('version');
-            $table->string('status');
+            $table->integer('version')->default(1);
+            $table->string('document_type')->default('estimate'); // 'estimate' or 'invoice'
 
             $table->string('title');
             $table->date('estimate_date');
@@ -32,6 +32,7 @@ return new class extends Migration
             $table->decimal('total_amount', 15, 2)->default(0);
             $table->decimal('tax_amount', 15, 2)->default(0);
 
+            // Snapshot fields for historical consistency
             $table->string('issuer_name')->nullable();
             $table->string('issuer_registration_number')->nullable();
             $table->string('issuer_address')->nullable();
@@ -49,6 +50,7 @@ return new class extends Migration
             $table->string('japan_post_bank_account_holder')->nullable();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -57,6 +59,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('invoice_histories');
+        Schema::dropIfExists('finalized_invoices');
     }
 };

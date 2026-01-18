@@ -49,6 +49,7 @@ return new class extends Migration
             $table->string('japan_post_bank_account_holder')->nullable();
 
             $table->timestamps();
+            $table->softDeletes();
 
             // Unique constraint for estimate_number and version per user group
             $table->unique(['user_group_id', 'estimate_number', 'version']);
