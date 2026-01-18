@@ -27,7 +27,10 @@ export default function Edit({ auth, template, invoiceItems }: Props) {
                             <EstimateTemplateForm
                                 template={template}
                                 invoiceItems={invoiceItems}
-                                submitRoute={route('estimate-templates.update', template.id)}
+                                submitRoute={route(
+                                    'estimate-templates.update',
+                                    template.id
+                                )}
                                 submitMethod="patch"
                                 backRoute={route('estimate-templates.index')}
                             />

@@ -13,7 +13,13 @@ interface Props extends PageProps {
     estimateTemplates: EstimateTemplate[];
 }
 
-export default function Edit({ auth, invoice, customers, invoiceItems, estimateTemplates }: Props) {
+export default function Edit({
+    auth,
+    invoice,
+    customers,
+    invoiceItems,
+    estimateTemplates,
+}: Props) {
     return (
         <AuthenticatedLayout
             header={
@@ -33,7 +39,10 @@ export default function Edit({ auth, invoice, customers, invoiceItems, estimateT
                                 customers={customers}
                                 invoiceItems={invoiceItems}
                                 estimateTemplates={estimateTemplates}
-                                submitRoute={route('invoices.update', invoice.id)}
+                                submitRoute={route(
+                                    'invoices.update',
+                                    invoice.id
+                                )}
                                 submitMethod="patch"
                                 backRoute={route('invoices.show', invoice.id)}
                             />

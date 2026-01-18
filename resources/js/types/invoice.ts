@@ -19,7 +19,14 @@ export interface Invoice {
     customer_id: string;
     estimate_number: string;
     version: number;
-    status: 'creating' | 'submitted' | 'order_received' | 'rejected' | 'invoice_creating' | 'invoice_submitted' | 'payment_confirmed';
+    status:
+        | 'creating'
+        | 'submitted'
+        | 'order_received'
+        | 'rejected'
+        | 'invoice_creating'
+        | 'invoice_submitted'
+        | 'payment_confirmed';
     document_type?: 'estimate' | 'invoice';
     title: string;
     estimate_date: string;

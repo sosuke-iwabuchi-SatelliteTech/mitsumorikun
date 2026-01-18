@@ -112,7 +112,9 @@ export default function Index({ userGroups, filters }: Props) {
                                             作成日
                                         </th>
                                         <th className="relative px-6 py-3">
-                                            <span className="sr-only">編集</span>
+                                            <span className="sr-only">
+                                                編集
+                                            </span>
                                         </th>
                                     </tr>
                                 </thead>
@@ -141,8 +143,7 @@ export default function Index({ userGroups, filters }: Props) {
                                                     group.created_at
                                                 ).toLocaleDateString('ja-JP')}
                                             </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                                            </td>
+                                            <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"></td>
                                         </tr>
                                     ))}
                                 </tbody>

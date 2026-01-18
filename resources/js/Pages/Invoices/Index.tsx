@@ -32,7 +32,7 @@ export default function Index({ auth, invoices, filters }: Props) {
             { preserveState: true }
         );
     };
-    
+
     return (
         <AuthenticatedLayout
             header={
@@ -125,7 +125,9 @@ export default function Index({ auth, invoices, filters }: Props) {
                                             className="text-right"
                                         />
                                         <th className="relative px-6 py-3">
-                                            <span className="sr-only">詳細</span>
+                                            <span className="sr-only">
+                                                詳細
+                                            </span>
                                         </th>
                                     </tr>
                                 </thead>
@@ -137,12 +139,17 @@ export default function Index({ auth, invoices, filters }: Props) {
                                                 className="cursor-pointer transition-colors duration-150 hover:bg-gray-50"
                                                 onClick={() =>
                                                     router.get(
-                                                        route('invoices.show', invoice.id)
+                                                        route(
+                                                            'invoices.show',
+                                                            invoice.id
+                                                        )
                                                     )
                                                 }
                                             >
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                                    <StatusBadge status={invoice.status} />
+                                                    <StatusBadge
+                                                        status={invoice.status}
+                                                    />
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                                                     {invoice.estimate_number}
@@ -152,16 +159,21 @@ export default function Index({ auth, invoices, filters }: Props) {
                                                     {invoice.title}
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                                    {invoice.customer?.name || '-'}
+                                                    {invoice.customer?.name ||
+                                                        '-'}
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                                    {formatDate(invoice.estimate_date)}
+                                                    {formatDate(
+                                                        invoice.estimate_date
+                                                    )}
                                                 </td>
-                                                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 text-right">
-                                                    ¥{Number(invoice.total_amount).toLocaleString()}
+                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-500">
+                                                    ¥
+                                                    {Number(
+                                                        invoice.total_amount
+                                                    ).toLocaleString()}
                                                 </td>
-                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                                                </td>
+                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"></td>
                                             </tr>
                                         ))
                                     ) : (

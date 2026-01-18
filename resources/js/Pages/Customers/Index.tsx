@@ -145,8 +145,7 @@ export default function Index({ auth, customers, filters }: Props) {
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                                     {customer.email || '-'}
                                                 </td>
-                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                                                </td>
+                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"></td>
                                             </tr>
                                         ))
                                     ) : (

@@ -17,7 +17,9 @@ export default function Create({ auth }: PageProps) {
         remarks: '',
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
         setData(e.target.name as any, e.target.value);
     };
 
@@ -40,9 +42,15 @@ export default function Create({ auth }: PageProps) {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
-                            <form onSubmit={submit} className="max-w-xl space-y-6">
+                            <form
+                                onSubmit={submit}
+                                className="max-w-xl space-y-6"
+                            >
                                 <div>
-                                    <InputLabel htmlFor="name" value="項目名称" />
+                                    <InputLabel
+                                        htmlFor="name"
+                                        value="項目名称"
+                                    />
                                     <TextInput
                                         id="name"
                                         name="name"
@@ -52,12 +60,18 @@ export default function Create({ auth }: PageProps) {
                                         required
                                         isFocused
                                     />
-                                    <InputError message={errors.name} className="mt-2" />
+                                    <InputError
+                                        message={errors.name}
+                                        className="mt-2"
+                                    />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <InputLabel htmlFor="unit_price" value="単価" />
+                                        <InputLabel
+                                            htmlFor="unit_price"
+                                            value="単価"
+                                        />
                                         <NumberInput
                                             id="unit_price"
                                             name="unit_price"
@@ -66,10 +80,16 @@ export default function Create({ auth }: PageProps) {
                                             onChange={handleChange}
                                             required
                                         />
-                                        <InputError message={errors.unit_price} className="mt-2" />
+                                        <InputError
+                                            message={errors.unit_price}
+                                            className="mt-2"
+                                        />
                                     </div>
                                     <div>
-                                        <InputLabel htmlFor="quantity" value="数量" />
+                                        <InputLabel
+                                            htmlFor="quantity"
+                                            value="数量"
+                                        />
                                         <NumberInput
                                             id="quantity"
                                             name="quantity"
@@ -79,7 +99,10 @@ export default function Create({ auth }: PageProps) {
                                             onChange={handleChange}
                                             required
                                         />
-                                        <InputError message={errors.quantity} className="mt-2" />
+                                        <InputError
+                                            message={errors.quantity}
+                                            className="mt-2"
+                                        />
                                     </div>
                                 </div>
 
@@ -92,7 +115,10 @@ export default function Create({ auth }: PageProps) {
                                         value={data.unit}
                                         onChange={handleChange}
                                     />
-                                    <InputError message={errors.unit} className="mt-2" />
+                                    <InputError
+                                        message={errors.unit}
+                                        className="mt-2"
+                                    />
                                 </div>
 
                                 <div>
@@ -104,7 +130,9 @@ export default function Create({ auth }: PageProps) {
                                                 className="form-radio text-indigo-600"
                                                 name="tax_type"
                                                 value="exc"
-                                                checked={data.tax_type === 'exc'}
+                                                checked={
+                                                    data.tax_type === 'exc'
+                                                }
                                                 onChange={handleChange as any}
                                             />
                                             <span className="ml-2">税抜</span>
@@ -115,17 +143,25 @@ export default function Create({ auth }: PageProps) {
                                                 className="form-radio text-indigo-600"
                                                 name="tax_type"
                                                 value="inc"
-                                                checked={data.tax_type === 'inc'}
+                                                checked={
+                                                    data.tax_type === 'inc'
+                                                }
                                                 onChange={handleChange as any}
                                             />
                                             <span className="ml-2">税込</span>
                                         </label>
                                     </div>
-                                    <InputError message={errors.tax_type} className="mt-2" />
+                                    <InputError
+                                        message={errors.tax_type}
+                                        className="mt-2"
+                                    />
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="remarks" value="備考" />
+                                    <InputLabel
+                                        htmlFor="remarks"
+                                        value="備考"
+                                    />
                                     <textarea
                                         id="remarks"
                                         name="remarks"
@@ -134,7 +170,10 @@ export default function Create({ auth }: PageProps) {
                                         onChange={handleChange}
                                         rows={3}
                                     />
-                                    <InputError message={errors.remarks} className="mt-2" />
+                                    <InputError
+                                        message={errors.remarks}
+                                        className="mt-2"
+                                    />
                                 </div>
 
                                 <div className="flex items-center justify-end gap-4">
@@ -144,7 +183,9 @@ export default function Create({ auth }: PageProps) {
                                     >
                                         キャンセル
                                     </Link>
-                                    <PrimaryButton disabled={processing}>保存</PrimaryButton>
+                                    <PrimaryButton disabled={processing}>
+                                        保存
+                                    </PrimaryButton>
                                 </div>
                             </form>
                         </div>

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
     headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
     },
 });
@@ -16,19 +16,19 @@ export interface ApiResponse<T> {
     [key: string]: any; // Allow other fields like 'customer' in the specific case
 }
 
-export const apiGet = <T>(url: string, params?: any) => 
-    api.get<T>(url, { params }).then(res => res.data);
+export const apiGet = <T>(url: string, params?: any) =>
+    api.get<T>(url, { params }).then((res) => res.data);
 
-export const apiPost = <T>(url: string, data?: any) => 
-    api.post<T>(url, data).then(res => res.data);
+export const apiPost = <T>(url: string, data?: any) =>
+    api.post<T>(url, data).then((res) => res.data);
 
-export const apiPut = <T>(url: string, data?: any) => 
-    api.put<T>(url, data).then(res => res.data);
+export const apiPut = <T>(url: string, data?: any) =>
+    api.put<T>(url, data).then((res) => res.data);
 
-export const apiPatch = <T>(url: string, data?: any) => 
-    api.patch<T>(url, data).then(res => res.data);
+export const apiPatch = <T>(url: string, data?: any) =>
+    api.patch<T>(url, data).then((res) => res.data);
 
-export const apiDel = <T>(url: string) => 
-    api.delete<T>(url).then(res => res.data);
+export const apiDel = <T>(url: string) =>
+    api.delete<T>(url).then((res) => res.data);
 
 export default api;

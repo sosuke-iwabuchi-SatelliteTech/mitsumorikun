@@ -8,7 +8,10 @@ interface Props extends PageProps {
 
 export default function Show({ auth, item }: Props) {
     const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(amount);
+        return new Intl.NumberFormat('ja-JP', {
+            style: 'currency',
+            currency: 'JPY',
+        }).format(amount);
     };
 
     const destroy = () => {
@@ -55,31 +58,56 @@ export default function Show({ auth, item }: Props) {
                         <div className="p-6 text-gray-900">
                             <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                                 <div className="sm:col-span-1">
-                                    <dt className="text-sm font-medium text-gray-500">項目名称</dt>
-                                    <dd className="mt-1 text-sm text-gray-900">{item.name}</dd>
+                                    <dt className="text-sm font-medium text-gray-500">
+                                        項目名称
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-900">
+                                        {item.name}
+                                    </dd>
                                 </div>
                                 <div className="sm:col-span-1">
-                                    <dt className="text-sm font-medium text-gray-500">単価</dt>
-                                    <dd className="mt-1 text-sm text-gray-900">{formatCurrency(item.unit_price)}</dd>
+                                    <dt className="text-sm font-medium text-gray-500">
+                                        単価
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-900">
+                                        {formatCurrency(item.unit_price)}
+                                    </dd>
                                 </div>
                                 <div className="sm:col-span-1">
-                                    <dt className="text-sm font-medium text-gray-500">数量</dt>
-                                    <dd className="mt-1 text-sm text-gray-900">{item.quantity}</dd>
+                                    <dt className="text-sm font-medium text-gray-500">
+                                        数量
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-900">
+                                        {item.quantity}
+                                    </dd>
                                 </div>
                                 <div className="sm:col-span-1">
-                                    <dt className="text-sm font-medium text-gray-500">単位</dt>
-                                    <dd className="mt-1 text-sm text-gray-900">{item.unit || '-'}</dd>
+                                    <dt className="text-sm font-medium text-gray-500">
+                                        単位
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-900">
+                                        {item.unit || '-'}
+                                    </dd>
                                 </div>
                                 <div className="sm:col-span-1">
-                                    <dt className="text-sm font-medium text-gray-500">税区分</dt>
-                                    <dd className="mt-1 text-sm text-gray-900">{item.tax_type === 'inc' ? '税込' : '税抜'}</dd>
+                                    <dt className="text-sm font-medium text-gray-500">
+                                        税区分
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-900">
+                                        {item.tax_type === 'inc'
+                                            ? '税込'
+                                            : '税抜'}
+                                    </dd>
                                 </div>
                                 <div className="sm:col-span-2">
-                                    <dt className="text-sm font-medium text-gray-500">備考</dt>
-                                    <dd className="mt-1 text-sm text-gray-900 whitespace-pre-wrap">{item.remarks || '-'}</dd>
+                                    <dt className="text-sm font-medium text-gray-500">
+                                        備考
+                                    </dt>
+                                    <dd className="mt-1 whitespace-pre-wrap text-sm text-gray-900">
+                                        {item.remarks || '-'}
+                                    </dd>
                                 </div>
                             </dl>
-
                         </div>
                     </div>
                 </div>

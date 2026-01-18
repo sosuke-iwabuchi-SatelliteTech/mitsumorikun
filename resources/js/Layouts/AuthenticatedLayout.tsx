@@ -79,7 +79,9 @@ export default function AuthenticatedLayout({
                                 {user.role === 'general' && (
                                     <NavLink
                                         href={route('invoice-items.index')}
-                                        active={route().current('invoice-items.*')}
+                                        active={route().current(
+                                            'invoice-items.*'
+                                        )}
                                     >
                                         見積項目管理
                                     </NavLink>
@@ -87,7 +89,9 @@ export default function AuthenticatedLayout({
                                 {user.role === 'general' && (
                                     <NavLink
                                         href={route('estimate-templates.index')}
-                                        active={route().current('estimate-templates.*')}
+                                        active={route().current(
+                                            'estimate-templates.*'
+                                        )}
                                     >
                                         見積テンプレート
                                     </NavLink>
@@ -95,7 +99,9 @@ export default function AuthenticatedLayout({
                                 {user.role === 'general' && (
                                     <NavLink
                                         href={route('group-information.edit')}
-                                        active={route().current('group-information.*')}
+                                        active={route().current(
+                                            'group-information.*'
+                                        )}
                                     >
                                         会社情報管理
                                     </NavLink>
@@ -219,46 +225,46 @@ export default function AuthenticatedLayout({
                 >
                     <div className="space-y-1 pb-3 pt-2">
                         {user.role === 'general' && (
-                                <ResponsiveNavLink
-                                    href={route('invoices.index')}
-                                    active={route().current('invoices.*')}
-                                >
-                                    見積・請求管理
-                                </ResponsiveNavLink>
-                            )}
+                            <ResponsiveNavLink
+                                href={route('invoices.index')}
+                                active={route().current('invoices.*')}
+                            >
+                                見積・請求管理
+                            </ResponsiveNavLink>
+                        )}
 
-                            {user.role === 'general' && (
-                                <ResponsiveNavLink
-                                    href={route('customers.index')}
-                                    active={route().current('customers.*')}
-                                >
-                                    顧客管理
-                                </ResponsiveNavLink>
-                            )}
-                            {user.role === 'general' && (
-                                <ResponsiveNavLink
-                                    href={route('invoice-items.index')}
-                                    active={route().current('invoice-items.*')}
-                                >
-                                    見積項目管理
-                                </ResponsiveNavLink>
-                            )}
-                            {user.role === 'general' && (
-                                <ResponsiveNavLink
-                                    href={route('estimate-templates.index')}
-                                    active={route().current('estimate-templates.*')}
-                                >
-                                    見積テンプレート
-                                </ResponsiveNavLink>
-                            )}
-                            {user.role === 'general' && (
-                                <ResponsiveNavLink
-                                    href={route('group-information.edit')}
-                                    active={route().current('group-information.*')}
-                                >
-                                    会社情報管理
-                                </ResponsiveNavLink>
-                            )}
+                        {user.role === 'general' && (
+                            <ResponsiveNavLink
+                                href={route('customers.index')}
+                                active={route().current('customers.*')}
+                            >
+                                顧客管理
+                            </ResponsiveNavLink>
+                        )}
+                        {user.role === 'general' && (
+                            <ResponsiveNavLink
+                                href={route('invoice-items.index')}
+                                active={route().current('invoice-items.*')}
+                            >
+                                見積項目管理
+                            </ResponsiveNavLink>
+                        )}
+                        {user.role === 'general' && (
+                            <ResponsiveNavLink
+                                href={route('estimate-templates.index')}
+                                active={route().current('estimate-templates.*')}
+                            >
+                                見積テンプレート
+                            </ResponsiveNavLink>
+                        )}
+                        {user.role === 'general' && (
+                            <ResponsiveNavLink
+                                href={route('group-information.edit')}
+                                active={route().current('group-information.*')}
+                            >
+                                会社情報管理
+                            </ResponsiveNavLink>
+                        )}
                         {user.role === 'admin' && (
                             <ResponsiveNavLink
                                 href={route('admin.users.index')}

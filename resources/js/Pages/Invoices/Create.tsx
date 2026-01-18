@@ -11,7 +11,12 @@ interface Props extends PageProps {
     estimateTemplates: EstimateTemplate[];
 }
 
-export default function Create({ auth, customers, invoiceItems, estimateTemplates }: Props) {
+export default function Create({
+    auth,
+    customers,
+    invoiceItems,
+    estimateTemplates,
+}: Props) {
     return (
         <AuthenticatedLayout
             header={

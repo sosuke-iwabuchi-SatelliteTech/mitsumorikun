@@ -109,7 +109,6 @@ export default function Show({ auth, customer }: Props) {
                             </dl>
                         </div>
                     </div>
-
                 </div>
             </div>
         </AuthenticatedLayout>

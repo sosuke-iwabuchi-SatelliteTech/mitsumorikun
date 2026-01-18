@@ -31,7 +31,10 @@ export default function Index({ auth, items, filters }: Props) {
     };
 
     const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(amount);
+        return new Intl.NumberFormat('ja-JP', {
+            style: 'currency',
+            currency: 'JPY',
+        }).format(amount);
     };
 
     return (
@@ -110,14 +113,22 @@ export default function Index({ auth, items, filters }: Props) {
                                             queryParams={params}
                                             routeName="invoice-items.index"
                                         />
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                        <th
+                                            scope="col"
+                                            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                        >
                                             単位
                                         </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                        <th
+                                            scope="col"
+                                            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                        >
                                             税区分
                                         </th>
                                         <th className="relative px-6 py-3">
-                                            <span className="sr-only">詳細</span>
+                                            <span className="sr-only">
+                                                詳細
+                                            </span>
                                         </th>
                                     </tr>
                                 </thead>
@@ -140,7 +151,9 @@ export default function Index({ auth, items, filters }: Props) {
                                                     {item.name}
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                                    {formatCurrency(item.unit_price)}
+                                                    {formatCurrency(
+                                                        item.unit_price
+                                                    )}
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                                     {item.quantity}
@@ -149,10 +162,11 @@ export default function Index({ auth, items, filters }: Props) {
                                                     {item.unit || '-'}
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                                    {item.tax_type === 'inc' ? '税込' : '税抜'}
+                                                    {item.tax_type === 'inc'
+                                                        ? '税込'
+                                                        : '税抜'}
                                                 </td>
-                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                                                </td>
+                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"></td>
                                             </tr>
                                         ))
                                     ) : (

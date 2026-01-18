@@ -40,7 +40,8 @@ export default function Edit({ userGroup }: { userGroup: UserGroup }) {
 
     const basicForm = useForm({
         invoice_company_name: userGroup.detail?.invoice_company_name || '',
-        invoice_registration_number: userGroup.detail?.invoice_registration_number || '',
+        invoice_registration_number:
+            userGroup.detail?.invoice_registration_number || '',
         zip_code: userGroup.detail?.zip_code || '',
         address1: userGroup.detail?.address1 || '',
         address2: userGroup.detail?.address2 || '',
@@ -61,7 +62,8 @@ export default function Edit({ userGroup }: { userGroup: UserGroup }) {
         account_holder: userGroup.detail?.account_holder || '',
         japan_post_bank_symbol: userGroup.detail?.japan_post_bank_symbol || '',
         japan_post_bank_number: userGroup.detail?.japan_post_bank_number || '',
-        japan_post_bank_account_holder: userGroup.detail?.japan_post_bank_account_holder || '',
+        japan_post_bank_account_holder:
+            userGroup.detail?.japan_post_bank_account_holder || '',
     });
 
     const submitBasic: FormEventHandler = (e) => {
@@ -98,7 +100,10 @@ export default function Edit({ userGroup }: { userGroup: UserGroup }) {
                 <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                     <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
                         <div className="border-b border-gray-200">
-                            <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+                            <nav
+                                className="-mb-px flex space-x-8"
+                                aria-label="Tabs"
+                            >
                                 <button
                                     onClick={() => setActiveTab('basic')}
                                     className={`${
@@ -123,99 +128,213 @@ export default function Edit({ userGroup }: { userGroup: UserGroup }) {
                         </div>
 
                         {activeTab === 'basic' && (
-                            <form onSubmit={submitBasic} className="mt-6 space-y-6">
+                            <form
+                                onSubmit={submitBasic}
+                                className="mt-6 space-y-6"
+                            >
                                 <div className="space-y-6">
                                     <div>
-                                        <InputLabel htmlFor="invoice_company_name" value="会社名（見積・請求書記載用）" />
+                                        <InputLabel
+                                            htmlFor="invoice_company_name"
+                                            value="会社名（見積・請求書記載用）"
+                                        />
                                         <TextInput
                                             id="invoice_company_name"
                                             className="mt-1 block w-full"
-                                            value={basicForm.data.invoice_company_name}
-                                            onChange={(e) => basicForm.setData('invoice_company_name', e.target.value)}
+                                            value={
+                                                basicForm.data
+                                                    .invoice_company_name
+                                            }
+                                            onChange={(e) =>
+                                                basicForm.setData(
+                                                    'invoice_company_name',
+                                                    e.target.value
+                                                )
+                                            }
                                         />
-                                        <InputError className="mt-2" message={basicForm.errors.invoice_company_name} />
+                                        <InputError
+                                            className="mt-2"
+                                            message={
+                                                basicForm.errors
+                                                    .invoice_company_name
+                                            }
+                                        />
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="invoice_registration_number" value="Invoice登録番号" />
+                                        <InputLabel
+                                            htmlFor="invoice_registration_number"
+                                            value="Invoice登録番号"
+                                        />
                                         <TextInput
                                             id="invoice_registration_number"
                                             className="mt-1 block w-full"
-                                            value={basicForm.data.invoice_registration_number}
-                                            onChange={(e) => basicForm.setData('invoice_registration_number', e.target.value)}
-                                            placeholder='T1234567890123'
+                                            value={
+                                                basicForm.data
+                                                    .invoice_registration_number
+                                            }
+                                            onChange={(e) =>
+                                                basicForm.setData(
+                                                    'invoice_registration_number',
+                                                    e.target.value
+                                                )
+                                            }
+                                            placeholder="T1234567890123"
                                         />
-                                        <InputError className="mt-2" message={basicForm.errors.invoice_registration_number} />
+                                        <InputError
+                                            className="mt-2"
+                                            message={
+                                                basicForm.errors
+                                                    .invoice_registration_number
+                                            }
+                                        />
                                     </div>
 
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                         <div>
-                                            <InputLabel htmlFor="zip_code" value="郵便番号" />
+                                            <InputLabel
+                                                htmlFor="zip_code"
+                                                value="郵便番号"
+                                            />
                                             <TextInput
                                                 id="zip_code"
                                                 className="mt-1 block w-full"
                                                 value={basicForm.data.zip_code}
-                                                onChange={(e) => basicForm.setData('zip_code', e.target.value)}
+                                                onChange={(e) =>
+                                                    basicForm.setData(
+                                                        'zip_code',
+                                                        e.target.value
+                                                    )
+                                                }
                                             />
-                                            <InputError className="mt-2" message={basicForm.errors.zip_code} />
+                                            <InputError
+                                                className="mt-2"
+                                                message={
+                                                    basicForm.errors.zip_code
+                                                }
+                                            />
                                         </div>
 
                                         <div>
-                                            <InputLabel htmlFor="phone_number" value="電話番号" />
+                                            <InputLabel
+                                                htmlFor="phone_number"
+                                                value="電話番号"
+                                            />
                                             <TextInput
                                                 id="phone_number"
                                                 className="mt-1 block w-full"
-                                                value={basicForm.data.phone_number}
-                                                onChange={(e) => basicForm.setData('phone_number', e.target.value)}
+                                                value={
+                                                    basicForm.data.phone_number
+                                                }
+                                                onChange={(e) =>
+                                                    basicForm.setData(
+                                                        'phone_number',
+                                                        e.target.value
+                                                    )
+                                                }
                                             />
-                                            <InputError className="mt-2" message={basicForm.errors.phone_number} />
+                                            <InputError
+                                                className="mt-2"
+                                                message={
+                                                    basicForm.errors
+                                                        .phone_number
+                                                }
+                                            />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="address1" value="住所1" />
+                                        <InputLabel
+                                            htmlFor="address1"
+                                            value="住所1"
+                                        />
                                         <TextInput
                                             id="address1"
                                             className="mt-1 block w-full"
                                             value={basicForm.data.address1}
-                                            onChange={(e) => basicForm.setData('address1', e.target.value)}
+                                            onChange={(e) =>
+                                                basicForm.setData(
+                                                    'address1',
+                                                    e.target.value
+                                                )
+                                            }
                                         />
-                                        <InputError className="mt-2" message={basicForm.errors.address1} />
+                                        <InputError
+                                            className="mt-2"
+                                            message={basicForm.errors.address1}
+                                        />
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="address2" value="住所2" />
+                                        <InputLabel
+                                            htmlFor="address2"
+                                            value="住所2"
+                                        />
                                         <TextInput
                                             id="address2"
                                             className="mt-1 block w-full"
                                             value={basicForm.data.address2}
-                                            onChange={(e) => basicForm.setData('address2', e.target.value)}
+                                            onChange={(e) =>
+                                                basicForm.setData(
+                                                    'address2',
+                                                    e.target.value
+                                                )
+                                            }
                                         />
-                                        <InputError className="mt-2" message={basicForm.errors.address2} />
+                                        <InputError
+                                            className="mt-2"
+                                            message={basicForm.errors.address2}
+                                        />
                                     </div>
 
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                         <div>
-                                            <InputLabel htmlFor="fax_number" value="FAX番号" />
+                                            <InputLabel
+                                                htmlFor="fax_number"
+                                                value="FAX番号"
+                                            />
                                             <TextInput
                                                 id="fax_number"
                                                 className="mt-1 block w-full"
-                                                value={basicForm.data.fax_number}
-                                                onChange={(e) => basicForm.setData('fax_number', e.target.value)}
+                                                value={
+                                                    basicForm.data.fax_number
+                                                }
+                                                onChange={(e) =>
+                                                    basicForm.setData(
+                                                        'fax_number',
+                                                        e.target.value
+                                                    )
+                                                }
                                             />
-                                            <InputError className="mt-2" message={basicForm.errors.fax_number} />
+                                            <InputError
+                                                className="mt-2"
+                                                message={
+                                                    basicForm.errors.fax_number
+                                                }
+                                            />
                                         </div>
 
                                         <div>
-                                            <InputLabel htmlFor="email" value="Eメール" />
+                                            <InputLabel
+                                                htmlFor="email"
+                                                value="Eメール"
+                                            />
                                             <TextInput
                                                 id="email"
                                                 type="email"
                                                 className="mt-1 block w-full"
                                                 value={basicForm.data.email}
-                                                onChange={(e) => basicForm.setData('email', e.target.value)}
+                                                onChange={(e) =>
+                                                    basicForm.setData(
+                                                        'email',
+                                                        e.target.value
+                                                    )
+                                                }
                                             />
-                                            <InputError className="mt-2" message={basicForm.errors.email} />
+                                            <InputError
+                                                className="mt-2"
+                                                message={basicForm.errors.email}
+                                            />
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -223,25 +342,48 @@ export default function Edit({ userGroup }: { userGroup: UserGroup }) {
                                             <InputLabel value="社判（角印）" />
                                             <div className="mt-2 space-y-4">
                                                 {/* プレビュー表示 */}
-                                                {(basicForm.data.seal_image || (userGroup.detail?.seal_image_path && !basicForm.data.delete_seal)) && (
-                                                    <div className="relative inline-block border rounded p-2 bg-gray-50">
+                                                {(basicForm.data.seal_image ||
+                                                    (userGroup.detail
+                                                        ?.seal_image_path &&
+                                                        !basicForm.data
+                                                            .delete_seal)) && (
+                                                    <div className="relative inline-block rounded border bg-gray-50 p-2">
                                                         <img
-                                                            src={basicForm.data.seal_image 
-                                                                ? URL.createObjectURL(basicForm.data.seal_image) 
-                                                                : route('group-information.seal')}
+                                                            src={
+                                                                basicForm.data
+                                                                    .seal_image
+                                                                    ? URL.createObjectURL(
+                                                                          basicForm
+                                                                              .data
+                                                                              .seal_image
+                                                                      )
+                                                                    : route(
+                                                                          'group-information.seal'
+                                                                      )
+                                                            }
                                                             alt="Seal Preview"
                                                             className="h-32 w-32 object-contain"
                                                         />
                                                         <button
                                                             type="button"
                                                             onClick={() => {
-                                                                if (basicForm.data.seal_image) {
-                                                                    basicForm.setData('seal_image', null);
+                                                                if (
+                                                                    basicForm
+                                                                        .data
+                                                                        .seal_image
+                                                                ) {
+                                                                    basicForm.setData(
+                                                                        'seal_image',
+                                                                        null
+                                                                    );
                                                                 } else {
-                                                                    basicForm.setData('delete_seal', true);
+                                                                    basicForm.setData(
+                                                                        'delete_seal',
+                                                                        true
+                                                                    );
                                                                 }
                                                             }}
-                                                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 shadow-sm"
+                                                            className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-sm hover:bg-red-600"
                                                             title="削除"
                                                         >
                                                             &times;
@@ -256,62 +398,115 @@ export default function Edit({ userGroup }: { userGroup: UserGroup }) {
                                                         className="hidden"
                                                         accept="image/png"
                                                         onChange={(e) => {
-                                                            const file = e.target.files?.[0];
+                                                            const file =
+                                                                e.target
+                                                                    .files?.[0];
                                                             if (file) {
-                                                                basicForm.setData({
-                                                                    ...basicForm.data,
-                                                                    seal_image: file,
-                                                                    delete_seal: false,
-                                                                });
+                                                                basicForm.setData(
+                                                                    {
+                                                                        ...basicForm.data,
+                                                                        seal_image:
+                                                                            file,
+                                                                        delete_seal: false,
+                                                                    }
+                                                                );
                                                             }
                                                         }}
                                                     />
                                                     <PrimaryButton
                                                         type="button"
-                                                        disabled={basicForm.processing}
-                                                        onClick={() => document.getElementById('seal_image')?.click()}
+                                                        disabled={
+                                                            basicForm.processing
+                                                        }
+                                                        onClick={() =>
+                                                            document
+                                                                .getElementById(
+                                                                    'seal_image'
+                                                                )
+                                                                ?.click()
+                                                        }
                                                     >
                                                         画像を選択
                                                     </PrimaryButton>
-                                                    <span className="text-xs text-gray-500">※透過PNG形式, 2MB以内</span>
+                                                    <span className="text-xs text-gray-500">
+                                                        ※透過PNG形式, 2MB以内
+                                                    </span>
                                                 </div>
-                                                <InputError className="mt-2" message={basicForm.errors.seal_image} />
+                                                <InputError
+                                                    className="mt-2"
+                                                    message={
+                                                        basicForm.errors
+                                                            .seal_image
+                                                    }
+                                                />
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="border-t pt-6">
-                                        <InputLabel htmlFor="pdf_font" value="PDFフォント設定" />
+                                        <InputLabel
+                                            htmlFor="pdf_font"
+                                            value="PDFフォント設定"
+                                        />
                                         <div className="mt-2 flex gap-8">
-                                            <label className="flex items-center gap-2 cursor-pointer">
+                                            <label className="flex cursor-pointer items-center gap-2">
                                                 <input
                                                     type="radio"
                                                     name="pdf_font"
                                                     value="ipa"
-                                                    checked={basicForm.data.pdf_font === 'ipa'}
-                                                    onChange={(e) => basicForm.setData('pdf_font', 'ipa')}
+                                                    checked={
+                                                        basicForm.data
+                                                            .pdf_font === 'ipa'
+                                                    }
+                                                    onChange={(e) =>
+                                                        basicForm.setData(
+                                                            'pdf_font',
+                                                            'ipa'
+                                                        )
+                                                    }
                                                     className="border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                                                 />
-                                                <span className="text-sm font-medium text-gray-700">IPAexゴシック (標準)</span>
+                                                <span className="text-sm font-medium text-gray-700">
+                                                    IPAexゴシック (標準)
+                                                </span>
                                             </label>
-                                            <label className="flex items-center gap-2 cursor-pointer">
+                                            <label className="flex cursor-pointer items-center gap-2">
                                                 <input
                                                     type="radio"
                                                     name="pdf_font"
                                                     value="klee"
-                                                    checked={basicForm.data.pdf_font === 'klee'}
-                                                    onChange={(e) => basicForm.setData('pdf_font', 'klee')}
+                                                    checked={
+                                                        basicForm.data
+                                                            .pdf_font === 'klee'
+                                                    }
+                                                    onChange={(e) =>
+                                                        basicForm.setData(
+                                                            'pdf_font',
+                                                            'klee'
+                                                        )
+                                                    }
                                                     className="border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                                                 />
-                                                <span className="text-sm font-medium text-gray-700">Klee One</span>
+                                                <span className="text-sm font-medium text-gray-700">
+                                                    Klee One
+                                                </span>
                                             </label>
                                         </div>
-                                        <InputError className="mt-2" message={basicForm.errors.pdf_font} />
-                                        <p className="mt-2 text-xs text-gray-500">※見積書、請求書のPDF出力時に適用されます。</p>
+                                        <InputError
+                                            className="mt-2"
+                                            message={basicForm.errors.pdf_font}
+                                        />
+                                        <p className="mt-2 text-xs text-gray-500">
+                                            ※見積書、請求書のPDF出力時に適用されます。
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4 border-t pt-6">
-                                    <PrimaryButton disabled={basicForm.processing}>保存</PrimaryButton>
+                                    <PrimaryButton
+                                        disabled={basicForm.processing}
+                                    >
+                                        保存
+                                    </PrimaryButton>
                                     <Transition
                                         show={basicForm.recentlySuccessful}
                                         enter="transition ease-in-out"
@@ -319,151 +514,342 @@ export default function Edit({ userGroup }: { userGroup: UserGroup }) {
                                         leave="transition ease-in-out"
                                         leaveTo="opacity-0"
                                     >
-                                        <p className="text-sm text-gray-600">保存しました。</p>
+                                        <p className="text-sm text-gray-600">
+                                            保存しました。
+                                        </p>
                                     </Transition>
                                 </div>
                             </form>
                         )}
 
                         {activeTab === 'account' && (
-                            <form onSubmit={submitAccount} className="mt-6 space-y-6">
+                            <form
+                                onSubmit={submitAccount}
+                                className="mt-6 space-y-6"
+                            >
                                 <div className="space-y-8">
                                     <div className="flex gap-8 border-b pb-4">
-                                        <label className="flex items-center gap-2 cursor-pointer">
+                                        <label className="flex cursor-pointer items-center gap-2">
                                             <input
                                                 type="radio"
                                                 name="account_method"
                                                 value="bank"
-                                                checked={accountForm.data.account_method === 'bank'}
-                                                onChange={(e) => accountForm.setData('account_method', 'bank')}
+                                                checked={
+                                                    accountForm.data
+                                                        .account_method ===
+                                                    'bank'
+                                                }
+                                                onChange={(e) =>
+                                                    accountForm.setData(
+                                                        'account_method',
+                                                        'bank'
+                                                    )
+                                                }
                                                 className="border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                                             />
-                                            <span className="text-sm font-medium text-gray-700">銀行口座を表示する</span>
+                                            <span className="text-sm font-medium text-gray-700">
+                                                銀行口座を表示する
+                                            </span>
                                         </label>
-                                        <label className="flex items-center gap-2 cursor-pointer">
+                                        <label className="flex cursor-pointer items-center gap-2">
                                             <input
                                                 type="radio"
                                                 name="account_method"
                                                 value="japan_post"
-                                                checked={accountForm.data.account_method === 'japan_post'}
-                                                onChange={(e) => accountForm.setData('account_method', 'japan_post')}
+                                                checked={
+                                                    accountForm.data
+                                                        .account_method ===
+                                                    'japan_post'
+                                                }
+                                                onChange={(e) =>
+                                                    accountForm.setData(
+                                                        'account_method',
+                                                        'japan_post'
+                                                    )
+                                                }
                                                 className="border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                                             />
-                                            <span className="text-sm font-medium text-gray-700">ゆうちょ銀行を表示する</span>
+                                            <span className="text-sm font-medium text-gray-700">
+                                                ゆうちょ銀行を表示する
+                                            </span>
                                         </label>
                                     </div>
 
-                                    {accountForm.data.account_method === 'bank' && (
-                                        <div className="rounded-lg border border-gray-200 p-4 bg-gray-50/50">
-                                            <h3 className="mb-4 text-lg font-medium text-gray-900 border-b pb-2">銀行口座</h3>
+                                    {accountForm.data.account_method ===
+                                        'bank' && (
+                                        <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
+                                            <h3 className="mb-4 border-b pb-2 text-lg font-medium text-gray-900">
+                                                銀行口座
+                                            </h3>
                                             <div className="space-y-6">
                                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                                     <div>
-                                                        <InputLabel htmlFor="bank_name" value="金融機関名" />
+                                                        <InputLabel
+                                                            htmlFor="bank_name"
+                                                            value="金融機関名"
+                                                        />
                                                         <TextInput
                                                             id="bank_name"
                                                             className="mt-1 block w-full shadow-none"
-                                                            value={accountForm.data.bank_name}
-                                                            onChange={(e) => accountForm.setData('bank_name', e.target.value)}
+                                                            value={
+                                                                accountForm.data
+                                                                    .bank_name
+                                                            }
+                                                            onChange={(e) =>
+                                                                accountForm.setData(
+                                                                    'bank_name',
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            }
                                                         />
-                                                        <InputError className="mt-2" message={accountForm.errors.bank_name} />
+                                                        <InputError
+                                                            className="mt-2"
+                                                            message={
+                                                                accountForm
+                                                                    .errors
+                                                                    .bank_name
+                                                            }
+                                                        />
                                                     </div>
                                                     <div>
-                                                        <InputLabel htmlFor="branch_name" value="支店名" />
+                                                        <InputLabel
+                                                            htmlFor="branch_name"
+                                                            value="支店名"
+                                                        />
                                                         <TextInput
                                                             id="branch_name"
                                                             className="mt-1 block w-full shadow-none"
-                                                            value={accountForm.data.branch_name}
-                                                            onChange={(e) => accountForm.setData('branch_name', e.target.value)}
+                                                            value={
+                                                                accountForm.data
+                                                                    .branch_name
+                                                            }
+                                                            onChange={(e) =>
+                                                                accountForm.setData(
+                                                                    'branch_name',
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            }
                                                         />
-                                                        <InputError className="mt-2" message={accountForm.errors.branch_name} />
+                                                        <InputError
+                                                            className="mt-2"
+                                                            message={
+                                                                accountForm
+                                                                    .errors
+                                                                    .branch_name
+                                                            }
+                                                        />
                                                     </div>
                                                 </div>
 
                                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                                     <div>
-                                                        <InputLabel htmlFor="account_type" value="口座種別" />
+                                                        <InputLabel
+                                                            htmlFor="account_type"
+                                                            value="口座種別"
+                                                        />
                                                         <select
                                                             id="account_type"
                                                             className="mt-1 block w-full rounded-md border-gray-300 shadow-none focus:border-indigo-500 focus:ring-indigo-500"
-                                                            value={accountForm.data.account_type}
-                                                            onChange={(e) => accountForm.setData('account_type', e.target.value)}
+                                                            value={
+                                                                accountForm.data
+                                                                    .account_type
+                                                            }
+                                                            onChange={(e) =>
+                                                                accountForm.setData(
+                                                                    'account_type',
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            }
                                                         >
-                                                            <option value="">選択してください</option>
-                                                            <option value="普通">普通</option>
-                                                            <option value="当座">当座</option>
+                                                            <option value="">
+                                                                選択してください
+                                                            </option>
+                                                            <option value="普通">
+                                                                普通
+                                                            </option>
+                                                            <option value="当座">
+                                                                当座
+                                                            </option>
                                                         </select>
-                                                        <InputError className="mt-2" message={accountForm.errors.account_type} />
+                                                        <InputError
+                                                            className="mt-2"
+                                                            message={
+                                                                accountForm
+                                                                    .errors
+                                                                    .account_type
+                                                            }
+                                                        />
                                                     </div>
                                                     <div className="md:col-span-2">
-                                                        <InputLabel htmlFor="account_number" value="口座番号" />
+                                                        <InputLabel
+                                                            htmlFor="account_number"
+                                                            value="口座番号"
+                                                        />
                                                         <TextInput
                                                             id="account_number"
                                                             className="mt-1 block w-full shadow-none"
-                                                            value={accountForm.data.account_number}
-                                                            onChange={(e) => accountForm.setData('account_number', e.target.value)}
+                                                            value={
+                                                                accountForm.data
+                                                                    .account_number
+                                                            }
+                                                            onChange={(e) =>
+                                                                accountForm.setData(
+                                                                    'account_number',
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            }
                                                         />
-                                                        <InputError className="mt-2" message={accountForm.errors.account_number} />
+                                                        <InputError
+                                                            className="mt-2"
+                                                            message={
+                                                                accountForm
+                                                                    .errors
+                                                                    .account_number
+                                                            }
+                                                        />
                                                     </div>
                                                 </div>
 
                                                 <div>
-                                                    <InputLabel htmlFor="account_holder" value="口座名義" />
+                                                    <InputLabel
+                                                        htmlFor="account_holder"
+                                                        value="口座名義"
+                                                    />
                                                     <TextInput
                                                         id="account_holder"
                                                         className="mt-1 block w-full shadow-none"
-                                                        value={accountForm.data.account_holder}
-                                                        onChange={(e) => accountForm.setData('account_holder', e.target.value)}
+                                                        value={
+                                                            accountForm.data
+                                                                .account_holder
+                                                        }
+                                                        onChange={(e) =>
+                                                            accountForm.setData(
+                                                                'account_holder',
+                                                                e.target.value
+                                                            )
+                                                        }
                                                     />
-                                                    <InputError className="mt-2" message={accountForm.errors.account_holder} />
+                                                    <InputError
+                                                        className="mt-2"
+                                                        message={
+                                                            accountForm.errors
+                                                                .account_holder
+                                                        }
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
                                     )}
 
-                                    {accountForm.data.account_method === 'japan_post' && (
-                                        <div className="rounded-lg border border-gray-200 p-4 bg-gray-50/50">
-                                            <h3 className="mb-4 text-lg font-medium text-gray-900 border-b pb-2">ゆうちょ銀行</h3>
+                                    {accountForm.data.account_method ===
+                                        'japan_post' && (
+                                        <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
+                                            <h3 className="mb-4 border-b pb-2 text-lg font-medium text-gray-900">
+                                                ゆうちょ銀行
+                                            </h3>
                                             <div className="space-y-6">
                                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                                     <div>
-                                                        <InputLabel htmlFor="japan_post_bank_symbol" value="記号（５桁）" />
+                                                        <InputLabel
+                                                            htmlFor="japan_post_bank_symbol"
+                                                            value="記号（５桁）"
+                                                        />
                                                         <TextInput
                                                             id="japan_post_bank_symbol"
                                                             className="mt-1 block w-full shadow-none"
-                                                            value={accountForm.data.japan_post_bank_symbol}
-                                                            onChange={(e) => accountForm.setData('japan_post_bank_symbol', e.target.value)}
+                                                            value={
+                                                                accountForm.data
+                                                                    .japan_post_bank_symbol
+                                                            }
+                                                            onChange={(e) =>
+                                                                accountForm.setData(
+                                                                    'japan_post_bank_symbol',
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            }
                                                         />
-                                                        <InputError className="mt-2" message={accountForm.errors.japan_post_bank_symbol} />
+                                                        <InputError
+                                                            className="mt-2"
+                                                            message={
+                                                                accountForm
+                                                                    .errors
+                                                                    .japan_post_bank_symbol
+                                                            }
+                                                        />
                                                     </div>
                                                     <div>
-                                                        <InputLabel htmlFor="japan_post_bank_number" value="番号（最大８桁）" />
+                                                        <InputLabel
+                                                            htmlFor="japan_post_bank_number"
+                                                            value="番号（最大８桁）"
+                                                        />
                                                         <TextInput
                                                             id="japan_post_bank_number"
                                                             className="mt-1 block w-full shadow-none"
-                                                            value={accountForm.data.japan_post_bank_number}
-                                                            onChange={(e) => accountForm.setData('japan_post_bank_number', e.target.value)}
+                                                            value={
+                                                                accountForm.data
+                                                                    .japan_post_bank_number
+                                                            }
+                                                            onChange={(e) =>
+                                                                accountForm.setData(
+                                                                    'japan_post_bank_number',
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            }
                                                         />
-                                                        <InputError className="mt-2" message={accountForm.errors.japan_post_bank_number} />
+                                                        <InputError
+                                                            className="mt-2"
+                                                            message={
+                                                                accountForm
+                                                                    .errors
+                                                                    .japan_post_bank_number
+                                                            }
+                                                        />
                                                     </div>
                                                 </div>
 
                                                 <div>
-                                                    <InputLabel htmlFor="japan_post_bank_account_holder" value="口座名義" />
+                                                    <InputLabel
+                                                        htmlFor="japan_post_bank_account_holder"
+                                                        value="口座名義"
+                                                    />
                                                     <TextInput
                                                         id="japan_post_bank_account_holder"
                                                         className="mt-1 block w-full shadow-none"
-                                                        value={accountForm.data.japan_post_bank_account_holder}
-                                                        onChange={(e) => accountForm.setData('japan_post_bank_account_holder', e.target.value)}
+                                                        value={
+                                                            accountForm.data
+                                                                .japan_post_bank_account_holder
+                                                        }
+                                                        onChange={(e) =>
+                                                            accountForm.setData(
+                                                                'japan_post_bank_account_holder',
+                                                                e.target.value
+                                                            )
+                                                        }
                                                     />
-                                                    <InputError className="mt-2" message={accountForm.errors.japan_post_bank_account_holder} />
+                                                    <InputError
+                                                        className="mt-2"
+                                                        message={
+                                                            accountForm.errors
+                                                                .japan_post_bank_account_holder
+                                                        }
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
                                     )}
                                 </div>
                                 <div className="flex items-center gap-4 border-t pt-6">
-                                    <PrimaryButton disabled={accountForm.processing}>保存</PrimaryButton>
+                                    <PrimaryButton
+                                        disabled={accountForm.processing}
+                                    >
+                                        保存
+                                    </PrimaryButton>
                                     <Transition
                                         show={accountForm.recentlySuccessful}
                                         enter="transition ease-in-out"
@@ -471,7 +857,9 @@ export default function Edit({ userGroup }: { userGroup: UserGroup }) {
                                         leave="transition ease-in-out"
                                         leaveTo="opacity-0"
                                     >
-                                        <p className="text-sm text-gray-600">保存しました。</p>
+                                        <p className="text-sm text-gray-600">
+                                            保存しました。
+                                        </p>
                                     </Transition>
                                 </div>
                             </form>

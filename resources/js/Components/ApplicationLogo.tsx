@@ -1,9 +1,5 @@
-export default function ApplicationLogo(props: React.ImgHTMLAttributes<HTMLImageElement>) {
-    return (
-        <img
-            {...props}
-            src="/images/logo.svg"
-            alt="Application Logo"
-        />
-    );
+export default function ApplicationLogo(
+    props: React.ImgHTMLAttributes<HTMLImageElement>
+) {
+    return <img {...props} src="/images/logo.svg" alt="Application Logo" />;
 }
