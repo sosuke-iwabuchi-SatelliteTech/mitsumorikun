@@ -86,6 +86,14 @@ export default function AuthenticatedLayout({
                                 )}
                                 {user.role === 'general' && (
                                     <NavLink
+                                        href={route('estimate-templates.index')}
+                                        active={route().current('estimate-templates.*')}
+                                    >
+                                        見積テンプレート
+                                    </NavLink>
+                                )}
+                                {user.role === 'general' && (
+                                    <NavLink
                                         href={route('group-information.edit')}
                                         active={route().current('group-information.*')}
                                     >
@@ -233,6 +241,14 @@ export default function AuthenticatedLayout({
                                     active={route().current('invoice-items.*')}
                                 >
                                     見積項目管理
+                                </ResponsiveNavLink>
+                            )}
+                            {user.role === 'general' && (
+                                <ResponsiveNavLink
+                                    href={route('estimate-templates.index')}
+                                    active={route().current('estimate-templates.*')}
+                                >
+                                    見積テンプレート
                                 </ResponsiveNavLink>
                             )}
                             {user.role === 'general' && (

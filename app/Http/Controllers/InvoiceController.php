@@ -6,6 +6,7 @@ use App\Http\Requests\InvoiceRequest;
 use App\Models\Invoice;
 use App\Models\FinalizedInvoice;
 use App\Models\Customer;
+use App\Models\EstimateTemplate;
 use App\Models\InvoiceItem;
 use App\Services\InvoiceService;
 use Illuminate\Http\RedirectResponse;
@@ -43,8 +44,9 @@ class InvoiceController extends Controller
     public function create(): Response
     {
         return Inertia::render('Invoices/Create', [
-            'customers' => Customer::all(['id', 'name', 'contact_person_name', 'address']),
+            'customers' => Customer::all(),
             'invoiceItems' => InvoiceItem::all(),
+            'estimateTemplates' => EstimateTemplate::where('user_group_id', auth()->user()->user_group_id)->latest()->with('details')->get(),
         ]);
     }
 
@@ -122,8 +124,9 @@ class InvoiceController extends Controller
 
         return Inertia::render('Invoices/Edit', [
             'invoice' => $invoice,
-            'customers' => Customer::all(['id', 'name', 'contact_person_name', 'address']),
+            'customers' => Customer::all(),
             'invoiceItems' => InvoiceItem::all(),
+            'estimateTemplates' => EstimateTemplate::where('user_group_id', auth()->user()->user_group_id)->latest()->with('details')->get(),
         ]);
     }
 

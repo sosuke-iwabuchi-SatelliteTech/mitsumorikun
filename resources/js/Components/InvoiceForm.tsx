@@ -1,4 +1,5 @@
 import { useForm, Link } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import api from '@/Utils/api';
 import { customerService } from '@/Services/customers';
 import { handleApiError, ValidationErrors } from '@/Utils/apiErrors';
@@ -13,6 +14,8 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import { useEffect, useState, Fragment } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDate } from '@/Utils/date';
+
+import { EstimateTemplate } from '@/types/estimateTemplate';
 
 interface InvoiceItemMaster {
     id: number;
@@ -29,13 +32,21 @@ interface Props {
     invoice?: Invoice;
     customers: Customer[];
     invoiceItems: InvoiceItemMaster[];
+    estimateTemplates: EstimateTemplate[];
     submitRoute: string;
     submitMethod: 'post' | 'put' | 'patch';
     backRoute: string;
 }
 
-export default function InvoiceForm({ invoice, customers, invoiceItems, submitRoute, submitMethod, backRoute }: Props) {
+export default function InvoiceForm({ invoice, customers, invoiceItems, estimateTemplates, submitRoute, submitMethod, backRoute }: Props) {
     const [localCustomers, setLocalCustomers] = useState<Customer[]>(customers);
+    
+    // テンプレート機能関連の状態
+    const [isApplyTemplateModalOpen, setIsApplyTemplateModalOpen] = useState(false);
+    const [isSaveAsTemplateModalOpen, setIsSaveAsTemplateModalOpen] = useState(false);
+    const [newTemplateName, setNewTemplateName] = useState('');
+    const [isSavingTemplate, setIsSavingTemplate] = useState(false);
+
 
     useEffect(() => {
         setLocalCustomers(customers);
@@ -67,6 +78,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
     const [masterSearchQuery, setMasterSearchQuery] = useState('');
     const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
     const [customerSearchQuery, setCustomerSearchQuery] = useState('');
+    const [templateSearchQuery, setTemplateSearchQuery] = useState('');
     const [isQuickCreateOpen, setIsQuickCreateOpen] = useState(false);
 
     const { data: customerData, setData: setCustomerData, post: postCustomer, processing: customerProcessing, errors: customerErrors, reset: resetCustomer } = useForm({
@@ -83,6 +95,11 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
         customer.name.toLowerCase().includes(customerSearchQuery.toLowerCase()) ||
         customer.contact_person_name?.toLowerCase().includes(customerSearchQuery.toLowerCase()) ||
         customer.address?.toLowerCase().includes(customerSearchQuery.toLowerCase())
+    );
+
+    const filteredTemplates = estimateTemplates.filter(template =>
+        template.name.toLowerCase().includes(templateSearchQuery.toLowerCase()) ||
+        template.remarks?.toLowerCase().includes(templateSearchQuery.toLowerCase())
     );
 
     const selectedCustomer = localCustomers.find(c => c.id === data.customer_id);
@@ -198,6 +215,54 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
             }
         } finally {
             setIsSubmittingQuickCustomer(false);
+        }
+    };
+
+    const handleApplyTemplate = (template: EstimateTemplate) => {
+        if (!template.details) return;
+        
+        const newDetails = [...data.details];
+        template.details.forEach(detail => {
+            newDetails.push({
+                item_name: detail.item_name,
+                quantity: Number(detail.quantity),
+                unit_price: Number(detail.unit_price),
+                unit: detail.unit,
+                tax_classification: detail.tax_classification,
+                amount: Math.floor(Number(detail.quantity) * Number(detail.unit_price)),
+                group_name: detail.group_name,
+                remarks: detail.remarks,
+            });
+        });
+
+        setData('details', newDetails);
+        setIsApplyTemplateModalOpen(false);
+    };
+
+    const handleSaveAsTemplate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newTemplateName) return;
+        
+        setIsSavingTemplate(true);
+        try {
+            await api.post(route('estimate-templates.store'), {
+                name: newTemplateName,
+                remarks: `${data.title} から保存`,
+                details: data.details
+            });
+            
+            setIsSaveAsTemplateModalOpen(false);
+            setNewTemplateName('');
+            // TODO: Ideally we should refresh the template list here, 
+            // but Inertia will usually do it if we redirect or refresh.
+            // Since this is a modal within a form, a full reload might be disruptive.
+            // For now, let's just alert the user.
+            alert('テンプレートとして保存しました。');
+            router.reload({ only: ['estimateTemplates'] });
+        } catch (error) {
+            alert('テンプレートの保存に失敗しました。');
+        } finally {
+            setIsSavingTemplate(false);
         }
     };
 
@@ -501,7 +566,28 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                         </svg>
                         登録ずみから引用
                     </button>
+                    <button
+                        type="button"
+                        onClick={() => setIsApplyTemplateModalOpen(true)}
+                        className="inline-flex items-center rounded-md bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-700 shadow-sm ring-1 ring-inset ring-indigo-300 hover:bg-indigo-100"
+                    >
+                        <svg className="-ml-0.5 mr-1.5 h-4 w-4 text-indigo-500" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                        テンプレートを適用
+                    </button>
                 </div>
+                {data.details.length > 0 && (
+                    <div className="mt-4">
+                        <button
+                            type="button"
+                            onClick={() => setIsSaveAsTemplateModalOpen(true)}
+                            className="text-sm text-indigo-600 hover:text-indigo-500 font-medium"
+                        >
+                            現在の明細をテンプレートとして保存
+                        </button>
+                    </div>
+                )}
             </div>
 
             <div className="flex flex-col items-end space-y-2 border-t pt-4">
@@ -695,7 +781,7 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                                 <InputError message={ajaxErrors.address} className="mt-2" />
                             </div>
                             <div className="flex justify-end gap-x-2 pt-2">
-                                <SecondaryButton onClick={() => setIsQuickCreateOpen(false)}>
+                                <SecondaryButton onClick={() => setIsQuickCreateOpen(false)} disabled={isSubmittingQuickCustomer}>
                                     キャンセル
                                 </SecondaryButton>
                                 <PrimaryButton disabled={isSubmittingQuickCustomer}>
@@ -706,11 +792,103 @@ export default function InvoiceForm({ invoice, customers, invoiceItems, submitRo
                     )}
 
                     <div className="mt-6 flex justify-end">
-                        <SecondaryButton onClick={() => setIsCustomerModalOpen(false)}>
+                        <SecondaryButton onClick={() => setIsCustomerModalOpen(false)} disabled={false}>
                             キャンセル
                         </SecondaryButton>
                     </div>
                 </div>
+            </Modal>
+
+            <Modal show={isApplyTemplateModalOpen} onClose={() => setIsApplyTemplateModalOpen(false)} maxWidth="2xl">
+                <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-medium text-gray-900">テンプレートを適用</h2>
+                        <button onClick={() => setIsApplyTemplateModalOpen(false)} className="text-gray-400 hover:text-gray-500">
+                            <span className="sr-only">閉じる</span>
+                            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div className="mb-4">
+                        <TextInput
+                            className="w-full"
+                            placeholder="名称や備考で検索..."
+                            value={templateSearchQuery}
+                            onChange={(e) => setTemplateSearchQuery(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="max-h-96 overflow-y-auto border rounded-md">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50 sticky top-0">
+                                <tr>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">テンプレート名</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase w-20">項目数</th>
+                                    <th className="px-4 py-2 text-right"></th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {filteredTemplates.map((template) => (
+                                    <tr key={template.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleApplyTemplate(template)}>
+                                        <td className="px-4 py-3">
+                                            <div className="text-sm font-medium text-gray-900">{template.name}</div>
+                                            {template.remarks && <div className="text-xs text-gray-500">{template.remarks}</div>}
+                                        </td>
+                                        <td className="px-4 py-3 text-sm text-gray-500">{template.details?.length || 0}</td>
+                                        <td className="px-4 py-3 text-right">
+                                            <span className="text-indigo-600 hover:text-indigo-900 text-sm font-medium">適用</span>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {filteredTemplates.length === 0 && (
+                                    <tr>
+                                        <td colSpan={3} className="px-4 py-8 text-center text-sm text-gray-500">
+                                            テンプレートがありません
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="mt-6 flex justify-end">
+                        <SecondaryButton onClick={() => setIsApplyTemplateModalOpen(false)} disabled={false}>
+                            キャンセル
+                        </SecondaryButton>
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal show={isSaveAsTemplateModalOpen} onClose={() => setIsSaveAsTemplateModalOpen(false)} maxWidth="md">
+                <form onSubmit={handleSaveAsTemplate} className="p-6">
+                    <h2 className="text-lg font-medium text-gray-900">テンプレートとして保存</h2>
+                    <p className="mt-1 text-sm text-gray-600">
+                        現在の明細内容を新しいテンプレートとして保存します。
+                    </p>
+                    
+                    <div className="mt-6">
+                        <InputLabel htmlFor="newTemplateName" value="テンプレート名" />
+                        <TextInput
+                            id="newTemplateName"
+                            className="mt-1 block w-full"
+                            value={newTemplateName}
+                            onChange={(e) => setNewTemplateName(e.target.value)}
+                            required
+                            autoFocus
+                        />
+                    </div>
+
+                    <div className="mt-6 flex justify-end gap-x-3">
+                        <SecondaryButton onClick={() => setIsSaveAsTemplateModalOpen(false)} disabled={isSavingTemplate}>
+                            キャンセル
+                        </SecondaryButton>
+                        <PrimaryButton disabled={isSavingTemplate}>
+                            保存
+                        </PrimaryButton>
+                    </div>
+                </form>
             </Modal>
         </Fragment>
     );

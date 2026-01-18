@@ -1,38 +1,32 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import { PageProps, Customer, InvoiceItem } from '@/types';
-import InvoiceForm from '@/Components/InvoiceForm';
-
-import { EstimateTemplate } from '@/types/estimateTemplate';
+import { PageProps } from '@/types';
+import EstimateTemplateForm from '@/Components/EstimateTemplateForm';
 
 interface Props extends PageProps {
-    customers: Customer[];
     invoiceItems: any[];
-    estimateTemplates: EstimateTemplate[];
 }
 
-export default function Create({ auth, customers, invoiceItems, estimateTemplates }: Props) {
+export default function Create({ auth, invoiceItems }: Props) {
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    新規見積作成
+                    新規テンプレート作成
                 </h2>
             }
         >
-            <Head title="新規見積作成" />
+            <Head title="新規テンプレート作成" />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
-                            <InvoiceForm
-                                customers={customers}
+                            <EstimateTemplateForm
                                 invoiceItems={invoiceItems}
-                                estimateTemplates={estimateTemplates}
-                                submitRoute={route('invoices.store')}
+                                submitRoute={route('estimate-templates.store')}
                                 submitMethod="post"
-                                backRoute={route('invoices.index')}
+                                backRoute={route('estimate-templates.index')}
                             />
                         </div>
                     </div>

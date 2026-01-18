@@ -19,6 +19,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('invoice-items', \App\Http\Controllers\InvoiceItemController::class);
         
         Route::resource('invoices', \App\Http\Controllers\InvoiceController::class);
+        Route::resource('estimate-templates', \App\Http\Controllers\EstimateTemplateController::class);
         Route::get('invoices/{invoice}/finalized', [\App\Http\Controllers\InvoiceController::class, 'finalizedList'])->name('invoices.finalized');
         Route::get('invoices/{invoice}/finalized/{finalized}', [\App\Http\Controllers\InvoiceController::class, 'showFinalized'])->name('invoices.finalized.show');
         Route::post('invoices/{invoice}/revision', [\App\Http\Controllers\InvoiceController::class, 'revision'])->name('invoices.revision');
