@@ -4,14 +4,17 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
 import { UserGroup } from '@/types';
+import UserGroupSelectModal from '@/Components/Admin/UserGroups/UserGroupSelectModal';
 
 interface Props {
     userGroups: UserGroup[];
 }
 
 export default function Create({ userGroups }: Props) {
+    const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -20,6 +23,10 @@ export default function Create({ userGroups }: Props) {
         user_group_id: '',
         role: 'general',
     });
+
+    const selectedGroup = userGroups.find(
+        (group) => group.id === data.user_group_id
+    );
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
@@ -93,31 +100,29 @@ export default function Create({ userGroups }: Props) {
                                         htmlFor="user_group_id"
                                         value="ユーザーグループ"
                                     />
-                                    <select
-                                        id="user_group_id"
-                                        name="user_group_id"
-                                        value={data.user_group_id}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                        onChange={(e) =>
-                                            setData(
-                                                'user_group_id',
-                                                e.target.value
-                                            )
+                                    <div
+                                        className="mt-1 cursor-pointer"
+                                        onClick={() =>
+                                            setIsGroupModalOpen(true)
                                         }
-                                        required
                                     >
-                                        <option value="">
-                                            グループを選択してください
-                                        </option>
-                                        {userGroups.map((group) => (
-                                            <option
-                                                key={group.id}
-                                                value={group.id}
-                                            >
-                                                {group.name}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        <div className="rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 shadow-sm transition hover:bg-gray-100">
+                                            {selectedGroup
+                                                ? selectedGroup.name
+                                                : 'グループが選択されていません'}
+                                        </div>
+                                    </div>
+                                    <UserGroupSelectModal
+                                        isOpen={isGroupModalOpen}
+                                        onClose={() =>
+                                            setIsGroupModalOpen(false)
+                                        }
+                                        onSelect={(group) => {
+                                            setData('user_group_id', group.id);
+                                            setIsGroupModalOpen(false);
+                                        }}
+                                        userGroups={userGroups}
+                                    />
                                     <InputError
                                         message={errors.user_group_id}
                                         className="mt-2"
