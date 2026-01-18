@@ -14,6 +14,7 @@ class EstimateTemplateTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected UserGroup $userGroup;
 
     protected function setUp(): void
@@ -41,7 +42,7 @@ class EstimateTemplateTest extends TestCase
             ->get(route('estimate-templates.index'));
 
         $response->assertStatus(200);
-        
+
         $templates = $response->original->getData()['page']['props']['templates']['data'];
         $this->assertCount(3, $templates);
     }
@@ -69,15 +70,15 @@ class EstimateTemplateTest extends TestCase
                     'unit_price' => 5000,
                     'tax_classification' => 'inclusive',
                     'amount' => 5000,
-                ]
-            ]
+                ],
+            ],
         ];
 
         $response = $this->actingAs($this->user)
             ->post(route('estimate-templates.store'), $data);
 
         $response->assertRedirect(route('estimate-templates.index'));
-        
+
         $this->assertDatabaseHas('estimate_templates', [
             'name' => 'New Template',
             'user_group_id' => $this->userGroup->id,
@@ -98,7 +99,7 @@ class EstimateTemplateTest extends TestCase
             'user_group_id' => $this->userGroup->id,
             'name' => 'Old Name',
         ]);
-        
+
         $detail = EstimateTemplateDetail::create([
             'estimate_template_id' => $template->id,
             'item_name' => 'Old Item',
@@ -125,15 +126,15 @@ class EstimateTemplateTest extends TestCase
                     'unit_price' => 300,
                     'tax_classification' => 'inclusive',
                     'amount' => 900,
-                ]
-            ]
+                ],
+            ],
         ];
 
         $response = $this->actingAs($this->user)
             ->put(route('estimate-templates.update', $template->id), $data);
 
         $response->assertRedirect(route('estimate-templates.index'));
-        
+
         $this->assertEquals('Updated Name', $template->fresh()->name);
         $this->assertCount(2, $template->fresh()->details);
         $this->assertDatabaseHas('estimate_template_details', [
@@ -182,8 +183,8 @@ class EstimateTemplateTest extends TestCase
                         'unit_price' => 100,
                         'tax_classification' => 'exclusive',
                         'amount' => 100,
-                    ]
-                ]
+                    ],
+                ],
             ]);
 
         $response->assertStatus(403);

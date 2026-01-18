@@ -2,9 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\Invoice;
-use App\Models\User;
 use App\Models\Customer;
+use App\Models\Invoice;
 use App\Models\UserGroup;
 use App\Services\PdfService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,7 +20,7 @@ class PdfGenerationTest extends TestCase
             'user_group_id' => $userGroup->id,
             'name' => 'Test Customer',
         ]);
-        
+
         $invoice = Invoice::create([
             'user_group_id' => $userGroup->id,
             'customer_id' => $customer->id,
@@ -34,9 +33,9 @@ class PdfGenerationTest extends TestCase
             'issuer_name' => 'Issuer',
         ]);
 
-        $service = new PdfService();
+        $service = new PdfService;
         $pdf = $service->generate($invoice, 'estimate');
-        
+
         $this->assertNotNull($pdf->output());
     }
 }

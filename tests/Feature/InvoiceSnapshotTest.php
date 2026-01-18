@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Customer;
-use App\Models\Invoice;
 use App\Models\FinalizedInvoice;
+use App\Models\Invoice;
 use App\Models\User;
 use App\Models\UserGroup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,6 +15,7 @@ class InvoiceSnapshotTest extends TestCase
     use RefreshDatabase;
 
     protected User $user;
+
     protected UserGroup $userGroup;
 
     protected function setUp(): void
@@ -59,7 +60,7 @@ class InvoiceSnapshotTest extends TestCase
 
         $this->assertEquals(1, FinalizedInvoice::count());
         $finalized = FinalizedInvoice::first();
-        
+
         $this->assertEquals($invoice->id, $finalized->invoice_id);
         $this->assertEquals('estimate', $finalized->document_type);
         $this->assertEquals('Test Estimate', $finalized->title);
@@ -86,10 +87,10 @@ class InvoiceSnapshotTest extends TestCase
 
         // Submit V1 -> Snapshot created
         $this->actingAs($this->user)->patch(route('invoices.status', $invoice->id), ['status' => 'submitted']);
-        
+
         // Update live invoice
         $invoice->update(['title' => 'Updated Title']);
-        
+
         $finalized = FinalizedInvoice::first();
         $this->assertEquals('V1 Title', $finalized->title);
         $this->assertEquals('Updated Title', $invoice->fresh()->title);

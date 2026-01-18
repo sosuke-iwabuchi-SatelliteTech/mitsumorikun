@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\InvoiceRequest;
-use App\Models\Invoice;
-use App\Models\FinalizedInvoice;
 use App\Models\Customer;
 use App\Models\EstimateTemplate;
+use App\Models\FinalizedInvoice;
+use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Services\InvoiceService;
 use Illuminate\Http\RedirectResponse;
@@ -68,7 +68,7 @@ class InvoiceController extends Controller
     {
         $invoice->load(['customer', 'details']);
 
-        $isLatest = !Invoice::where('user_group_id', $invoice->user_group_id)
+        $isLatest = ! Invoice::where('user_group_id', $invoice->user_group_id)
             ->where('estimate_number', $invoice->estimate_number)
             ->where('version', '>', $invoice->version)
             ->exists();
@@ -169,7 +169,7 @@ class InvoiceController extends Controller
      */
     public function revision(Invoice $invoice): RedirectResponse
     {
-        if (!in_array($invoice->status, ['submitted', 'invoice_submitted'])) {
+        if (! in_array($invoice->status, ['submitted', 'invoice_submitted'])) {
             return back()->with('error', '提出済みのステータスからのみ訂正可能です。');
         }
 

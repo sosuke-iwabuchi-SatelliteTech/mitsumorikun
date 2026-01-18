@@ -17,7 +17,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('general')->group(function () {
         Route::resource('customers', \App\Http\Controllers\CustomerController::class);
         Route::resource('invoice-items', \App\Http\Controllers\InvoiceItemController::class);
-        
+
         Route::resource('invoices', \App\Http\Controllers\InvoiceController::class);
         Route::resource('estimate-templates', \App\Http\Controllers\EstimateTemplateController::class);
         Route::get('invoices/{invoice}/finalized', [\App\Http\Controllers\InvoiceController::class, 'finalizedList'])->name('invoices.finalized');

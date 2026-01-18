@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\InvoiceDetail;
-use App\Models\Customer;
 use App\Models\UserGroup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -20,7 +20,7 @@ class PdfTaxColumnTest extends TestCase
             'user_group_id' => $userGroup->id,
             'name' => 'Test Customer',
         ]);
-        
+
         $invoice = Invoice::create([
             'user_group_id' => $userGroup->id,
             'customer_id' => $customer->id,
@@ -62,7 +62,7 @@ class PdfTaxColumnTest extends TestCase
             'user_group_id' => $userGroup->id,
             'name' => 'Test Customer',
         ]);
-        
+
         $invoice = Invoice::create([
             'user_group_id' => $userGroup->id,
             'customer_id' => $customer->id,
@@ -111,7 +111,7 @@ class PdfTaxColumnTest extends TestCase
             'user_group_id' => $userGroup->id,
             'name' => 'Test Customer',
         ]);
-        
+
         $invoice = Invoice::create([
             'user_group_id' => $userGroup->id,
             'customer_id' => $customer->id,

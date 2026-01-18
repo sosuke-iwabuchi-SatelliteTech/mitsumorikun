@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\Customer;
+use App\Models\Invoice;
 use App\Models\User;
 use App\Models\UserGroup;
 use App\Models\UserGroupDetail;
-use App\Models\Invoice;
-use App\Models\Customer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -92,7 +92,7 @@ class PdfFontTest extends TestCase
         ])->render();
 
         $this->assertStringContainsString('font-family: \'KleeOne\'', $view);
-        
+
         // Change back to ipa
         $this->userGroup->detail->update(['pdf_font' => 'ipa']);
         $view = view('pdf.estimate', [

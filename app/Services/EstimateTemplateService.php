@@ -11,7 +11,7 @@ class EstimateTemplateService
     public function create(UserGroup $userGroup, array $data): EstimateTemplate
     {
         return DB::transaction(function () use ($userGroup, $data) {
-            $template = new EstimateTemplate();
+            $template = new EstimateTemplate;
             $template->fill($data);
             $template->user_group_id = $userGroup->id;
             $template->save();
@@ -35,7 +35,7 @@ class EstimateTemplateService
             ]);
 
             $incomingIds = collect($data['details'])->pluck('id')->filter()->all();
-            
+
             // Delete removed details
             $template->details()->whereNotIn('id', $incomingIds)->delete();
 

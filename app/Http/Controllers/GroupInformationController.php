@@ -63,7 +63,7 @@ class GroupInformationController extends Controller
         $userGroup = $request->user()->userGroup;
         $detail = $userGroup->detail;
 
-        if (!$detail || !$detail->seal_image_path || !Storage::disk('local')->exists($detail->seal_image_path)) {
+        if (! $detail || ! $detail->seal_image_path || ! Storage::disk('local')->exists($detail->seal_image_path)) {
             abort(404);
         }
 

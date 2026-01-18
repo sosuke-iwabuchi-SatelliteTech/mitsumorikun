@@ -50,11 +50,11 @@ class CustomerController extends Controller
         ]);
 
         $customer = Customer::create($validated);
- 
+
         if ($request->wantsJson()) {
             return response()->json([
                 'message' => '顧客を登録しました。',
-                'customer' => $customer
+                'customer' => $customer,
             ]);
         }
 

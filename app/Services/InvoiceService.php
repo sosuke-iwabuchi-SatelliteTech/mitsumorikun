@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Invoice;
 use App\Models\FinalizedInvoice;
+use App\Models\Invoice;
 use App\Models\UserGroup;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +18,7 @@ class InvoiceService
         return DB::transaction(function () use ($userGroup, $data) {
             $detail = $userGroup->detail;
 
-            $invoice = new Invoice();
+            $invoice = new Invoice;
             $data['total_amount'] = intval($data['total_amount'] ?? 0);
             $data['tax_amount'] = intval($data['tax_amount'] ?? 0);
             $invoice->fill($data);
@@ -84,7 +84,7 @@ class InvoiceService
             $newInvoice = $oldInvoice->replicate();
             $newInvoice->version = $oldInvoice->version + 1;
             $newInvoice->status = ($oldInvoice->status === 'invoice_submitted') ? 'invoice_creating' : 'creating';
-            
+
             // Re-snapshot from UserGroupDetail to ensure latest info if they changed company settings
             $detail = $oldInvoice->userGroup->detail;
             if ($detail) {
@@ -120,9 +120,9 @@ class InvoiceService
     public function finalize(Invoice $invoice): FinalizedInvoice
     {
         return DB::transaction(function () use ($invoice) {
-            $finalized = new FinalizedInvoice();
+            $finalized = new FinalizedInvoice;
             $attributes = $invoice->getAttributes();
-            
+
             // Set document_type based on status
             $isInvoice = in_array($invoice->status, ['invoice_creating', 'invoice_submitted', 'payment_confirmed']);
             $docType = $isInvoice ? 'invoice' : 'estimate';
@@ -134,7 +134,7 @@ class InvoiceService
                 ->where('estimate_number', $invoice->estimate_number)
                 ->where('document_type', $docType)
                 ->max('version') ?? 0;
-            
+
             $attributes['version'] = $lastVersion + 1;
 
             $finalized->fill($attributes);

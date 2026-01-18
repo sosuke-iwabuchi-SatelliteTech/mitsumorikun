@@ -14,6 +14,7 @@ class InvoiceServiceTest extends TestCase
     use RefreshDatabase;
 
     protected InvoiceService $service;
+
     protected UserGroup $userGroup;
 
     protected function setUp(): void
@@ -21,7 +22,7 @@ class InvoiceServiceTest extends TestCase
         parent::setUp();
         $this->service = app(InvoiceService::class);
         $this->userGroup = UserGroup::create(['name' => 'Test Group']);
-        
+
         UserGroupDetail::create([
             'user_group_id' => $this->userGroup->id,
             'invoice_company_name' => 'Test Corp',
@@ -96,7 +97,7 @@ class InvoiceServiceTest extends TestCase
         $this->assertEquals($invoice->estimate_number, $newInvoice->estimate_number);
         $this->assertEquals(1, $invoice->version);
         $this->assertEquals(2, $newInvoice->version);
-        
+
         $this->assertEquals('Test Corp', $invoice->issuer_name);
         $this->assertEquals('Updated Corp', $newInvoice->issuer_name);
     }
@@ -157,7 +158,7 @@ class InvoiceServiceTest extends TestCase
             // Tax = -100,000 - (-90,909.0909...) = -9,090.9090...
             // Truncated Tax = -9090
             'total_amount' => -100000,
-            'tax_amount' => -9090.9, 
+            'tax_amount' => -9090.9,
         ];
 
         $invoice = $this->service->create($this->userGroup, $data);

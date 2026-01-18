@@ -51,6 +51,7 @@ class EstimateTemplateController extends Controller
         }
 
         $estimate_template->load('details');
+
         return Inertia::render('EstimateTemplates/Edit', [
             'template' => $estimate_template,
             'invoiceItems' => InvoiceItem::all(),

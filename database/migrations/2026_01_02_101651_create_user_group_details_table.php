@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('user_group_id')->unique()->constrained()->cascadeOnDelete();
             $table->string('invoice_company_name')->nullable();
-            
+
             // 基本情報
             $table->string('invoice_registration_number')->nullable();
             $table->string('zip_code')->nullable();
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('account_type')->nullable();
             $table->string('account_number')->nullable();
             $table->string('account_holder')->nullable();
-            
+
             // ゆうちょ
             $table->boolean('use_japan_post')->default(false);
             $table->string('japan_post_bank_symbol')->nullable();

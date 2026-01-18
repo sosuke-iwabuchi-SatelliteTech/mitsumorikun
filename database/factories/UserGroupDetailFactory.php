@@ -17,7 +17,7 @@ class UserGroupDetailFactory extends Factory
     public function definition(): array
     {
         return [
-            'invoice_registration_number' => 'T' . fake()->numerify('#############'),
+            'invoice_registration_number' => 'T'.fake()->numerify('#############'),
             'zip_code' => fake()->postcode(),
             'address1' => fake()->address(),
             'phone_number' => fake()->phoneNumber(),

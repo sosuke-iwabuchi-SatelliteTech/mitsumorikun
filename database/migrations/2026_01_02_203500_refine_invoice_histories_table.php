@@ -17,7 +17,7 @@ return new class extends Migration
             });
         }
 
-        if (!Schema::hasColumn('invoice_histories', 'document_type')) {
+        if (! Schema::hasColumn('invoice_histories', 'document_type')) {
             Schema::table('invoice_histories', function (Blueprint $table) {
                 $table->string('document_type')->default('estimate')->after('version'); // 'estimate' or 'invoice'
             });

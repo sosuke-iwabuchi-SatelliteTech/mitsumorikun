@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\User;
-use App\Models\Customer;
 use App\Models\UserGroup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -14,7 +14,9 @@ class PdfFilenameTest extends TestCase
     use RefreshDatabase;
 
     protected $user;
+
     protected $userGroup;
+
     protected $customer;
 
     protected function setUp(): void
@@ -47,8 +49,8 @@ class PdfFilenameTest extends TestCase
 
         $response = $this->actingAs($this->user)->get(route('invoices.download', $invoice));
 
-        $filename = "見積書[EST-001]テスト見積.pdf";
-        $encodedFilename = "filename*=utf-8''" . rawurlencode($filename);
+        $filename = '見積書[EST-001]テスト見積.pdf';
+        $encodedFilename = "filename*=utf-8''".rawurlencode($filename);
 
         $response->assertStatus(200);
         $this->assertStringContainsString($encodedFilename, $response->headers->get('Content-Disposition'));
@@ -70,8 +72,8 @@ class PdfFilenameTest extends TestCase
 
         $response = $this->actingAs($this->user)->get(route('invoices.download', $invoice));
 
-        $filename = "請求書[INV-002]テスト請求.pdf";
-        $encodedFilename = "filename*=utf-8''" . rawurlencode($filename);
+        $filename = '請求書[INV-002]テスト請求.pdf';
+        $encodedFilename = "filename*=utf-8''".rawurlencode($filename);
 
         $response->assertStatus(200);
         $this->assertStringContainsString($encodedFilename, $response->headers->get('Content-Disposition'));
@@ -107,8 +109,8 @@ class PdfFilenameTest extends TestCase
 
         $response = $this->actingAs($this->user)->get(route('finalized-invoices.download', $finalized));
 
-        $filename = "見積書[EST-003]確定テスト.pdf";
-        $encodedFilename = "filename*=utf-8''" . rawurlencode($filename);
+        $filename = '見積書[EST-003]確定テスト.pdf';
+        $encodedFilename = "filename*=utf-8''".rawurlencode($filename);
 
         $response->assertStatus(200);
         $this->assertStringContainsString($encodedFilename, $response->headers->get('Content-Disposition'));

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('invoice_details', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('invoice_id')->constrained()->cascadeOnDelete();
-            
+
             $table->string('item_name');
             $table->decimal('quantity', 15, 2)->default(1);
             $table->decimal('unit_price', 15, 2)->default(0);
@@ -22,10 +22,10 @@ return new class extends Migration
             $table->decimal('tax_rate', 5, 2)->default(0.10);
             $table->string('tax_classification')->default('exclusive'); // inclusive, exclusive
             $table->decimal('amount', 15, 2)->default(0);
-            
+
             $table->string('group_name')->nullable();
             $table->integer('display_order')->default(0);
-            
+
             $table->text('remarks')->nullable();
 
             $table->timestamps();
