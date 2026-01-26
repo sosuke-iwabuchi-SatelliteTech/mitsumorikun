@@ -41,6 +41,9 @@ jobs:
       - name: Generate Key
         run: php artisan key:generate
 
+      - name: Build frontend
+        run: npm run build
+
       - name: JS Tests
         run: npm test
 
