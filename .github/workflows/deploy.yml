@@ -1,53 +1,130 @@
 name: Deploy
 
 on:
-    workflow_dispatch:
-        inputs:
-            environment:
-                description: 'Environment to deploy to'
-                required: true
-                default: 'production'
-                type: choice
-                options:
-                    - production
-                    - staging
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
 
 jobs:
-    deploy:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
+  ci:
+    uses: ./.github/workflows/ci.yml
 
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: '8.2'
-                  extensions: mbstring, xml, ctype, iconv, mysql, pgsql, sqlite, bcmath, soap, intl, gd, zip
-                  coverage: none
+  deploy:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Setup Node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: '20'
+      - name: Set Release Name
+        run: echo "RELEASE_NAME=$(TZ='Asia/Tokyo' date +'%Y%m%d%H%M%S')-${{ github.run_id }}" >> $GITHUB_ENV
 
-            - name: Install dependencies
-              run: |
-                  composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-                  npm install
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, json
+          coverage: none
 
-            - name: Copy .env
-              run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
 
-            - name: Generate key
-              run: php artisan key:generate
+      - name: Install dependencies
+        run: |
+          composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction
+          npm ci
 
-            - name: Build frontend
-              run: npm run build
+      - name: Build frontend
+        run: npm run build
 
-            - name: Run tests
-              run: php artisan test
+      - name: Create Release Artifact
+        run: |
+          mkdir -p deploy/database deploy/public
+          # ソースコードをコピー (SQLiteファイルは含めない)
+          cp -r app bootstrap config resources routes vendor artisan composer.json composer.lock vite.config.ts package.json deploy/
+          cp -r database/migrations database/seeders deploy/database/
+          cp -r public/build public/textbook deploy/public/
+          cp public/index.php public/.htaccess deploy/public/
+          cp public/*.png public/*.svg public/*.ico public/*.json public/*.txt deploy/public/ 2>/dev/null || true
+          
+          # storageの枠組みだけ作成（リンク用）
+          mkdir -p deploy/storage
+          
+          tar -czf release.tar.gz -C deploy .
 
-            - name: Deploy
-              run: |
-                  echo "Deploying to ${{ github.event.inputs.environment }}..."
-                  # Add your actual deployment commands here (e.g., rsync, ssh, or cloud specific CLIs)
+      - name: Upload Artifact
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          source: "release.tar.gz"
+          target: ${{ secrets.APP_ROUTE_PATH }}/releases/${{ env.RELEASE_NAME }}
+
+      - name: Deploy and Link
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            APP_PATH=${{ secrets.APP_ROUTE_PATH }}
+            RELEASE_PATH=$APP_PATH/releases/${{ env.RELEASE_NAME }}
+            SHARED_PATH=$APP_PATH/shared
+
+            # 1. 永続ディレクトリ・共有ファイルの準備 (初回のみ)
+            mkdir -p $SHARED_PATH/storage/app/public $SHARED_PATH/storage/framework/cache $SHARED_PATH/storage/framework/sessions $SHARED_PATH/storage/framework/views $SHARED_PATH/storage/logs
+            mkdir -p $SHARED_PATH/database
+            [ -f $SHARED_PATH/database/database.sqlite ] || touch $SHARED_PATH/database/database.sqlite
+            
+            # 2. リリースの展開
+            cd $RELEASE_PATH
+            tar -xzf release.tar.gz
+            rm release.tar.gz
+
+            # 3. 共有アイテムへのシンボリックリンク
+            # .env
+            ln -nfs $APP_PATH/.env $RELEASE_PATH/.env
+            
+            # storage (リンクを貼る前にartifactの空ディレクトリを削除)
+            rm -rf $RELEASE_PATH/storage
+            ln -nfs $SHARED_PATH/storage $RELEASE_PATH/storage
+            
+            # database.sqlite
+            ln -nfs $SHARED_PATH/database/database.sqlite $RELEASE_PATH/database/database.sqlite
+
+            # 4. 権限とグループの整合性
+            # 新しいリリースのグループを www-data に変更
+            chgrp -R www-data $RELEASE_PATH
+            # ディレクトリに SGID を設定 (既存のディレクトリ構成に合わせる)
+            find $RELEASE_PATH -type d -exec chmod g+s {} +
+            # storage と database への書き込み権限
+            chmod -R 775 $SHARED_PATH/storage $SHARED_PATH/database
+
+            # 5. Laravel最適化とマイグレーション
+            php artisan optimize:clear
+            php artisan migrate --force
+            php artisan storage:link
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            # 5. 公開ディレクトリの切り替え (Atomic Switch)
+            ln -nfs $RELEASE_PATH $APP_PATH/current
+
+            # 6. 古いリリースの削除 (最新5世代を残す)
+            cd $APP_PATH/releases
+            ls -1t | tail -n +6 | xargs rm -rf 2>/dev/null || true
