@@ -6,7 +6,8 @@
         "build": "vite build",
         "dev": "vite",
         "lint": "eslint .",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "test": "npm run lint"
     },
     "devDependencies": {
         "@headlessui/react": "^2.0.0",
