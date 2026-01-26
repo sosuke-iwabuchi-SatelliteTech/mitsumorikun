@@ -50,11 +50,18 @@ jobs:
         run: |
           mkdir -p deploy/database deploy/public
           # ソースコードをコピー (SQLiteファイルは含めない)
-          cp -r app bootstrap config resources routes vendor artisan composer.json composer.lock vite.config.ts package.json deploy/
+          # langディレクトリを追加、不要なtextbookを削除
+          cp -r app bootstrap config lang resources routes vendor artisan composer.json composer.lock vite.config.ts package.json deploy/
           cp -r database/migrations database/seeders deploy/database/
-          cp -r public/build public/textbook deploy/public/
+          
+          # public配下のコピー
+          cp -r public/build deploy/public/
+          [ -d public/images ] && cp -r public/images deploy/public/ || true
+          
+          # public直下のファイルをコピー
           cp public/index.php public/.htaccess deploy/public/
-          cp public/*.png public/*.svg public/*.ico public/*.json public/*.txt deploy/public/ 2>/dev/null || true
+          cp public/*.ico public/*.txt public/*.webmanifest public/*.json deploy/public/ 2>/dev/null || true
+          cp public/*.png public/*.svg deploy/public/ 2>/dev/null || true
           
           # storageの枠組みだけ作成（リンク用）
           mkdir -p deploy/storage
