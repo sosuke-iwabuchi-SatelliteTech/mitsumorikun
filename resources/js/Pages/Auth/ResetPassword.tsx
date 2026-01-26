@@ -5,7 +5,7 @@ import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, useForm } from '@inertiajs/react';
 
-export default function ResetPassword({ token, email }) {
+export default function ResetPassword({ token, email }: { token: string; email: string }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         token: token,
         email: email,
@@ -13,7 +13,7 @@ export default function ResetPassword({ token, email }) {
         password_confirmation: '',
     });
 
-    const submit = (e) => {
+    const submit = (e: React.FormEvent) => {
         e.preventDefault();
 
         post(route('password.store'), {
@@ -26,21 +26,15 @@ export default function ResetPassword({ token, email }) {
             <Head title="パスワード再設定" />
 
             <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="メールアドレス" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
+                <TextInput
+                    id="email"
+                    type="hidden"
+                    name="email"
+                    value={data.email}
+                    autoComplete="username"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('email', e.target.value)}
+                />
+                <InputError message={errors.email} className="mt-2" />
 
                 <div className="mt-4">
                     <InputLabel htmlFor="password" value="パスワード" />
