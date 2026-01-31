@@ -46,7 +46,3 @@ jobs:
             tar -xzf fonts.tar.gz -C fonts
             rm fonts.tar.gz
             
-            # Set permissions
-            chgrp -R www-data $FONTS_PATH
-            chmod -R 775 $FONTS_PATH
-            find $FONTS_PATH -type d -exec chmod g+s {} +
