@@ -29,6 +29,7 @@ class InstallFonts extends Command
     {
         $fontDir = storage_path('fonts');
         $this->info("Scanning fonts in: $fontDir");
+        $this->info("Real path: " . (realpath($fontDir) ?: 'Not found'));
 
         if (!is_dir($fontDir)) {
             $this->error("Directory not found: $fontDir");
@@ -46,12 +47,29 @@ class InstallFonts extends Command
             return 1;
         }
 
+        $chroot = [
+            base_path(),
+            storage_path(),
+        ];
+
+        // Add real paths to chroot to handle symlinks
+        if ($realBasePath = realpath(base_path())) {
+            $chroot[] = $realBasePath;
+        }
+        if ($realStoragePath = realpath(storage_path())) {
+            $chroot[] = $realStoragePath;
+        }
+        // Broaden chroot for common server structures
+        $chroot[] = '/var/www/mitsumorikun';
+
+        $this->info("Chroot paths: " . implode(', ', array_unique($chroot)));
+
         $options = new Options([
             'fontDir' => $fontDir,
             'fontCache' => $fontDir,
             'tempDir' => storage_path('framework/cache'),
             'isRemoteEnabled' => true,
-            'chroot' => base_path(),
+            'chroot' => array_unique($chroot),
         ]);
 
         $dompdf = new Dompdf($options);
