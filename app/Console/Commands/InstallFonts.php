@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use Dompdf\CanvasFactory;
 
 class InstallFonts extends Command
 {
@@ -36,17 +35,36 @@ class InstallFonts extends Command
             return 1;
         }
 
+        // Check if directory is writable
+        if (!is_writable($fontDir)) {
+            $this->error("Directory is not writable: $fontDir");
+            $this->warn("Current User: " . (function_exists('posix_getpwuid') ? posix_getpwuid(posix_geteuid())['name'] : get_current_user()));
+            if (function_exists('posix_getpwuid')) {
+                $this->warn("Directory Owner: " . posix_getpwuid(fileowner($fontDir))['name']);
+            }
+            $this->warn("Permissions: " . substr(sprintf('%o', fileperms($fontDir)), -4));
+            return 1;
+        }
+
         $options = new Options([
             'fontDir' => $fontDir,
             'fontCache' => $fontDir,
-            'isRemoteEnabled' => true, // Needed for registerFont to "load" local files via path
+            'tempDir' => storage_path('framework/cache'),
+            'isRemoteEnabled' => true,
+            'chroot' => base_path(),
         ]);
 
         $dompdf = new Dompdf($options);
         $fontMetrics = $dompdf->getFontMetrics();
 
+        // Capture Dompdf warnings
+        set_error_handler(function ($errno, $errstr) {
+            if ($errno === E_USER_WARNING || $errno === E_WARNING) {
+                $this->warn("Dompdf Warning: $errstr");
+            }
+        });
+
         // Define fonts to register
-        // Family name => [style => filename]
         $fonts = [
             'ipaexgothic' => [
                 'normal' => 'ipaexg.ttf',
@@ -58,21 +76,22 @@ class InstallFonts extends Command
             ],
         ];
 
+        $allSuccess = true;
         foreach ($fonts as $family => $variants) {
             foreach ($variants as $style => $filename) {
                 $path = $fontDir . '/' . $filename;
                 if (!file_exists($path)) {
                     $this->warn("Missing font file: $path");
+                    $allSuccess = false;
                     continue;
                 }
 
                 $this->info("Registering $family ($style)...");
 
-                // registerFont expects an array for style
                 $styleArr = [
                     'family' => $family,
                     'style' => $style,
-                    'weight' => $style, // Using same for weight as Dompdf's getType handles this
+                    'weight' => $style,
                 ];
 
                 try {
@@ -81,14 +100,23 @@ class InstallFonts extends Command
                         $this->info("Successfully registered $family ($style)");
                     } else {
                         $this->error("Failed to register $family ($style)");
+                        $allSuccess = false;
                     }
                 } catch (\Exception $e) {
                     $this->error("Error registering $family ($style): " . $e->getMessage());
+                    $allSuccess = false;
                 }
             }
         }
 
-        $this->info("Font installation completed.");
-        return 0;
+        restore_error_handler();
+
+        if ($allSuccess) {
+            $this->info("Font installation completed successfully.");
+            return 0;
+        } else {
+            $this->error("Font installation completed with some errors.");
+            return 1;
+        }
     }
 }
