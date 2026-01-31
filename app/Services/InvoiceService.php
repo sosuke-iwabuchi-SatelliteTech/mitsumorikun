@@ -13,6 +13,34 @@ class InvoiceService
         protected EstimateNumberService $estimateNumberService
     ) {}
 
+    /**
+     * Refresh issuer information from the user group's settings.
+     */
+    public function refreshIssuerInfo(Invoice $invoice): void
+    {
+        $invoice->load('userGroup.detail');
+        $detail = $invoice->userGroup->detail;
+        if (!$detail) {
+            return;
+        }
+
+        $invoice->issuer_name = $detail->invoice_company_name;
+        $invoice->issuer_registration_number = $detail->invoice_registration_number;
+        $invoice->issuer_address = sprintf('〒%s %s%s', $detail->zip_code, $detail->address1, $detail->address2);
+        $invoice->issuer_tel = $detail->phone_number;
+        $invoice->issuer_fax = $detail->fax_number;
+
+        $invoice->bank_name = $detail->bank_name;
+        $invoice->branch_name = $detail->branch_name;
+        $invoice->account_type = $detail->account_type;
+        $invoice->account_number = $detail->account_number;
+        $invoice->account_holder = $detail->account_holder;
+
+        $invoice->japan_post_bank_symbol = $detail->japan_post_bank_symbol;
+        $invoice->japan_post_bank_number = $detail->japan_post_bank_number;
+        $invoice->japan_post_bank_account_holder = $detail->japan_post_bank_account_holder;
+    }
+
     public function create(UserGroup $userGroup, array $data): Invoice
     {
         return DB::transaction(function () use ($userGroup, $data) {
@@ -28,23 +56,7 @@ class InvoiceService
             $invoice->status = 'creating';
 
             // Snapshot from UserGroupDetail
-            if ($detail) {
-                $invoice->issuer_name = $detail->invoice_company_name;
-                $invoice->issuer_registration_number = $detail->invoice_registration_number;
-                $invoice->issuer_address = sprintf('〒%s %s%s', $detail->zip_code, $detail->address1, $detail->address2);
-                $invoice->issuer_tel = $detail->phone_number;
-                $invoice->issuer_fax = $detail->fax_number;
-
-                $invoice->bank_name = $detail->bank_name;
-                $invoice->branch_name = $detail->branch_name;
-                $invoice->account_type = $detail->account_type;
-                $invoice->account_number = $detail->account_number;
-                $invoice->account_holder = $detail->account_holder;
-
-                $invoice->japan_post_bank_symbol = $detail->japan_post_bank_symbol;
-                $invoice->japan_post_bank_number = $detail->japan_post_bank_number;
-                $invoice->japan_post_bank_account_holder = $detail->japan_post_bank_account_holder;
-            }
+            $this->refreshIssuerInfo($invoice);
 
             $invoice->save();
 
@@ -66,6 +78,10 @@ class InvoiceService
             $data['tax_amount'] = intval($data['tax_amount'] ?? 0);
             $invoice->update($data);
 
+            // Also refresh issuer info when updating to keep it relatively fresh
+            $this->refreshIssuerInfo($invoice);
+            $invoice->save();
+
             if (isset($data['details'])) {
                 $invoice->details()->delete();
                 foreach ($data['details'] as $index => $detailData) {
@@ -86,24 +102,7 @@ class InvoiceService
             $newInvoice->status = ($oldInvoice->status === 'invoice_submitted') ? 'invoice_creating' : 'creating';
 
             // Re-snapshot from UserGroupDetail to ensure latest info if they changed company settings
-            $detail = $oldInvoice->userGroup->detail;
-            if ($detail) {
-                $newInvoice->issuer_name = $detail->invoice_company_name;
-                $newInvoice->issuer_registration_number = $detail->invoice_registration_number;
-                $newInvoice->issuer_address = sprintf('〒%s %s%s', $detail->zip_code, $detail->address1, $detail->address2);
-                $newInvoice->issuer_tel = $detail->phone_number;
-                $newInvoice->issuer_fax = $detail->fax_number;
-
-                $newInvoice->bank_name = $detail->bank_name;
-                $newInvoice->branch_name = $detail->branch_name;
-                $newInvoice->account_type = $detail->account_type;
-                $newInvoice->account_number = $detail->account_number;
-                $newInvoice->account_holder = $detail->account_holder;
-
-                $newInvoice->japan_post_bank_symbol = $detail->japan_post_bank_symbol;
-                $newInvoice->japan_post_bank_number = $detail->japan_post_bank_number;
-                $newInvoice->japan_post_bank_account_holder = $detail->japan_post_bank_account_holder;
-            }
+            $this->refreshIssuerInfo($newInvoice);
 
             $newInvoice->save();
 
@@ -120,6 +119,10 @@ class InvoiceService
     public function finalize(Invoice $invoice): FinalizedInvoice
     {
         return DB::transaction(function () use ($invoice) {
+            // Ensure the latest company info is captured upon finalization
+            $this->refreshIssuerInfo($invoice);
+            $invoice->save();
+
             $finalized = new FinalizedInvoice;
             $attributes = $invoice->getAttributes();
 

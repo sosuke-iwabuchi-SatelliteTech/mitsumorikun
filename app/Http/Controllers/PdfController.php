@@ -5,14 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\FinalizedInvoice;
 use App\Models\Invoice;
 use App\Services\PdfService;
+use App\Services\InvoiceService;
 
 class PdfController extends Controller
 {
     protected $pdfService;
+    protected $invoiceService;
 
-    public function __construct(PdfService $pdfService)
+    public function __construct(PdfService $pdfService, InvoiceService $invoiceService)
     {
         $this->pdfService = $pdfService;
+        $this->invoiceService = $invoiceService;
     }
 
     public function preview(Invoice $invoice)
@@ -21,6 +24,9 @@ class PdfController extends Controller
             abort(403, '入金確認済みのデータは確定情報から出力してください。');
         }
         $type = $this->getDocumentType($invoice->status);
+
+        // For un-finalized invoices, always use the current company info in preview
+        $this->invoiceService->refreshIssuerInfo($invoice);
 
         return $this->pdfService->generate($invoice, $type)->stream("preview_{$invoice->estimate_number}.pdf");
     }
@@ -34,6 +40,9 @@ class PdfController extends Controller
             abort(403, '入金確認済みのデータは確定情報から出力してください。');
         }
         $type = $this->getDocumentType($invoice->status);
+
+        // For un-finalized invoices, always use the current company info in download
+        $this->invoiceService->refreshIssuerInfo($invoice);
 
         return $this->pdfService->generate($invoice, $type)
             ->download($this->getDownloadFilename($invoice, $type));
