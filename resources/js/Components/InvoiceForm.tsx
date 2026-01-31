@@ -140,7 +140,7 @@ export default function InvoiceForm({
         ) {
             newDetails[index].amount = Math.floor(
                 Number(newDetails[index].quantity) *
-                    Number(newDetails[index].unit_price)
+                Number(newDetails[index].unit_price)
             );
         }
 
@@ -148,7 +148,12 @@ export default function InvoiceForm({
     };
 
     const handleCustomerSelect = (customer: Customer) => {
-        setData('customer_id', customer.id);
+        // Update local customers list if the customer is not already in it
+        // (This happens when a customer is newly created in the modal)
+        if (!localCustomers.find((c) => c.id === customer.id)) {
+            setLocalCustomers((prev) => [...prev, customer]);
+        }
+        setData('customer_id', String(customer.id));
         setIsCustomerModalOpen(false);
     };
 
