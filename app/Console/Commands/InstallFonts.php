@@ -36,6 +36,16 @@ class InstallFonts extends Command
             return 1;
         }
 
+        // Check required extensions
+        $extensions = ['mbstring', 'iconv', 'gd', 'zlib'];
+        foreach ($extensions as $ext) {
+            if (!extension_loaded($ext)) {
+                $this->error("Required extension missing: $ext");
+            } else {
+                $this->info("Extension loaded: $ext");
+            }
+        }
+
         // Check if directory is writable
         if (!is_writable($fontDir)) {
             $this->error("Directory is not writable: $fontDir");
@@ -44,7 +54,12 @@ class InstallFonts extends Command
                 $this->warn("Directory Owner: " . posix_getpwuid(fileowner($fontDir))['name']);
             }
             $this->warn("Permissions: " . substr(sprintf('%o', fileperms($fontDir)), -4));
-            return 1;
+
+            // Check parent directory
+            $parentDir = dirname($fontDir);
+            $this->info("Parent directory: $parentDir (Writable: " . (is_writable($parentDir) ? 'YES' : 'NO') . ")");
+        } else {
+            $this->info("Directory is writable.");
         }
 
         $chroot = [
