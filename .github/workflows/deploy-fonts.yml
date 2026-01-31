@@ -1,0 +1,52 @@
+name: Deploy Fonts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-fonts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Fonts Archive
+        run: |
+          if [ -d "storage/fonts" ]; then
+            tar -czf fonts.tar.gz -C storage/fonts .
+          else
+            echo "Error: storage/fonts directory not found."
+            exit 1
+          fi
+
+      - name: Upload Fonts Archive
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          source: "fonts.tar.gz"
+          target: ${{ secrets.APP_ROUTE_PATH }}/shared/storage
+
+      - name: Extract and Set Permissions
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            SHARED_STORAGE_PATH=${{ secrets.APP_ROUTE_PATH }}/shared/storage
+            FONTS_PATH=$SHARED_STORAGE_PATH/fonts
+            
+            mkdir -p $FONTS_PATH
+            cd $SHARED_STORAGE_PATH
+            tar -xzf fonts.tar.gz -C fonts
+            rm fonts.tar.gz
+            
+            # Set permissions
+            chgrp -R www-data $FONTS_PATH
+            chmod -R 775 $FONTS_PATH
+            find $FONTS_PATH -type d -exec chmod g+s {} +
